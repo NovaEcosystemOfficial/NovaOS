@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  NovaOS Milestone 0.1 — Live ISO (Fedora + Plasma + SDDM)
+  Scope: bootable foundation only. No Ryuk, no Nova AI, no Nova Shell product.
+  Build: scripts/build-iso.sh (requires root on a Fedora host)
+-->
+<image schemaversion="8.4" name="NovaOS">
+    <description type="system">
+        <author>Nova</author>
+        <contact>engineering@novaos.local</contact>
+        <specification>NovaOS 0.1 Foundation Live</specification>
+    </description>
+
+    <preferences>
+        <version>0.1.0</version>
+        <packagemanager>dnf5</packagemanager>
+        <locale>en_US</locale>
+        <keytable>us</keytable>
+        <timezone>UTC</timezone>
+        <rpm-check-signatures>false</rpm-check-signatures>
+        <rpm-excludedocs>true</rpm-excludedocs>
+        <type
+            image="iso"
+            flags="overlay"
+            firmware="uefi"
+            hybridpersistent_filesystem="ext4"
+            hybridpersistent="true"
+            kernelcmdline="rhgb quiet"
+            primary="true"
+        >
+            <bootloader name="grub2" timeout="5"/>
+        </type>
+    </preferences>
+
+    <users>
+        <!-- Temporary hash; config.sh sets passwords to novaos -->
+        <user
+            name="root"
+            groups="root"
+            home="/root"
+            password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0"
+        />
+        <user
+            name="nova"
+            groups="nova,wheel"
+            home="/home/nova"
+            password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0"
+        />
+    </users>
+
+    <!-- Repositories: version pinned via release.env / build-iso --set-repo overrides -->
+    <repository type="rpm-md" alias="fedora" sourcetype="metalink" priority="1">
+        <source path="https://mirrors.fedoraproject.org/metalink?repo=fedora-44&amp;arch=x86_64"/>
+    </repository>
+    <repository type="rpm-md" alias="updates" sourcetype="metalink" priority="1">
+        <source path="https://mirrors.fedoraproject.org/metalink?repo=updates-released-f44&amp;arch=x86_64"/>
+    </repository>
+
+    <packages type="bootstrap">
+        <package name="filesystem"/>
+        <package name="basesystem"/>
+        <package name="fedora-release"/>
+        <package name="shadow-utils"/>
+        <package name="shim-x64" arch="x86_64"/>
+        <package name="grub2-efi-x64"/>
+        <package name="grub2-efi-x64-modules"/>
+        <package name="grub2-efi-x64-cdboot"/>
+    </packages>
+
+    <packages type="image">
+        <!-- ESP excludes (Fedora KIWI practice) -->
+        <file name="iso-esp-excludes.yaml" target="image/exclude_files_efifatimage.yaml"/>
+
+        <!-- Core + live -->
+        <package name="kernel"/>
+        <package name="grub2-tools"/>
+        <package name="grub2-tools-extra"/>
+        <package name="grubby"/>
+        <package name="dracut"/>
+        <package name="dracut-kiwi-live"/>
+        <package name="e2fsprogs"/>
+        <package name="dosfstools"/>
+        <package name="selinux-policy-targeted"/>
+        <package name="NetworkManager"/>
+        <package name="NetworkManager-wifi"/>
+        <package name="dhcp-client"/>
+        <package name="tzdata"/>
+        <package name="vim-minimal"/>
+        <package name="sudo"/>
+        <package name="passwd"/>
+        <package name="glibc-langpack-en"/>
+        <package name="glibc-langpack-it"/>
+        <package name="plymouth"/>
+        <package name="plymouth-system-theme"/>
+
+        <!-- Graphical stack: Plasma + SDDM (stock; not Nova Shell product) -->
+        <package name="sddm"/>
+        <package name="sddm-breeze"/>
+        <package name="xorg-x11-server-Xorg"/>
+        <package name="xorg-x11-xauth"/>
+        <package name="xorg-x11-drv-libinput"/>
+        <package name="xorg-x11-drv-evdev"/>
+        <package name="xorg-x11-drv-fbdev"/>
+        <package name="xorg-x11-drv-vesa"/>
+        <package name="xorg-x11-drv-qxl"/>
+        <package name="plasma-desktop"/>
+        <package name="plasma-workspace"/>
+        <package name="plasma-workspace-wayland"/>
+        <package name="plasma-workspace-x11"/>
+        <package name="plasma-systemsettings"/>
+        <package name="plasma-nm"/>
+        <package name="plasma-pa"/>
+        <package name="konsole"/>
+        <package name="dolphin"/>
+        <package name="breeze-icon-theme"/>
+        <package name="xdg-user-dirs"/>
+        <package name="pipewire"/>
+        <package name="wireplumber"/>
+        <package name="mesa-dri-drivers"/>
+        <package name="mesa-vulkan-drivers"/>
+        <package name="dejavu-sans-fonts"/>
+        <package name="google-noto-sans-fonts"/>
+        <package name="xdg-utils"/>
+    </packages>
+</image>

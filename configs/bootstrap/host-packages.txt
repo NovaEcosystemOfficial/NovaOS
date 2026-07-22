@@ -1,0 +1,16 @@
+# Pacchetti host Fedora per build + test ISO NovaOS
+# Nomi verificati su Fedora (kiwi-systemdeps-iso-media, non -iso)
+git
+kiwi-cli
+kiwi-systemdeps
+kiwi-systemdeps-iso-media
+python3
+qemu-kvm
+qemu-img
+qemu-system-x86
+edk2-ovmf
+libxml2
+rsync
+make
+sqlite
+dnf-plugins-core

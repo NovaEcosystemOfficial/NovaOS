@@ -1,0 +1,28 @@
+# Desktop / graphical packages for NovaOS 0.1 live (stock Plasma, not Nova Shell)
+# Authoritative install list: configs/kiwi/novaos-m01/appliance.kiwi
+sddm
+sddm-breeze
+xorg-x11-server-Xorg
+xorg-x11-xauth
+xorg-x11-drv-libinput
+xorg-x11-drv-evdev
+xorg-x11-drv-fbdev
+xorg-x11-drv-vesa
+xorg-x11-drv-qxl
+plasma-desktop
+plasma-workspace
+plasma-workspace-wayland
+plasma-workspace-x11
+plasma-systemsettings
+plasma-nm
+plasma-pa
+konsole
+dolphin
+breeze-icon-theme
+pipewire
+wireplumber
+mesa-dri-drivers
+mesa-vulkan-drivers
+dejavu-sans-fonts
+google-noto-sans-fonts
+xdg-utils

@@ -1,0 +1,5 @@
+# Bootstrap (installed into temporary bootstrap root by KIWI)
+filesystem
+basesystem
+fedora-release
+shadow-utils

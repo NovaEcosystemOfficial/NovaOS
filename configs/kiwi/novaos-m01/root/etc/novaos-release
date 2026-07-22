@@ -1,0 +1,9 @@
+NovaOS 0.1 Foundation Live Image
+================================
+
+This media boots a Fedora-based NovaOS live system with SDDM and Plasma.
+
+Default login: nova / novaos
+Root password: novaos
+
+Not included: Ryuk, Nova AI, Nova Shell product.
