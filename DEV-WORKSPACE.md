@@ -17,7 +17,7 @@ Output:
 - `iso/releases/novaos-0.1.0-x86_64-live.iso`
 - `iso/latest/novaos-current.iso`
 
-Login: see `configs/kiwi/novaos-m01/CREDENTIALS.txt` (`nova` / `novaos`).
+Login (public demo, not a secret): `nova` / `novaos` — see `SECURITY.md` and `configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt`.
 
 ## Layout
 

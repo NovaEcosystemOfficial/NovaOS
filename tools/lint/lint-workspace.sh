@@ -11,6 +11,7 @@ required_files=(
   configs/kiwi/novaos-m01/appliance.kiwi
   configs/kiwi/novaos-m01/config.sh
   configs/kiwi/novaos-m01/iso-esp-excludes.yaml
+  configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt
   configs/fedora/release.env
   configs/bootstrap/host-packages.txt
   scripts/build-iso.sh
@@ -20,6 +21,7 @@ required_files=(
   scripts/validate-pipeline.sh
   scripts/lib/common.sh
   Makefile
+  SECURITY.md
 )
 
 echo "lint-workspace: ${ROOT}"

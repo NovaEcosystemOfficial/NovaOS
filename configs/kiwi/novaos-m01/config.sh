@@ -34,11 +34,11 @@ EOF
 cat > /etc/motd <<'EOF'
 Welcome to NovaOS 0.1 — Foundation Boot
 Scope: bootable base (Plasma + SDDM). No Ryuk / Nova AI / Nova Shell product yet.
-Default user: nova  password: novaos
+Public demo login: nova / novaos  (not a secret — see PUBLIC_DEMO_CREDENTIALS.txt)
 EOF
 
 ########################################
-# Users & credentials (dev / M0.1)
+# Users — PUBLIC DEMO passwords (M0.1 only)
 ########################################
 if ! id -u nova >/dev/null 2>&1; then
     useradd -m -U -G wheel,video,audio,input -s /bin/bash nova

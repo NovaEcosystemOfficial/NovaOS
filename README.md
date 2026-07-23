@@ -92,7 +92,7 @@ La missione di NovaOS è:
 make validate && sudo make setup && make check && sudo make iso && make vm
 ```
 
-Login immagine: `nova` / `novaos` — `configs/kiwi/novaos-m01/CREDENTIALS.txt`
+Login immagine (demo pubblico, non un segreto): `nova` / `novaos` — vedi [`SECURITY.md`](SECURITY.md) e [`configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt`](configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt).
 
 ---
 

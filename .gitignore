@@ -22,10 +22,22 @@ configs/bootstrap/env.sh
 *.key
 *.p12
 *.pfx
+*.p8
+id_rsa
+id_ed25519
+id_ecdsa
 secrets/
 credentials/
+!configs/kiwi/**/PUBLIC_DEMO_CREDENTIALS.txt
 *.credentials.json
 service-account*.json
+*secret*
+!*PUBLIC_DEMO*
+*.token
+*.keystore
+auth.json
+.npmrc
+.pypirc
 
 # --- Dipendenze e tool ---
 node_modules/

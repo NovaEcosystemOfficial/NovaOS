@@ -58,7 +58,7 @@ echo "    iso:  ${ISO_PATH}"
 echo "    disk: ${DISK}"
 echo "    ovmf: ${OVMF_CODE}"
 echo "    ram:  ${RAM_MB}M cpus: ${CPUS}"
-echo "    login: nova / novaos"
+echo "    login (public demo): nova / novaos"
 echo
 
 exec qemu-system-x86_64 \

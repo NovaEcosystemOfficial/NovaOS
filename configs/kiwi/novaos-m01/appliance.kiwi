@@ -33,7 +33,7 @@
     </preferences>
 
     <users>
-        <!-- Temporary hash; config.sh sets passwords to novaos -->
+        <!-- Public demo password hashes; config.sh sets final password to novaos (PUBLIC, not a secret) -->
         <user
             name="root"
             groups="root"

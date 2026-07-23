@@ -7,7 +7,9 @@ Real KIWI NG description for NovaOS 0.1 live ISO.
 | `appliance.kiwi` | Image description (repos, packages, live ISO type) |
 | `config.sh` | Chroot configure: identity, users, SDDM, graphical target |
 | `iso-esp-excludes.yaml` | ESP file filter (Fedora KIWI practice) |
-| `CREDENTIALS.txt` | Default login for the image |
+| `PUBLIC_DEMO_CREDENTIALS.txt` | Public demo login (not a secret) |
+
+Also see repository root `SECURITY.md`.
 
 Build:
 
