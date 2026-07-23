@@ -25,7 +25,7 @@
             firmware="uefi"
             hybridpersistent_filesystem="ext4"
             hybridpersistent="true"
-            kernelcmdline="rhgb quiet"
+            kernelcmdline="console=tty0 console=ttyS0,115200n8"
             primary="true"
         >
             <bootloader name="grub2" timeout="5"/>
@@ -42,13 +42,13 @@
         />
         <user
             name="nova"
-            groups="nova,wheel"
+            groups="nova,wheel,video,render,audio,input"
             home="/home/nova"
             password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0"
         />
     </users>
 
-    <!-- Repositories: version pinned via release.env / build-iso --set-repo overrides -->
+    <!-- Repositories: version pinned via release.env / build-iso metalink rewrite -->
     <repository type="rpm-md" alias="fedora" sourcetype="metalink" priority="1">
         <source path="https://mirrors.fedoraproject.org/metalink?repo=fedora-44&amp;arch=x86_64"/>
     </repository>
@@ -65,6 +65,7 @@
         <package name="grub2-efi-x64"/>
         <package name="grub2-efi-x64-modules"/>
         <package name="grub2-efi-x64-cdboot"/>
+        <package name="grub2-pc-modules"/>
     </packages>
 
     <packages type="image">
@@ -75,6 +76,7 @@
         <package name="kernel"/>
         <package name="grub2-tools"/>
         <package name="grub2-tools-extra"/>
+        <package name="grub2-pc-modules"/>
         <package name="grubby"/>
         <package name="dracut"/>
         <package name="dracut-kiwi-live"/>
@@ -87,7 +89,6 @@
         <package name="tzdata"/>
         <package name="vim-minimal"/>
         <package name="sudo"/>
-        <package name="passwd"/>
         <package name="glibc-langpack-en"/>
         <package name="glibc-langpack-it"/>
         <package name="plymouth"/>
@@ -100,16 +101,19 @@
         <package name="xorg-x11-xauth"/>
         <package name="xorg-x11-drv-libinput"/>
         <package name="xorg-x11-drv-evdev"/>
-        <package name="xorg-x11-drv-fbdev"/>
-        <package name="xorg-x11-drv-vesa"/>
         <package name="xorg-x11-drv-qxl"/>
+        <package name="xorg-x11-drv-vmware"/>
+        <package name="virtualbox-guest-additions"/>
+        <package name="open-vm-tools"/>
+        <package name="open-vm-tools-desktop"/>
+        <package name="spice-vdagent"/>
         <package name="plasma-desktop"/>
         <package name="plasma-workspace"/>
-        <package name="plasma-workspace-wayland"/>
         <package name="plasma-workspace-x11"/>
         <package name="plasma-systemsettings"/>
         <package name="plasma-nm"/>
         <package name="plasma-pa"/>
+        <package name="kwin-x11"/>
         <package name="konsole"/>
         <package name="dolphin"/>
         <package name="breeze-icon-theme"/>
@@ -118,8 +122,10 @@
         <package name="wireplumber"/>
         <package name="mesa-dri-drivers"/>
         <package name="mesa-vulkan-drivers"/>
+        <package name="mesa-libGL"/>
         <package name="dejavu-sans-fonts"/>
         <package name="google-noto-sans-fonts"/>
         <package name="xdg-utils"/>
+        <package name="xterm"/>
     </packages>
 </image>

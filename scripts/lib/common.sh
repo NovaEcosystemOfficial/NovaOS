@@ -15,6 +15,21 @@ export NOVAOS_BUILD_DIR="${NOVAOS_BUILD_DIR:-${NOVAOS_ROOT}/build}"
 export NOVAOS_ISO_DIR="${NOVAOS_ISO_DIR:-${NOVAOS_ROOT}/iso}"
 export NOVAOS_CONFIG_DIR="${NOVAOS_CONFIG_DIR:-${NOVAOS_ROOT}/configs}"
 
+# KIWI needs a real Linux filesystem for workdirs (loop mounts, chmod, xattrs).
+# Auto-relocate when the repo lives on drvfs/9p/NTFS (typical WSL /mnt/* case).
+novaos_ensure_linux_build_fs() {
+  local fstype
+  fstype="$(findmnt -n -o FSTYPE --target "${NOVAOS_BUILD_DIR}" 2>/dev/null || true)"
+  case "${fstype}" in
+    9p|drvfs|fuse*|vfat|ntfs|ntfs3|cifs|smb3)
+      local relocated="/var/tmp/novaos-build"
+      echo "WARN: NOVAOS_BUILD_DIR is on ${fstype}; relocating work to ${relocated}" >&2
+      export NOVAOS_BUILD_DIR="${relocated}"
+      mkdir -p "${NOVAOS_BUILD_DIR}/cache" "${NOVAOS_BUILD_DIR}/work" "${NOVAOS_BUILD_DIR}/logs"
+      ;;
+  esac
+}
+
 novaos_load_release_env() {
   local env_file="${NOVAOS_CONFIG_DIR}/fedora/release.env"
   if [[ ! -f "${env_file}" ]]; then

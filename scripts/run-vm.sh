@@ -69,7 +69,7 @@ exec qemu-system-x86_64 \
   -drive file="${DISK}",if=virtio,format=qcow2 \
   -cdrom "${ISO_PATH}" \
   -boot order=d \
-  -device virtio-vga \
+  -device qxl-vga \
   -device virtio-net-pci,netdev=n0 \
   -netdev user,id=n0 \
   -usb -device usb-tablet \
