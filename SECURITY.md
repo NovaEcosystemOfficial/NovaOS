@@ -23,6 +23,11 @@ Rewriting `main` history and force-pushing would add operational risk for almost
 
 If a **real** secret is ever committed by mistake: rotate it immediately, then request a coordinated history purge.
 
-## Production images
+## Production / installed images
 
-Before any external / production distribution, replace demo passwords with a secure first-boot or installer flow. Do not ship `novaos` as a default on real systems.
+Before any external / production distribution of an **installed** system:
+
+- Demo live passwords must not remain as the only account (Calamares creates a real user; `novaos-post-install.sh` removes `nova`).
+- Do not ship `novaos` as a default password on real systems.
+
+Live ISO demo credentials remain public for engineering smoke tests only.

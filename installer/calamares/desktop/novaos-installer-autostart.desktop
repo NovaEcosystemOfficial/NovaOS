@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=NovaOS Installer Autostart
+Comment=Start Calamares automatically on Live sessions
+Exec=/usr/sbin/novaos-autostart-installer.sh
+X-KDE-autostart-phase=2
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=KDE;
+NoDisplay=true
+Terminal=false

@@ -80,50 +80,41 @@ La missione di NovaOS è:
 
 | Elemento | Stato |
 |----------|--------|
-| **Foundation** | Congelata — tag `v0.1.0-foundation` |
-| **Milestone attiva** | **M2.2 Developer Edition** — branch `m2.2-dev-edition` |
-| **Identity** | M1 branding on branch history (`m1-nova-identity`) |
-| **HW audit** | [`qa/M2-HARDWARE-READINESS.md`](qa/M2-HARDWARE-READINESS.md) |
-| **Dev Edition QA** | [`qa/M2.2-DEV-EDITION.md`](qa/M2.2-DEV-EDITION.md) |
-| **ISO** | `iso/NovaOS_0.1.iso` (live, x86_64) |
+| **Release** | **0.2 Installable** — live + Calamares |
+| **ISO** | `iso/NovaOS_0.2.iso` (live + installer, x86_64) |
 | **Desktop** | Plasma X11 + SDDM + branding Nova + Firefox + toolchain |
+| **Installer** | Calamares (ADR-008), autostart Live, dual-boot + os-prober + UEFI |
 | **Workspace** | `~/NovaWorkspace/` (script `setup-dev.sh`) |
-| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope) |
+| **HW / Dev QA** | [`qa/M2-HARDWARE-READINESS.md`](qa/M2-HARDWARE-READINESS.md), [`qa/M2.2-DEV-EDITION.md`](qa/M2.2-DEV-EDITION.md) |
+| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope 0.2) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Identity QA** | [`qa/M1-IDENTITY.md`](qa/M1-IDENTITY.md) |
 | **Guida build** | [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md) |
 
-### Foundation 0.1 → M1 Identity → M2 HW → M2.2 Developer Edition
+### Foundation 0.1 → 0.2 Installable
 
-Foundation: boot → login → desktop stabile (P0).  
-M1: identità visiva NovaOS.  
-M2: audit hardware reale + fix minimi (firmware, power/BT/audio, GL bare-metal).  
-M2.2: Firefox predefinito, toolchain (Git/Node/Python/build), NovaWorkspace, Cursor-ready (Cursor non preinstallato).  
+Scope 0.2: live senza regressioni **e** installazione su disco (Calamares) con utente reale, UEFI, dual-boot Linux.  
+Include Identity (M1), HW readiness (M2) e Developer Edition (M2.2).  
 **Secure Boot:** non supportato in produzione — disabilitare in firmware.  
-**Install su disco:** non disponibile (live-only) — vedi checklist M2.
+Dual-boot: non distruttivo di default (erase non pre-selezionato).
 
 ```bash
-git checkout m2.2-dev-edition   # Developer Edition (attiva)
-git checkout m2-hw-readiness    # solo M2 HW
-git checkout m1-nova-identity   # solo Identity
-git checkout v0.1.0-foundation  # Foundation pura
-git checkout m2.2-rp-0-start    # restore pre-M2.2
-```
-
-
-```bash
-make validate && sudo make setup && make check && sudo make iso
-sudo make p0-gate          # gate stabilità P0 (obbligatorio pre-tag)
+make validate && make validate-installer
+sudo make setup && make check && sudo make iso
+sudo make p0-gate          # gate stabilità live (obbligatorio)
+sudo make install-gate     # presenza installer nell'ISO
 make smoke                 # solo smoke desktop QEMU
 make vm                    # boot interattivo
 ```
 
-| Credenziale demo (pubblica) | Valore |
-|-----------------------------|--------|
-| Utente desktop | `nova` |
+| Credenziale demo (pubblica, **solo live**) | Valore |
+|--------------------------------------------|--------|
+| Utente desktop live | `nova` |
 | Password | `novaos` |
 
-Dettagli: [`SECURITY.md`](SECURITY.md), [`configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt`](configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt).
+Sul sistema **installato** l’utente demo viene rimosso; si usa l’account creato in Calamares.
+
+Dettagli: [`SECURITY.md`](SECURITY.md), [`qa/INSTALL-CHECKLIST.md`](qa/INSTALL-CHECKLIST.md), [`installer/README.md`](installer/README.md).
 
 **VM consigliate:** VirtualBox → Graphics **VMSVGA**, **3D OFF**; VMware → VMware SVGA / open-vm-tools.
 
@@ -205,12 +196,13 @@ Dettaglio motivato: [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).
 
 ---
 
-## Come contribuire (post-Foundation 0.1)
+## Come contribuire (post-0.2 Installable)
 
 1. Leggere [`CHANGELOG.md`](CHANGELOG.md) e [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).  
-2. Su fix di stabilità: una issue = causa + fix + test di regressione; niente feature.  
-3. Prima di dichiarare OK una ISO candidata: `sudo make p0-gate` deve essere PASS.  
-4. Non introdurre Ryuk / Nova AI / Nova Shell di prodotto su questo freeze.
+2. Su fix di stabilità live: una issue = causa + fix + test di regressione.  
+3. Su installer: aggiornare `installer/calamares/` + `make validate-installer` + checklist in `qa/INSTALL-CHECKLIST.md`.  
+4. Prima di dichiarare OK una ISO candidata: `sudo make p0-gate` **e** `sudo make install-gate` devono essere PASS.  
+5. Non introdurre Ryuk / Nova AI / Nova Shell di prodotto in questo milestone.
 
 ---
 

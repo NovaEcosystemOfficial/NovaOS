@@ -2,39 +2,41 @@
 
 Directory di **output** delle immagini ISO (e checksum correlati) generate dalla pipeline.
 
-## Scopo (Sprint 5)
+## Scopo
 
-Avere una destinazione chiara e professionale per gli artefatti “consegnabili” interni, separata da `build/work`.
-
-## Motivazione
-
-| Path | Contenuto |
-|------|-----------|
-| `build/` | Intermedi, cache, log |
-| `iso/` | ISO + `.sha256` pronti per test VM/USB |
-
-Gli sviluppatori e i tester cercano sempre `iso/` — non devono scavare nei workdir KIWI.
+Destinazione chiara per gli artefatti consegnabili, separata da `build/work`.
 
 ## Struttura
 
 ```text
 iso/
 ├── README.md
-├── releases/     # ISO versionate (gitignored content)
-└── latest/       # opzionale: copia/symlink della candidata corrente (gitignored)
+├── NovaOS_0.2.iso          # copia root (gitignored)
+├── NovaOS_0.2.iso.sha256
+├── releases/               # ISO versionate (gitignored content)
+└── latest/novaos-current.iso
 ```
 
-## Naming (da `docs/boot-foundation/06-ISO-Build.md`)
+## Naming
+
+Da `configs/fedora/release.env` (`NOVAOS_ISO_NAME`):
 
 ```text
-novaos-<version>-<arch>-<profile>.iso
-es. novaos-0.1.0-x86_64-live.iso
+NovaOS_0.2.iso
 ```
+
+Alternate documented form: `novaos-<version>-<arch>-live.iso`.
+
+## Build
+
+```bash
+sudo make iso
+# or full gate:
+sudo bash scripts/build-installable-release.sh
+```
+
+Requires root, Fedora host, ~80 GB free on a real Linux filesystem.
 
 ## Policy git
 
-I file `*.iso` sono già ignorati dal `.gitignore` root. Non committare ISO.
-
-## Stato Sprint 5
-
-Struttura pronta. Nessuna ISO generata in questo sprint.
+I file `*.iso` sono ignorati dal `.gitignore`. Non committare ISO.

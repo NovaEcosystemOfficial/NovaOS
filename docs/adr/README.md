@@ -15,6 +15,7 @@ Questo elenco raccoglie le decisioni architetturali ufficiali del progetto. Ogni
 | [ADR-005](ADR-005-Display-Manager.md) | Display Manager | Proposta | SDDM |
 | [ADR-006](ADR-006-Update-System.md) | Update System | Proposta | DNF nel breve; traiettoria verso rpm-ostree |
 | [ADR-007](ADR-007-AI-Architecture.md) | AI Architecture | Proposta | Architettura ibrida (Ollama locale + API cloud) |
+| [ADR-008](ADR-008-Installer-Engine.md) | Installer Engine | Accettato | Calamares su Live KIWI (M0.2); Anaconda candidata futura |
 
 ## Formato ADR
 
@@ -35,7 +36,8 @@ ADR-001 Base Linux
    ├── ADR-003 Build System
    ├── ADR-004 Package Manager
    ├── ADR-005 Display Manager
-   └── ADR-006 Update System
+   ├── ADR-006 Update System
+   └── ADR-008 Installer Engine (Calamares @ M0.2)
 ADR-007 AI Architecture (trasversale, ma influenza system/ e ai/)
 ```
 

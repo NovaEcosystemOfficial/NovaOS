@@ -3,7 +3,54 @@
 All notable changes to NovaOS are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-Versioning follows foundation tags (`v0.1.0-foundation`, …) until product semver stabilizes.
+Versioning follows foundation/installable tags (`v0.1.0-foundation`, `v0.2.0-installable`, …) until product semver stabilizes.
+
+---
+
+## [0.2.0-installable] — 2026-07-25
+
+Installable milestone: live ISO remains supported; Calamares enables disk install with dual-boot safety.
+
+### Added
+
+- **ADR-008** — Calamares as installer engine on KIWI live
+- Calamares config tree under `installer/calamares/` (settings, modules, branding, desktop launcher)
+- Live autostart: Calamares launches after Plasma on live sessions (`novaos-autostart-installer.sh`)
+- Post-install hardening script `novaos-post-install.sh` (no demo autologin, os-prober, remove live user)
+- Packages: `calamares`, `os-prober`, filesystem tools, Developer Edition toolchain (Firefox, Node 22, …)
+- Gates: `make validate-installer`, `sudo make install-gate`, `sudo make p0-gate`
+- Manual Tier 3 checklist: `qa/INSTALL-CHECKLIST.md`
+- ISO artifact name: `NovaOS_0.2.iso`
+- Merged M1 Identity + M2 HW readiness + M2.2 Developer Edition onto the installable line
+
+### Changed
+
+- `configs/fedora/release.env` → `NOVAOS_VERSION=0.2.0` / milestone `0.2`
+- `scripts/build-iso.sh` syncs `installer/calamares` into KIWI root overlay
+- Live MOTD documents Install NovaOS launcher
+
+### Security / dual-boot
+
+- Partitioning UI defaults to **no** pre-selected erase (`initialPartitioningChoice: none`)
+- `prompt-install: true` confirmation before writing disks
+- Installed systems remove public demo user `nova`; accounts come from the installer
+- `GRUB_DISABLE_OS_PROBER=false` for other OS detection
+
+### Compatibility
+
+- Live path unchanged in spirit: Plasma X11 + SDDM + P0 smoke still required
+- Profile remains `novaos-m01` for pipeline compatibility
+
+### Verification
+
+```bash
+make validate && make validate-installer
+sudo make setup && make check && sudo make iso
+sudo make p0-gate
+sudo make install-gate
+```
+
+Hardware / dual-boot: follow `qa/INSTALL-CHECKLIST.md`.
 
 ---
 
@@ -46,78 +93,7 @@ P0 gate (`make p0-gate`) must be **PASS** on the freeze ISO before tagging.
 
 ---
 
-## [Unreleased] — M2.2 Developer Edition (branch `m2.2-dev-edition`)
+## Prior line (merged into 0.2)
 
-Transform NovaOS into a complete developer workstation on the stable Foundation
-desktop. No kernel / bootloader / cmdline / build-pipeline changes.
-
-### Added
-
-- Firefox as default browser (`mimeapps.list`, Desktop launcher, panel seed, `xdg-settings`)
-- Developer toolchain: git, OpenSSH, curl, wget, zip/unzip, gcc/g++/make/cmake,
-  Python3+pip, Node.js 22 LTS (`nodejs22*`), Flatpak (+ Flathub), htop, fastfetch
-- `~/NovaWorkspace/{NovaOS,NovaDocs,NovaStudio,NovaCloud,NovaAI}` via `/usr/local/bin/setup-dev.sh`
-- Cursor readiness deps + `/usr/share/novaos/developer/CURSOR-READINESS.md` (Cursor **not** shipped)
-- Checklist `qa/M2.2-DEV-EDITION.md`
-
-### Notes
-
-- Restore point: tag `m2.2-rp-0-start`
-- Rebuild verified: smoke virtio+qxl **PASS**; ISO SHA256 `b1518e407c26dd9e292ea6ac6e943d0809095a3500e8d9fc298522ec58b29d06`
-- Interactive HTTPS/site checks remain manual guest validation (**WARNING**)
-
----
-
-## [Unreleased] — M2 Real Hardware Readiness (branch `m2-hw-readiness`)
-
-Audit + minimal fixes for live evaluation on real UEFI hardware. No installer
-product, no Secure Boot signing, no dual-boot feature.
-
-### Added
-
-- Checklist `qa/M2-HARDWARE-READINESS.md` (PASS / WARNING / TODO / FAIL)
-- Packages: `linux-firmware`, `alsa-sof-firmware`, `upower`, `power-profiles-daemon`,
-  `bluez`, `bluedevil`, `pipewire-pulseaudio`, `pipewire-alsa`, `mokutil`, `efibootmgr`
-
-### Changed
-
-- Software GL / `KWIN_COMPOSE=Q` applied only when `systemd-detect-virt -q` (bare metal uses Mesa)
-- Removed forced SDDM `-dpi 96` (HiDPI-friendly)
-- Enable `bluetooth`, `upower`, `power-profiles-daemon` services
-
-### Documented limitations
-
-- **Secure Boot:** not supported for production; disable in firmware for M2
-- **Installer:** live-only (FAIL for disk install) — deferred
-- **Dual boot:** TODO — deferred
-- **GPT install layout:** WARNING — no on-disk installer to apply it
-
----
-
-## [Unreleased] — M1 Nova Identity (branch `m1-nova-identity`)
-
-Branding-only milestone on top of Foundation 0.1. No kernel/bootloader/cmdline,
-no session/graphics stack changes, no build-pipeline script changes.
-
-### Added
-
-- Official M1 assets (Luminous Precision): mark, wordmark, wallpaper, system icon
-- Color scheme `NovaOS` (`/usr/share/color-schemes/NovaOS.colors`)
-- SDDM theme `novaos` (X11 / software-GL friendly)
-- Plasma look-and-feel `org.novaos.desktop` + KSplash QML
-- KIWI root overlay under `configs/kiwi/novaos-m01/root/usr/share/…`
-- Identity defaults: SDDM theme, LookAndFeel, ColorScheme, `os-release` `LOGO=novaos`
-- Restore tags: `m1-rp-0-start` … `m1-rp-4-docs` (see `qa/M1-IDENTITY.md`)
-
-### Known limitations
-
-- Plymouth remains **disabled** (`plymouth.enable=0`) for VirtualBox/VMware stability
-- Stock Plasma layout (panels); product Nova Shell layout is out of scope
-- RPM packaging of branding packages remains deferred (overlay installs files)
-
-### Rollback
-
-```bash
-git checkout v0.1.0-foundation
-# or revert M1 commits / reset to m1-rp-0-start
-```
+M1 Identity, M2 HW readiness, and M2.2 Developer Edition landings are included in
+the 0.2 installable line (see branches / tags `m1-*`, `m2-*`, `m2.2-*`).

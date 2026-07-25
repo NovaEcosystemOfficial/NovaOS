@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install NovaOS
+Name[it]=Installa NovaOS
+GenericName=System Installer
+GenericName[it]=Installer di sistema
+Comment=Install NovaOS to this computer (dual-boot friendly)
+Comment[it]=Installa NovaOS su questo computer (compatibile dual-boot)
+Keywords=calamares;installer;novaos;install;
+TryExec=/usr/bin/calamares
+# Live image grants passwordless sudo for calamares (see sudoers.d/novaos-calamares-live).
+Exec=sudo -E /usr/bin/calamares
+Icon=calamares
+Terminal=false
+StartupNotify=true
+Categories=Qt;System;Settings;

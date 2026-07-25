@@ -81,12 +81,12 @@ Boot ISO live → valida Milestone checklist → (install dopo)
 
 ## 6. Strategia di implementazione
 
-1. **Decisione engine** entro inizio implementazione ISO: default proposto **Anaconda** (coerenza Fedora) salvo spike contrario.  
-2. Prima ISO: live + installer stock branded minimally.  
-3. Nascondere/skip moduli cloud/AI.  
-4. Post-install: stesso look SDDM + Nova Shell della live.  
-5. Test install su **VM** prima del PC fisico di sviluppo.  
-6. Checklist: reboot installed system passa criteri M0.1.
+1. **Decisione engine:** **Calamares** (ADR-008) sulla Live KIWI esistente; Anaconda riservata a futuri media Lorax/Atomic.  
+2. ISO 0.2: live + installer branded minimally (`installer/calamares/`).  
+3. Dual-boot: partitioning Alongside/Manual + `os-prober`; erase non è default.  
+4. Post-install: SDDM senza autologin demo; rimozione utente `nova`; GRUB con altri OS.  
+5. Test install su **VM** (`qa/INSTALL-CHECKLIST.md`) prima del PC fisico.  
+6. Gate: `make validate-installer` + `sudo make install-gate` + checklist Tier 3.
 
 ### UX vincoli (Design System light)
 
@@ -96,12 +96,12 @@ Boot ISO live → valida Milestone checklist → (install dopo)
 
 ---
 
-## 7. Roadmap installer (oltre M0.1)
+## 7. Roadmap installer
 
 | Versione | Capacità |
 |----------|----------|
-| 0.1 | Live + install base |
-| 0.2 | Branding installer più completo |
+| 0.1 | Live only (freeze foundation) |
+| **0.2** | **Live + Calamares install + dual-boot best-effort** |
 | 0.3+ | Onboarding Design System (tema, senza AI ancora) |
 | 1.x | Opzioni NovaAI/Cloud come da platform docs |
 
