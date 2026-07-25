@@ -1,16 +1,19 @@
 # NovaOS — common developer targets (Linux build host)
 
-.PHONY: help setup check validate iso vm clean lint
+.PHONY: help setup check validate iso vm smoke verify-desktop p0-gate clean lint
 
 help:
 	@echo "NovaOS build targets:"
-	@echo "  make validate - static pipeline checks (no root)"
-	@echo "  make setup    - install host dependencies (root)"
-	@echo "  make check    - validate build host environment"
-	@echo "  make iso      - build live ISO (root)"
-	@echo "  make vm       - boot latest ISO in QEMU"
-	@echo "  make clean    - remove build workdirs"
-	@echo "  make lint     - workspace structure check"
+	@echo "  make validate        - static pipeline checks (no root)"
+	@echo "  make setup           - install host dependencies (root)"
+	@echo "  make check           - validate build host environment"
+	@echo "  make iso             - build live ISO (root)"
+	@echo "  make smoke           - headless QEMU desktop smoke (virtio+qxl)"
+	@echo "  make verify-desktop  - build ISO + automated desktop smoke"
+	@echo "  make p0-gate         - Foundation 0.1 P0 stability gate (root)"
+	@echo "  make vm              - boot latest ISO in QEMU"
+	@echo "  make clean           - remove build workdirs"
+	@echo "  make lint            - workspace structure check"
 
 validate:
 	bash ./scripts/validate-pipeline.sh
@@ -24,6 +27,15 @@ check:
 
 iso:
 	sudo bash ./scripts/build-iso.sh
+
+smoke:
+	bash ./scripts/smoke-desktop.sh
+
+verify-desktop:
+	sudo bash ./scripts/build-and-verify-desktop.sh
+
+p0-gate:
+	sudo bash ./scripts/qa-p0-gate.sh
 
 vm:
 	bash ./scripts/run-vm.sh

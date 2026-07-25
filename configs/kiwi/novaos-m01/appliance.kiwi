@@ -25,7 +25,7 @@
             firmware="uefi"
             hybridpersistent_filesystem="ext4"
             hybridpersistent="true"
-            kernelcmdline="console=tty0 console=ttyS0,115200n8"
+            kernelcmdline="console=tty0 console=ttyS0,115200n8 selinux=0 enforcing=0 plymouth.enable=0"
             primary="true"
         >
             <bootloader name="grub2" timeout="5"/>
@@ -97,6 +97,12 @@
         <!-- Graphical stack: Plasma + SDDM (stock; not Nova Shell product) -->
         <package name="sddm"/>
         <package name="sddm-breeze"/>
+        <package name="accountsservice"/>
+        <package name="polkit"/>
+        <package name="polkit-kde"/>
+        <package name="systemd-pam"/>
+        <package name="dbus-daemon"/>
+        <package name="dbus-x11"/>
         <package name="xorg-x11-server-Xorg"/>
         <package name="xorg-x11-xauth"/>
         <package name="xorg-x11-drv-libinput"/>
@@ -113,19 +119,32 @@
         <package name="plasma-systemsettings"/>
         <package name="plasma-nm"/>
         <package name="plasma-pa"/>
+        <package name="plasma-breeze"/>
         <package name="kwin-x11"/>
         <package name="konsole"/>
         <package name="dolphin"/>
         <package name="breeze-icon-theme"/>
         <package name="xdg-user-dirs"/>
+        <package name="xdg-desktop-portal"/>
+        <package name="xdg-desktop-portal-kde"/>
         <package name="pipewire"/>
         <package name="wireplumber"/>
         <package name="mesa-dri-drivers"/>
         <package name="mesa-vulkan-drivers"/>
         <package name="mesa-libGL"/>
+        <package name="mesa-libEGL"/>
+        <package name="mesa-libgbm"/>
+        <package name="mesa-libGLU"/>
+        <package name="libglvnd"/>
+        <package name="libglvnd-glx"/>
+        <package name="libglvnd-egl"/>
+        <package name="llvm-libs"/>
+        <package name="qqc2-breeze-style"/>
+        <package name="kf6-kirigami"/>
         <package name="dejavu-sans-fonts"/>
         <package name="google-noto-sans-fonts"/>
         <package name="xdg-utils"/>
         <package name="xterm"/>
+        <package name="procps-ng"/>
     </packages>
 </image>

@@ -80,19 +80,33 @@ La missione di NovaOS è:
 
 | Elemento | Stato |
 |----------|--------|
-| **Sprint** | Sprint 6 — ISO build infrastructure |
-| **Build** | KIWI description + scripts **operativi** |
-| **ISO** | Generabile con `sudo make iso` su host Fedora |
-| **Nova Shell / Ryuk / AI** | Non inclusi (intenzionale) |
+| **Release** | **Foundation 0.1 congelata** — tag `v0.1.0-foundation` |
+| **ISO** | `iso/NovaOS_0.1.iso` (live, x86_64) |
+| **Desktop** | Plasma X11 + SDDM (sessione stabile in VM) |
+| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope 0.1) |
+| **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Guida build** | [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md) |
 
-### Prima ISO (M0.1 foundation)
+### Foundation 0.1 (congelata)
+
+Scope: boot → login → desktop usabile (terminale / impostazioni / power a livello sistema).  
+Niente nuove funzionalità sul ramo foundation finché i test P0 restano verdi.
 
 ```bash
-make validate && sudo make setup && make check && sudo make iso && make vm
+make validate && sudo make setup && make check && sudo make iso
+sudo make p0-gate          # gate stabilità P0 (obbligatorio pre-tag)
+make smoke                 # solo smoke desktop QEMU
+make vm                    # boot interattivo
 ```
 
-Login immagine (demo pubblico, non un segreto): `nova` / `novaos` — vedi [`SECURITY.md`](SECURITY.md) e [`configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt`](configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt).
+| Credenziale demo (pubblica) | Valore |
+|-----------------------------|--------|
+| Utente desktop | `nova` |
+| Password | `novaos` |
+
+Dettagli: [`SECURITY.md`](SECURITY.md), [`configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt`](configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt).
+
+**VM consigliate:** VirtualBox → Graphics **VMSVGA**, **3D OFF**; VMware → VMware SVGA / open-vm-tools.
 
 ---
 
@@ -138,6 +152,7 @@ NovaOS/
 ├── system/           # Futuro system / Ryuk
 ├── .github/          # CI/CD futuro
 ├── DEV-WORKSPACE.md  # Guida infrastruttura Sprint 5
+├── CHANGELOG.md      # Storia release (Foundation 0.1+)
 ├── README.md
 ├── LICENSE
 └── .gitignore
@@ -157,6 +172,7 @@ Dettaglio motivato: [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).
 | [`design-system/`](docs/design-system/README.md) | Identità visiva e Nova Shell (Sprint 2) |
 | [`platform/`](docs/platform/README.md) | Architettura software (Sprint 3) |
 | [`boot-foundation/`](docs/boot-foundation/README.md) | Prima ISO / Milestone 0.1 (Sprint 4) |
+| [`CHANGELOG.md`](CHANGELOG.md) | Note di rilascio (root) |
 
 ---
 
@@ -170,12 +186,12 @@ Dettaglio motivato: [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).
 
 ---
 
-## Come contribuire (fase infrastruttura)
+## Come contribuire (post-Foundation 0.1)
 
-1. Leggere [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).  
-2. Verificare la struttura: `bash tools/lint/lint-workspace.sh` e `bash scripts/check-env.sh`.  
-3. Non introdurre Ryuk/AI/Shell di prodotto finché M0.1 non è in esecuzione pianificata.  
-4. Le ricette KIWI e i pacchetti branding arriveranno negli sprint di build ISO.
+1. Leggere [`CHANGELOG.md`](CHANGELOG.md) e [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).  
+2. Su fix di stabilità: una issue = causa + fix + test di regressione; niente feature.  
+3. Prima di dichiarare OK una ISO candidata: `sudo make p0-gate` deve essere PASS.  
+4. Non introdurre Ryuk / Nova AI / Nova Shell di prodotto su questo freeze.
 
 ---
 
