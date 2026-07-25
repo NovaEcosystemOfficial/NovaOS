@@ -1,7 +1,8 @@
-NovaOS 0.1 Foundation Live Image
-================================
+NovaOS 0.1 — Foundation + Nova Identity (M1)
+============================================
 
 Fedora-based NovaOS live system (SDDM + Plasma).
+Branding: Luminous Precision (logo, wallpaper, SDDM, KSplash, colors).
 
 Public demo login (NOT a secret):
   user: nova
@@ -11,4 +12,5 @@ Public demo login (NOT a secret):
 See PUBLIC_DEMO_CREDENTIALS.txt / SECURITY.md in the NovaOS repository.
 Do not use these passwords on production systems.
 
-Not included: Ryuk, Nova AI, Nova Shell product.
+Not included: Ryuk, Nova AI, product Nova Shell layout.
+Plymouth splash remains disabled (VM-safe Foundation cmdline).

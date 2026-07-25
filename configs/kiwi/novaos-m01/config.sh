@@ -18,6 +18,7 @@ HOME_URL="https://novaos.local"
 DOCUMENTATION_URL="https://novaos.local"
 SUPPORT_URL="https://novaos.local"
 BUG_REPORT_URL="https://novaos.local"
+LOGO="novaos"
 VARIANT="Foundation"
 VARIANT_ID="m01"
 EOF
@@ -32,7 +33,7 @@ Kernel \r on an \m (\l)
 EOF
 
 cat > /etc/motd <<'EOF'
-Welcome to NovaOS 0.1 — Foundation Boot
+Welcome to NovaOS 0.1 — Foundation + Nova Identity (M1)
 Public demo: autologin nova (Plasma X11). TTY: nova / novaos
 VirtualBox: Graphics=VMSVGA, 3D Acceleration OFF.
 VMware: VMware SVGA / open-vm-tools enabled.
@@ -101,23 +102,28 @@ OpenGLIsUnsafe=true
 Backend=QPainter
 EOF
 
+# M1 Nova Identity — branding defaults only (no session/graphics stack changes).
 cat > /etc/xdg/kdeglobals <<'EOF'
 [General]
-ColorScheme=BreezeLight
+ColorScheme=NovaOS
 
 [KDE]
-LookAndFeelPackage=org.kde.breeze.desktop
+LookAndFeelPackage=org.novaos.desktop
 EOF
 
 cat > /etc/xdg/ksplashrc <<'EOF'
 [KSplash]
-Engine=none
+Engine=KSplashQML
+Theme=org.novaos.desktop
 EOF
 
 cat > /etc/xdg/baloofilerc <<'EOF'
 [Basic Settings]
 Indexing-Enabled=false
 EOF
+
+# Wallpaper comes from LookAndFeelPackage defaults (Image=NovaOS).
+# Do not seed a truncated plasma-*.appletsrc — that can drop the stock panel.
 
 # Seed demo user config so first-login Plasma/KWin cannot race empty homedir.
 mkdir -p /home/nova/.config
@@ -315,7 +321,7 @@ Numlock=none
 GreeterEnvironment=LIBGL_ALWAYS_SOFTWARE=1,QT_QPA_PLATFORM=xcb,GALLIUM_DRIVER=llvmpipe,KWIN_COMPOSE=Q
 
 [Theme]
-Current=breeze
+Current=novaos
 
 [X11]
 SessionCommand=/usr/share/sddm/scripts/Xsession
