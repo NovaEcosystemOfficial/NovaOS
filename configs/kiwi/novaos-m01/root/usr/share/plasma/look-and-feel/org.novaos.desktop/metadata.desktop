@@ -1,0 +1,13 @@
+[Desktop Entry]
+Comment=NovaOS M1 look and feel — Luminous Precision
+Name=NovaOS
+X-KDE-PluginInfo-Author=Nova
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Email=engineering@novaos.local
+X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-PluginInfo-License=MIT
+X-KDE-PluginInfo-Name=org.novaos.desktop
+X-KDE-PluginInfo-Version=0.1.0
+X-KDE-PluginInfo-Website=https://novaos.local
+X-KDE-PluginInfo-Depends=
+X-KPackage-Dependencies=

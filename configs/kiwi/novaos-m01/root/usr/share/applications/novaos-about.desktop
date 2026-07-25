@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=About NovaOS
+Comment=NovaOS system identity
+Icon=novaos
+Exec=systemsettings kcm_about-distro
+Categories=System;
+NoDisplay=true
