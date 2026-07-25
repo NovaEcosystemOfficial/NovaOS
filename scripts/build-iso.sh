@@ -73,6 +73,31 @@ rm -f "${DESC_WORK}/README.md" \
       "${DESC_WORK}/CREDENTIALS.txt" \
       "${DESC_WORK}/.gitkeep"
 
+########################################
+# Sync Calamares installer tree into KIWI root overlay
+# Canonical source: installer/calamares/ (reversible: delete + rebuild)
+########################################
+INSTALLER_SRC="${ROOT}/installer/calamares"
+ROOT_OVERLAY="${DESC_WORK}/root"
+if [[ -d "${INSTALLER_SRC}" ]]; then
+  echo "==> Syncing Calamares config from installer/calamares"
+  mkdir -p \
+    "${ROOT_OVERLAY}/etc/calamares/modules" \
+    "${ROOT_OVERLAY}/etc/calamares/branding/novaos" \
+    "${ROOT_OVERLAY}/usr/sbin" \
+    "${ROOT_OVERLAY}/usr/share/applications"
+  cp -f "${INSTALLER_SRC}/settings.conf" "${ROOT_OVERLAY}/etc/calamares/settings.conf"
+  cp -a "${INSTALLER_SRC}/modules/." "${ROOT_OVERLAY}/etc/calamares/modules/"
+  cp -a "${INSTALLER_SRC}/branding/novaos/." "${ROOT_OVERLAY}/etc/calamares/branding/novaos/"
+  cp -f "${INSTALLER_SRC}/scripts/novaos-post-install.sh" \
+        "${ROOT_OVERLAY}/usr/sbin/novaos-post-install.sh"
+  chmod 755 "${ROOT_OVERLAY}/usr/sbin/novaos-post-install.sh"
+  cp -f "${INSTALLER_SRC}/desktop/novaos-installer.desktop" \
+        "${ROOT_OVERLAY}/usr/share/applications/novaos-installer.desktop"
+else
+  echo "WARN: ${INSTALLER_SRC} missing — ISO will be live-only" >&2
+fi
+
 python3 - "${DESC_WORK}/appliance.kiwi" "${FEDORA_VERSION}" "${FEDORA_ARCH}" <<'PY'
 import re, sys
 path, ver, arch = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -95,15 +120,16 @@ open(path, "w", encoding="utf-8").write(text3)
 print(f"Pinned metalink repos to Fedora {ver}/{arch}")
 PY
 
-python3 - "${DESC_WORK}/config.sh" "${NOVAOS_VERSION}" "${NOVAOS_MILESTONE:-0.1}" <<'PY'
-import sys
+python3 - "${DESC_WORK}/config.sh" "${NOVAOS_VERSION}" "${NOVAOS_MILESTONE:-0.2}" <<'PY'
+import re, sys
 path, version, milestone = sys.argv[1], sys.argv[2], sys.argv[3]
 text = open(path, encoding="utf-8").read()
-text = text.replace('VERSION="0.1.0"', f'VERSION="{version}"')
-text = text.replace('VERSION_ID="0.1"', f'VERSION_ID="{milestone}"')
-text = text.replace('PRETTY_NAME="NovaOS 0.1"', f'PRETTY_NAME="NovaOS {milestone}"')
-text = text.replace("NovaOS 0.1 (Foundation)", f"NovaOS {milestone} (Foundation)")
-text = text.replace("Welcome to NovaOS 0.1", f"Welcome to NovaOS {milestone}")
+text = re.sub(r'(?m)^VERSION="[^"]*"', f'VERSION="{version}"', text, count=1)
+text = re.sub(r'(?m)^VERSION_ID="[^"]*"', f'VERSION_ID="{milestone}"', text, count=1)
+text = re.sub(r'(?m)^PRETTY_NAME="NovaOS [^"]*"', f'PRETTY_NAME="NovaOS {milestone}"', text, count=1)
+text = re.sub(r'NovaOS [0-9.]+ \(Installable Live\)', f'NovaOS {milestone} (Installable Live)', text, count=1)
+text = re.sub(r'NovaOS [0-9.]+ \(Foundation\)', f'NovaOS {milestone} (Installable Live)', text, count=1)
+text = re.sub(r'Welcome to NovaOS [0-9.]+', f'Welcome to NovaOS {milestone}', text, count=1)
 open(path, "w", encoding="utf-8").write(text)
 print(f"Synced config.sh version strings to {version} / milestone {milestone}")
 PY

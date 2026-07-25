@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: Nova
+# SPDX-License-Identifier: MIT
+---
+componentName:  novaos
+
+welcomeStyleCalamares:   false
+welcomeExpandingLogo:   true
+
+windowExpanding:    normal
+windowSize: 900px,560px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         "NovaOS"
+    shortProductName:    "NovaOS"
+    version:             "${VERSION}"
+    shortVersion:        "${VERSION_ID}"
+    versionedName:       "NovaOS ${VERSION}"
+    shortVersionedName:  "NovaOS ${VERSION_ID}"
+    bootloaderEntryName: "NovaOS"
+    productUrl:          "https://novaos.local"
+    supportUrl:          ""
+    knownIssuesUrl:      ""
+    releaseNotesUrl:     ""
+    donateUrl:           ""
+
+images:
+    productIcon:         "logo.png"
+    productLogo:         "logo.png"
+    productWelcome:      "welcome.png"
+
+style:
+   SidebarBackground:        "#0B1F2A"
+   SidebarText:              "#E8F1F5"
+   SidebarTextCurrent:       "#0B1F2A"
+   SidebarBackgroundCurrent: "#3AA6C8"
+
+slideshow:               "show.qml"
+slideshowAPI: 2
+
+uploadServer:
+    type:    "none"

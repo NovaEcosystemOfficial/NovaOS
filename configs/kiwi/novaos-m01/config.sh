@@ -8,36 +8,46 @@ set -euxo pipefail
 ########################################
 cat > /usr/lib/os-release <<'EOF'
 NAME="NovaOS"
-VERSION="0.1.0"
+VERSION="0.2.0"
 ID=novaos
 ID_LIKE="fedora"
-VERSION_ID="0.1"
-PRETTY_NAME="NovaOS 0.1"
+VERSION_ID="0.2"
+PRETTY_NAME="NovaOS 0.2"
 ANSI_COLOR="0;36"
 HOME_URL="https://novaos.local"
 DOCUMENTATION_URL="https://novaos.local"
 SUPPORT_URL="https://novaos.local"
 BUG_REPORT_URL="https://novaos.local"
-VARIANT="Foundation"
-VARIANT_ID="m01"
+VARIANT="Installable"
+VARIANT_ID="m02"
 EOF
 ln -sfn /usr/lib/os-release /etc/os-release
 
 echo "NovaOS" > /etc/hostname
 
 cat > /etc/issue <<'EOF'
-NovaOS 0.1 (Foundation)
+NovaOS 0.2 (Installable Live)
 Kernel \r on an \m (\l)
 
 EOF
 
 cat > /etc/motd <<'EOF'
-Welcome to NovaOS 0.1 — Foundation Boot
+Welcome to NovaOS 0.2 — Installable Live
 Public demo: autologin nova (Plasma X11). TTY: nova / novaos
+Install to disk: desktop icon "Install NovaOS" (Calamares).
 VirtualBox: Graphics=VMSVGA, 3D Acceleration OFF.
 VMware: VMware SVGA / open-vm-tools enabled.
 Session log: /tmp/novaos-session.log and ~/.local/share/xorg/novaos-session.log
 EOF
+
+# Live marker (removed/overwritten on installed systems by novaos-post-install.sh)
+mkdir -p /etc/novaos
+cat > /etc/novaos/install-state <<'EOF'
+mode=live
+installer=calamares
+milestone=0.2
+EOF
+chmod 644 /etc/novaos/install-state
 
 ########################################
 # Users — PUBLIC DEMO passwords (M0.1 only)
@@ -539,6 +549,43 @@ echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 
 systemctl disable nova-ryuk.service 2>/dev/null || true
 systemctl disable nova-ai-core.service 2>/dev/null || true
+
+########################################
+# Calamares installer (Milestone 0.2) — live only personality
+# Configs are overlaid from installer/calamares via build-iso.sh → root/
+########################################
+if command -v calamares >/dev/null 2>&1 || [[ -x /usr/bin/calamares ]]; then
+  mkdir -p /etc/calamares /usr/sbin /usr/share/applications \
+           /home/nova/Desktop /home/nova/.local/share/applications
+  if [[ -x /usr/sbin/novaos-post-install.sh ]]; then
+    chmod 755 /usr/sbin/novaos-post-install.sh
+  fi
+  if [[ -f /usr/share/applications/novaos-installer.desktop ]]; then
+    chmod 644 /usr/share/applications/novaos-installer.desktop
+    cp -f /usr/share/applications/novaos-installer.desktop \
+          /home/nova/Desktop/novaos-installer.desktop
+    cp -f /usr/share/applications/novaos-installer.desktop \
+          /home/nova/.local/share/applications/novaos-installer.desktop
+    chown nova:nova /home/nova/Desktop/novaos-installer.desktop \
+                     /home/nova/.local/share/applications/novaos-installer.desktop || true
+    # Mark trusted for Plasma (ignore failures on non-Plasma hosts)
+    if command -v gio >/dev/null 2>&1; then
+      runuser -u nova -- gio set /home/nova/Desktop/novaos-installer.desktop \
+        metadata::trusted true 2>/dev/null || true
+    fi
+  fi
+  # Prefer NovaOS branding if present
+  if [[ -f /etc/calamares/settings.conf ]]; then
+    echo "Calamares settings present"
+  else
+    echo "WARN: /etc/calamares/settings.conf missing — installer branding may be stock" >&2
+  fi
+  # Dual-boot helper on live media too (used when installing GRUB to target)
+  mkdir -p /etc/default/grub.d
+  cat > /etc/default/grub.d/40-novaos-os-prober.cfg <<'EOF'
+GRUB_DISABLE_OS_PROBER=false
+EOF
+fi
 
 # Hard requirement: without pam_systemd, SDDM sessions have no XDG_RUNTIME_DIR/D-Bus.
 if [[ ! -e /usr/lib64/security/pam_systemd.so && ! -e /lib64/security/pam_systemd.so ]]; then

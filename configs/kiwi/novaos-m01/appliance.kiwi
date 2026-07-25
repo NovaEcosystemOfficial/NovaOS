@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  NovaOS Milestone 0.1 — Live ISO (Fedora + Plasma + SDDM)
-  Scope: bootable foundation only. No Ryuk, no Nova AI, no Nova Shell product.
+  NovaOS Milestone 0.2 — Live + Installable ISO (Fedora + Plasma + SDDM + Calamares)
+  Scope: live boot (no regression) + disk install with dual-boot support.
+  No Ryuk, no Nova AI, no Nova Shell product.
   Build: scripts/build-iso.sh (requires root on a Fedora host)
 -->
 <image schemaversion="8.4" name="NovaOS">
     <description type="system">
         <author>Nova</author>
         <contact>engineering@novaos.local</contact>
-        <specification>NovaOS 0.1 Foundation Live</specification>
+        <specification>NovaOS 0.2 Installable Live</specification>
     </description>
 
     <preferences>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
         <packagemanager>dnf5</packagemanager>
         <locale>en_US</locale>
         <keytable>us</keytable>
@@ -82,6 +83,15 @@
         <package name="dracut-kiwi-live"/>
         <package name="e2fsprogs"/>
         <package name="dosfstools"/>
+        <package name="btrfs-progs"/>
+        <package name="xfsprogs"/>
+        <package name="ntfsprogs"/>
+        <package name="ntfs-3g"/>
+        <package name="rsync"/>
+        <package name="parted"/>
+        <package name="gdisk"/>
+        <package name="efibootmgr"/>
+        <package name="os-prober"/>
         <package name="selinux-policy-targeted"/>
         <package name="NetworkManager"/>
         <package name="NetworkManager-wifi"/>
@@ -93,6 +103,29 @@
         <package name="glibc-langpack-it"/>
         <package name="plymouth"/>
         <package name="plymouth-system-theme"/>
+
+        <!-- Disk installer (ADR-008): Calamares on KIWI live -->
+        <package name="calamares"/>
+        <package name="calamares-libs"/>
+        <package name="kdesu"/>
+        <package name="polkit"/>
+
+        <!-- Development tools on installed + live workstation image -->
+        <package name="git"/>
+        <package name="gcc"/>
+        <package name="gcc-c++"/>
+        <package name="make"/>
+        <package name="cmake"/>
+        <package name="gdb"/>
+        <package name="python3"/>
+        <package name="python3-pip"/>
+        <package name="strace"/>
+        <package name="which"/>
+        <package name="curl"/>
+        <package name="wget"/>
+        <package name="tar"/>
+        <package name="gzip"/>
+        <package name="unzip"/>
 
         <!-- Graphical stack: Plasma + SDDM (stock; not Nova Shell product) -->
         <package name="sddm"/>

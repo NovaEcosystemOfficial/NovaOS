@@ -80,31 +80,36 @@ La missione di NovaOS è:
 
 | Elemento | Stato |
 |----------|--------|
-| **Release** | **Foundation 0.1 congelata** — tag `v0.1.0-foundation` |
-| **ISO** | `iso/NovaOS_0.1.iso` (live, x86_64) |
+| **Release** | **0.2 Installable** — live + Calamares (`v0.2.0-installable` candidata) |
+| **ISO** | `iso/NovaOS_0.2.iso` (live + installer, x86_64) |
 | **Desktop** | Plasma X11 + SDDM (sessione stabile in VM) |
-| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope 0.1) |
+| **Installer** | Calamares (ADR-008), dual-boot Alongside/Manual + os-prober |
+| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope 0.2) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Guida build** | [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md) |
 
-### Foundation 0.1 (congelata)
+### Foundation 0.1 (congelata) → 0.2 Installable
 
-Scope: boot → login → desktop usabile (terminale / impostazioni / power a livello sistema).  
-Niente nuove funzionalità sul ramo foundation finché i test P0 restano verdi.
+Scope 0.2: boot live senza regressioni **e** installazione su disco con utente reale, rete, Plasma, tool di sviluppo.  
+Dual-boot: non distruttivo di default (erase non pre-selezionato).
 
 ```bash
-make validate && sudo make setup && make check && sudo make iso
-sudo make p0-gate          # gate stabilità P0 (obbligatorio pre-tag)
+make validate && make validate-installer
+sudo make setup && make check && sudo make iso
+sudo make p0-gate          # gate stabilità live (obbligatorio)
+sudo make install-gate     # presenza installer nell'ISO
 make smoke                 # solo smoke desktop QEMU
 make vm                    # boot interattivo
 ```
 
-| Credenziale demo (pubblica) | Valore |
-|-----------------------------|--------|
-| Utente desktop | `nova` |
+| Credenziale demo (pubblica, **solo live**) | Valore |
+|--------------------------------------------|--------|
+| Utente desktop live | `nova` |
 | Password | `novaos` |
 
-Dettagli: [`SECURITY.md`](SECURITY.md), [`configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt`](configs/kiwi/novaos-m01/PUBLIC_DEMO_CREDENTIALS.txt).
+Sul sistema **installato** l’utente demo viene rimosso; si usa l’account creato in Calamares.
+
+Dettagli: [`SECURITY.md`](SECURITY.md), [`qa/INSTALL-CHECKLIST.md`](qa/INSTALL-CHECKLIST.md), [`installer/README.md`](installer/README.md).
 
 **VM consigliate:** VirtualBox → Graphics **VMSVGA**, **3D OFF**; VMware → VMware SVGA / open-vm-tools.
 
@@ -186,12 +191,13 @@ Dettaglio motivato: [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).
 
 ---
 
-## Come contribuire (post-Foundation 0.1)
+## Come contribuire (post-0.2 Installable)
 
 1. Leggere [`CHANGELOG.md`](CHANGELOG.md) e [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md).  
-2. Su fix di stabilità: una issue = causa + fix + test di regressione; niente feature.  
-3. Prima di dichiarare OK una ISO candidata: `sudo make p0-gate` deve essere PASS.  
-4. Non introdurre Ryuk / Nova AI / Nova Shell di prodotto su questo freeze.
+2. Su fix di stabilità live: una issue = causa + fix + test di regressione.  
+3. Su installer: aggiornare `installer/calamares/` + `make validate-installer` + checklist in `qa/INSTALL-CHECKLIST.md`.  
+4. Prima di dichiarare OK una ISO candidata: `sudo make p0-gate` **e** `sudo make install-gate` devono essere PASS.  
+5. Non introdurre Ryuk / Nova AI / Nova Shell di prodotto in questo milestone.
 
 ---
 

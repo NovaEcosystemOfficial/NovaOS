@@ -56,7 +56,7 @@ else
 fi
 
 # 5) Cross refs inside appliance
-for needle in iso-esp-excludes.yaml dracut-kiwi-live sddm plasma-desktop konsole plasma-systemsettings; do
+for needle in iso-esp-excludes.yaml dracut-kiwi-live sddm plasma-desktop konsole plasma-systemsettings calamares os-prober; do
   if grep -q "${needle}" "${DESC}/appliance.kiwi"; then
     pass "appliance contains ${needle}"
   else
@@ -130,7 +130,7 @@ if grep -qE '^kiwi-systemdeps-iso$' "${NOVAOS_CONFIG_DIR}/bootstrap/host-package
 fi
 
 # 10) Makefile targets
-for t in setup check iso vm clean lint validate; do
+for t in setup check iso vm clean lint validate validate-installer install-gate; do
   if grep -qE "^${t}:" "${NOVAOS_ROOT}/Makefile"; then
     pass "Makefile target ${t}"
   else
