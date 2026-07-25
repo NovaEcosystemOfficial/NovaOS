@@ -82,6 +82,14 @@ Run on a real UEFI laptop with Secure Boot **off**:
 
 ---
 
+## Automated verification (2026-07-25)
+
+| Check | Result |
+|-------|--------|
+| ISO rebuild with M2 packages | **PASS** (`BUILD OK`) |
+| Desktop smoke virtio + qxl | **PASS** (`kwin-plasma`) |
+| ISO SHA256 | `5359c9fa34791e3e04d34f414f2a91b1952b9c3333c2bab433658356f00dc638` |
+
 ## Rollback
 
 ```bash
