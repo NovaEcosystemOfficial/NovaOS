@@ -1,6 +1,6 @@
-# `novaos-sddm-theme` (sorgenti pacchetto)
+# `novaos-sddm-theme`
 
-Pacchetto previsto per il tema SDDM Nova (login M0.1).
+Pacchetto RPM previsto per il greeter SDDM NovaOS.
 
-**Non implementato in Sprint 5.**  
-Asset: `../../assets/sddm/`.
+**M1 status:** theme sources in `assets/sddm/novaos/`, installed via KIWI
+overlay to `/usr/share/sddm/themes/novaos/`. RPM packaging deferred.

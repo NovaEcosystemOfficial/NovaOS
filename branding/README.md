@@ -7,11 +7,11 @@ Identità visiva e asset di marca di NovaOS (fonte creativa di progetto).
 | Path | Ruolo |
 |------|--------|
 | `branding/` | Fonte creativa / Design System delivery |
-| `assets/branding/` | Copia/export pronti al **packaging** nel rootfs |
+| `assets/branding/` | Export pronti al packaging / overlay |
 
 Specifiche: [`docs/design-system/`](../docs/design-system/README.md).
 
-## Stato — Sprint 5
+## M1
 
-Workspace di packaging pronto in `assets/` e `packages/novaos-branding/`.  
-Depositare qui i file logo ufficiali quando disponibili; non è richiesto codice di sistema.
+Official M1 sources: [`m1/`](m1/). Installed into the live image via KIWI overlay
+(see `qa/M1-IDENTITY.md`). RPM packaging deferred.

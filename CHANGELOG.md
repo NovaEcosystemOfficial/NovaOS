@@ -46,6 +46,30 @@ P0 gate (`make p0-gate`) must be **PASS** on the freeze ISO before tagging.
 
 ---
 
-## [Unreleased]
+## [Unreleased] — M1 Nova Identity (branch `m1-nova-identity`)
 
-_No changes yet beyond 0.1.0-foundation._
+Branding-only milestone on top of Foundation 0.1. No kernel/bootloader/cmdline,
+no session/graphics stack changes, no build-pipeline script changes.
+
+### Added
+
+- Official M1 assets (Luminous Precision): mark, wordmark, wallpaper, system icon
+- Color scheme `NovaOS` (`/usr/share/color-schemes/NovaOS.colors`)
+- SDDM theme `novaos` (X11 / software-GL friendly)
+- Plasma look-and-feel `org.novaos.desktop` + KSplash QML
+- KIWI root overlay under `configs/kiwi/novaos-m01/root/usr/share/…`
+- Identity defaults: SDDM theme, LookAndFeel, ColorScheme, `os-release` `LOGO=novaos`
+- Restore tags: `m1-rp-0-start` … `m1-rp-4-docs` (see `qa/M1-IDENTITY.md`)
+
+### Known limitations
+
+- Plymouth remains **disabled** (`plymouth.enable=0`) for VirtualBox/VMware stability
+- Stock Plasma layout (panels); product Nova Shell layout is out of scope
+- RPM packaging of branding packages remains deferred (overlay installs files)
+
+### Rollback
+
+```bash
+git checkout v0.1.0-foundation
+# or revert M1 commits / reset to m1-rp-0-start
+```

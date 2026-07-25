@@ -80,17 +80,25 @@ La missione di NovaOS è:
 
 | Elemento | Stato |
 |----------|--------|
-| **Release** | **Foundation 0.1 congelata** — tag `v0.1.0-foundation` |
+| **Foundation** | Congelata — tag `v0.1.0-foundation` |
+| **Milestone attiva** | **M1 Nova Identity** — branch `m1-nova-identity` |
 | **ISO** | `iso/NovaOS_0.1.iso` (live, x86_64) |
-| **Desktop** | Plasma X11 + SDDM (sessione stabile in VM) |
-| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope 0.1) |
+| **Desktop** | Plasma X11 + SDDM + branding Nova (logo, wallpaper, tema) |
+| **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
+| **Identity QA** | [`qa/M1-IDENTITY.md`](qa/M1-IDENTITY.md) |
 | **Guida build** | [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md) |
 
-### Foundation 0.1 (congelata)
+### Foundation 0.1 + M1 Identity
 
-Scope: boot → login → desktop usabile (terminale / impostazioni / power a livello sistema).  
-Niente nuove funzionalità sul ramo foundation finché i test P0 restano verdi.
+Foundation: boot → login → desktop stabile (P0).  
+M1: identità visiva NovaOS (asset + SDDM + KSplash + palette + wallpaper) **senza** toccare cmdline, servizi o pipeline.
+
+```bash
+git checkout m1-nova-identity   # lavoro M1
+git checkout v0.1.0-foundation  # ripristino Foundation pura
+```
+
 
 ```bash
 make validate && sudo make setup && make check && sudo make iso

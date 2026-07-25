@@ -1,5 +1,7 @@
-# `novaos-release` (sorgenti pacchetto)
+# `novaos-release`
 
-Pacchetto previsto per identity di rilascio (`os-release`, pretty name NovaOS).
+Pacchetto RPM previsto per `/usr/lib/os-release` e metadati distro.
 
-**Non implementato in Sprint 5.**
+**M1 status:** `os-release` (incl. `LOGO=novaos`) is still written by
+`configs/kiwi/novaos-m01/config.sh`. Icon pixmap comes from the branding overlay.
+RPM packaging deferred.
