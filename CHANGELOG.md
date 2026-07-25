@@ -52,6 +52,13 @@ sudo make install-gate
 
 Hardware / dual-boot: follow `qa/INSTALL-CHECKLIST.md`.
 
+### Verification (rebuild)
+
+- `validate` / `validate-installer`: **PASS**
+- `install-gate`: **PASS** (Calamares + Live autostart + os-prober)
+- `p0-gate` / smoke virtio+qxl: **PASS**
+- ISO SHA256: `f74391a1bab471b6e4406961a9e5e0f64d563914fbf928444ea70b59f9314eb1`
+
 ---
 
 ## [0.1.0-foundation] — 2026-07-25
