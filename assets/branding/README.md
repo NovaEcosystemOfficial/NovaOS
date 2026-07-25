@@ -1,9 +1,10 @@
-# Branding assets (packaging)
+# `assets/branding/`
 
-Destinazione dei file logo/mark da includere nei pacchetti `novaos-branding`.
+Packaging exports for NovaOS identity (M1).
 
-Specifiche: `docs/design-system/01-Brand.md`, `02-Color-Palette.md`.
+Source of truth (creative): `branding/m1/`.  
+Installed into the live image via KIWI overlay
+`configs/kiwi/novaos-m01/root/usr/share/novaos/branding/`
+(RPM packaging deferred).
 
-Fonte creativa di progetto: anche `../../branding/`.
-
-**Sprint 5:** cartella riservata — depositare asset quando disponibili.
+Contents: mark SVG/PNG, wordmark, splash helpers, `NovaOS.colors`, pixmaps.

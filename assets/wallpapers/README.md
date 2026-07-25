@@ -1,5 +1,5 @@
-# Wallpapers
+# `assets/wallpapers/`
 
-Sfondi ufficiali NovaOS / Nova Shell iniziale.
+Official wallpaper package **NovaOS** (M1 Ink Field).
 
-Formati consigliati: 3840×2160 e 1920×1080, peso contenuto.
+Installed via KIWI overlay to `/usr/share/wallpapers/NovaOS/`.

@@ -1,5 +1,7 @@
-# SDDM theme assets
+# `assets/sddm/`
 
-Risorse del greeter Nova (login personalizzato M0.1).
+SDDM greeter theme **novaos** (M1 — Luminous Precision).
 
-Implementazione tema: sprint successivi. Qui solo asset statici.
+Installed via KIWI overlay to `/usr/share/sddm/themes/novaos/`.
+X11 / software-GL friendly (no blur shaders). Plymouth remains disabled
+on Foundation cmdline.
