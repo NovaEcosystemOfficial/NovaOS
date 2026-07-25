@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Pin Firefox (+ Konsole) on the Plasma task manager once per user.
+# Runs from XDG autostart after the desktop is up. Reversible: delete marker.
+set -euo pipefail
+
+MARKER="${HOME}/.config/novaos/dev-favorites-seeded"
+CFG="${HOME}/.config/plasma-org.kde.plasma.desktop-appletsrc"
+mkdir -p "${HOME}/.config/novaos"
+[[ -f "${MARKER}" ]] && exit 0
+[[ -f "${CFG}" ]] || exit 0
+
+# Prefer Icon Tasks / Task Manager groups that already exist.
+python3 - <<'PY' "${CFG}" || true
+import re, sys
+from pathlib import Path
+cfg = Path(sys.argv[1])
+text = cfg.read_text(encoding="utf-8", errors="replace")
+launchers = "applications:firefox.desktop,applications:org.kde.konsole.desktop,applications:org.kde.dolphin.desktop,applications:systemsettings.desktop"
+# Match Configuration/General under task manager applets
+pattern = re.compile(
+    r"(?m)^(\[Containments\]\[\d+\]\[Applets\]\[\d+\]\[Configuration\]\[General\])\n"
+    r"((?:.*\n)*?)(?=^\[|\Z)"
+)
+changed = False
+
+def repl(m):
+    global changed
+    header, body = m.group(1), m.group(2)
+    # Only touch task manager / icon tasks related blocks (launchers key or empty General near tasks)
+    if "launchers=" in body or "launchersPortedToKAstats" in body or "groupingStrategy" in body:
+        lines = []
+        found = False
+        for line in body.splitlines(True):
+            if line.startswith("launchers="):
+                lines.append(f"launchers={launchers}\n")
+                found = True
+            else:
+                lines.append(line)
+        if not found:
+            lines.insert(0, f"launchers={launchers}\n")
+        changed = True
+        return header + "\n" + "".join(lines)
+    return m.group(0)
+
+new = pattern.sub(repl, text)
+if changed and new != text:
+    cfg.write_text(new, encoding="utf-8")
+    print("seeded task manager launchers")
+else:
+    # Fallback: append favorites note for Kickoff-less setups
+    print("no task manager block found yet; desktop shortcut still available")
+PY
+
+touch "${MARKER}"
+# Reload plasmashell config if available (ignore failures on live/VM).
+qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true

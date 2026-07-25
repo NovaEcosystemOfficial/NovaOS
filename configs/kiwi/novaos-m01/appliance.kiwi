@@ -157,5 +157,44 @@
         <package name="xdg-utils"/>
         <package name="xterm"/>
         <package name="procps-ng"/>
+
+        <!-- M2.2 Developer Edition: browser -->
+        <package name="firefox"/>
+
+        <!-- M2.2 Developer Edition: toolchain -->
+        <package name="git"/>
+        <package name="openssh-clients"/>
+        <package name="openssh-server"/>
+        <package name="curl"/>
+        <package name="wget2-wget"/>
+        <package name="unzip"/>
+        <package name="zip"/>
+        <package name="gcc"/>
+        <package name="gcc-c++"/>
+        <package name="make"/>
+        <package name="cmake"/>
+        <package name="python3"/>
+        <package name="python3-pip"/>
+        <package name="nodejs22"/>
+        <package name="nodejs22-npm"/>
+        <package name="nodejs22-bin"/>
+        <package name="flatpak"/>
+        <package name="htop"/>
+        <package name="fastfetch"/>
+
+        <!-- M2.2 Cursor / Electron readiness (do not install Cursor itself) -->
+        <package name="nss"/>
+        <package name="atk"/>
+        <package name="at-spi2-atk"/>
+        <package name="gtk3"/>
+        <package name="libXScrnSaver"/>
+        <package name="libXrandr"/>
+        <package name="alsa-lib"/>
+        <package name="libdrm"/>
+        <package name="libxkbcommon"/>
+        <package name="xdg-desktop-portal-gtk"/>
+        <package name="google-noto-sans-mono-fonts"/>
+        <package name="liberation-fonts-all"/>
+        <package name="mesa-libgbm"/>
     </packages>
 </image>

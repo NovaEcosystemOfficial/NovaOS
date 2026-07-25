@@ -46,6 +46,28 @@ P0 gate (`make p0-gate`) must be **PASS** on the freeze ISO before tagging.
 
 ---
 
+## [Unreleased] — M2.2 Developer Edition (branch `m2.2-dev-edition`)
+
+Transform NovaOS into a complete developer workstation on the stable Foundation
+desktop. No kernel / bootloader / cmdline / build-pipeline changes.
+
+### Added
+
+- Firefox as default browser (`mimeapps.list`, Desktop launcher, panel seed, `xdg-settings`)
+- Developer toolchain: git, OpenSSH, curl, wget, zip/unzip, gcc/g++/make/cmake,
+  Python3+pip, Node.js 22 LTS (`nodejs22*`), Flatpak (+ Flathub), htop, fastfetch
+- `~/NovaWorkspace/{NovaOS,NovaDocs,NovaStudio,NovaCloud,NovaAI}` via `/usr/local/bin/setup-dev.sh`
+- Cursor readiness deps + `/usr/share/novaos/developer/CURSOR-READINESS.md` (Cursor **not** shipped)
+- Checklist `qa/M2.2-DEV-EDITION.md`
+
+### Notes
+
+- Restore point: tag `m2.2-rp-0-start`
+- Rebuild verified: smoke virtio+qxl **PASS**; ISO SHA256 `b1518e407c26dd9e292ea6ac6e943d0809095a3500e8d9fc298522ec58b29d06`
+- Interactive HTTPS/site checks remain manual guest validation (**WARNING**)
+
+---
+
 ## [Unreleased] — M2 Real Hardware Readiness (branch `m2-hw-readiness`)
 
 Audit + minimal fixes for live evaluation on real UEFI hardware. No installer

@@ -118,6 +118,9 @@ temp/
 # --- Test / locali ---
 *.local
 local/
+# Keep KIWI overlay scripts under root/usr/local (Developer Edition).
+!configs/kiwi/**/usr/local/
+!configs/kiwi/**/usr/local/**
 .scratch/
 vm/disks/**
 !vm/disks/README.md

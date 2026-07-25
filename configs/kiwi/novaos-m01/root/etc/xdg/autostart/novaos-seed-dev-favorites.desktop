@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=NovaOS seed developer favorites
+Comment=Pin Firefox on the Plasma task manager once
+Exec=/usr/local/libexec/novaos-seed-dev-favorites
+X-KDE-autostart-phase=2
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=KDE;
+NoDisplay=true

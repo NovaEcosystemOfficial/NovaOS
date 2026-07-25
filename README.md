@@ -81,28 +81,33 @@ La missione di NovaOS è:
 | Elemento | Stato |
 |----------|--------|
 | **Foundation** | Congelata — tag `v0.1.0-foundation` |
-| **Milestone attiva** | **M2 Real Hardware Readiness** — branch `m2-hw-readiness` |
+| **Milestone attiva** | **M2.2 Developer Edition** — branch `m2.2-dev-edition` |
 | **Identity** | M1 branding on branch history (`m1-nova-identity`) |
 | **HW audit** | [`qa/M2-HARDWARE-READINESS.md`](qa/M2-HARDWARE-READINESS.md) |
+| **Dev Edition QA** | [`qa/M2.2-DEV-EDITION.md`](qa/M2.2-DEV-EDITION.md) |
 | **ISO** | `iso/NovaOS_0.1.iso` (live, x86_64) |
-| **Desktop** | Plasma X11 + SDDM + branding Nova (logo, wallpaper, tema) |
+| **Desktop** | Plasma X11 + SDDM + branding Nova + Firefox + toolchain |
+| **Workspace** | `~/NovaWorkspace/` (script `setup-dev.sh`) |
 | **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Identity QA** | [`qa/M1-IDENTITY.md`](qa/M1-IDENTITY.md) |
 | **Guida build** | [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md) |
 
-### Foundation 0.1 + M1 Identity + M2 HW readiness
+### Foundation 0.1 → M1 Identity → M2 HW → M2.2 Developer Edition
 
 Foundation: boot → login → desktop stabile (P0).  
 M1: identità visiva NovaOS.  
 M2: audit hardware reale + fix minimi (firmware, power/BT/audio, GL bare-metal).  
+M2.2: Firefox predefinito, toolchain (Git/Node/Python/build), NovaWorkspace, Cursor-ready (Cursor non preinstallato).  
 **Secure Boot:** non supportato in produzione — disabilitare in firmware.  
 **Install su disco:** non disponibile (live-only) — vedi checklist M2.
 
 ```bash
-git checkout m2-hw-readiness    # lavoro M2
+git checkout m2.2-dev-edition   # Developer Edition (attiva)
+git checkout m2-hw-readiness    # solo M2 HW
 git checkout m1-nova-identity   # solo Identity
 git checkout v0.1.0-foundation  # Foundation pura
+git checkout m2.2-rp-0-start    # restore pre-M2.2
 ```
 
 

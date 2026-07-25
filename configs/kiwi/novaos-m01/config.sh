@@ -566,4 +566,62 @@ if ! command -v dbus-launch >/dev/null 2>&1 && [[ ! -x /usr/bin/dbus-launch ]]; 
     exit 1
 fi
 
+########################################
+# M2.2 Developer Edition — workspace / browser (reversible overlay + seeds)
+########################################
+chmod 755 /usr/local/bin/setup-dev.sh 2>/dev/null || true
+chmod 755 /usr/local/libexec/novaos-seed-dev-favorites 2>/dev/null || true
+
+# System-wide MIME defaults are in /etc/xdg/mimeapps.list (overlay).
+# Seed per-user copy + Desktop launcher so menu/panel/desktop all expose Firefox.
+mkdir -p /home/nova/.config /home/nova/Desktop /etc/skel/Desktop /etc/skel/.config
+if [[ -f /etc/xdg/mimeapps.list ]]; then
+    cp -f /etc/xdg/mimeapps.list /home/nova/.config/mimeapps.list
+    cp -f /etc/xdg/mimeapps.list /etc/skel/.config/mimeapps.list
+fi
+if [[ -f /usr/share/applications/firefox.desktop ]]; then
+    cp -f /usr/share/applications/firefox.desktop /home/nova/Desktop/firefox.desktop
+    cp -f /usr/share/applications/firefox.desktop /etc/skel/Desktop/firefox.desktop
+    chmod 755 /home/nova/Desktop/firefox.desktop /etc/skel/Desktop/firefox.desktop
+fi
+
+if command -v flatpak >/dev/null 2>&1; then
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+fi
+
+# OpenSSH available for developer remotes (password login remains demo-only).
+systemctl enable sshd.service 2>/dev/null || true
+
+if command -v runuser >/dev/null 2>&1; then
+    runuser -u nova -- bash -lc 'xdg-settings set default-web-browser firefox.desktop' 2>/dev/null || true
+    runuser -u nova -- /usr/local/bin/setup-dev.sh || true
+else
+    su -s /bin/bash nova -c 'xdg-settings set default-web-browser firefox.desktop' 2>/dev/null || true
+    su -s /bin/bash nova -c '/usr/local/bin/setup-dev.sh' || true
+fi
+
+# Convenience: neofetch → fastfetch when only fastfetch is shipped.
+if [[ ! -e /usr/local/bin/neofetch ]] && command -v fastfetch >/dev/null 2>&1; then
+    ln -sfn "$(command -v fastfetch)" /usr/local/bin/neofetch
+fi
+
+chown -R nova:nova /home/nova
+
+# Static presence checks (fail image build if toolchain incomplete).
+for cmd in firefox git ssh curl wget unzip zip gcc g++ make cmake python3 \
+           node npm flatpak htop fastfetch; do
+    if ! command -v "${cmd}" >/dev/null 2>&1; then
+        echo "ERROR: M2.2 required command missing: ${cmd}" >&2
+        exit 1
+    fi
+done
+if ! command -v pip3 >/dev/null 2>&1 && ! command -v pip >/dev/null 2>&1; then
+    if ! python3 -m pip --version >/dev/null 2>&1; then
+        echo "ERROR: M2.2 required command missing: pip/pip3" >&2
+        exit 1
+    fi
+fi
+test -d /home/nova/NovaWorkspace/NovaOS
+test -x /usr/local/bin/setup-dev.sh
+
 exit 0
