@@ -95,11 +95,12 @@ if [[ -f /etc/selinux/config ]]; then
     sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config || true
 fi
 
+# Bare-metal friendly defaults. VM soft-GL / QPainter is applied at *runtime*
+# by novaos-safe-graphics.sh when systemd-detect-virt reports a hypervisor
+# (config.sh runs in build chroot — cannot decide target HW here).
 cat > /etc/xdg/kwinrc <<'EOF'
 [Compositing]
 Enabled=true
-OpenGLIsUnsafe=true
-Backend=QPainter
 EOF
 
 # M1 Nova Identity — branding defaults only (no session/graphics stack changes).
@@ -142,17 +143,22 @@ EOF
 
 cat > /etc/xdg/plasma-workspace/env/novaos-safe-graphics.sh <<'EOF'
 #!/bin/sh
-# VM-safe defaults for VirtualBox (VMSVGA, 3D off) and VMware SVGA.
-export LIBGL_ALWAYS_SOFTWARE=1
-export GALLIUM_DRIVER=llvmpipe
-export MESA_LOADER_DRIVER_OVERRIDE=llvmpipe
+# Runtime graphics policy:
+# - Hypervisor (VirtualBox / VMware / QEMU): force software GL + QPainter-friendly env
+# - Bare metal: leave Mesa/HW acceleration alone (M2 real-HW readiness)
 export QT_QPA_PLATFORM=xcb
-export KWIN_COMPOSE=Q
-export KWIN_OPENGL_IS_UNSAFE=1
 export KDE_FULL_SESSION=true
 export XDG_CURRENT_DESKTOP=KDE
 export XDG_SESSION_DESKTOP=KDE
 export DESKTOP_SESSION=plasma
+
+if command -v systemd-detect-virt >/dev/null 2>&1 && systemd-detect-virt -q 2>/dev/null; then
+  export LIBGL_ALWAYS_SOFTWARE=1
+  export GALLIUM_DRIVER=llvmpipe
+  export MESA_LOADER_DRIVER_OVERRIDE=llvmpipe
+  export KWIN_COMPOSE=Q
+  export KWIN_OPENGL_IS_UNSAFE=1
+fi
 EOF
 chmod 755 /etc/xdg/plasma-workspace/env/novaos-safe-graphics.sh
 cp /etc/xdg/plasma-workspace/env/novaos-safe-graphics.sh /etc/profile.d/novaos-safe-graphics.sh
@@ -318,6 +324,7 @@ Relogin=false
 [General]
 DisplayServer=x11
 Numlock=none
+# Greeter keeps software GL for VM stability; user session is runtime-gated.
 GreeterEnvironment=LIBGL_ALWAYS_SOFTWARE=1,QT_QPA_PLATFORM=xcb,GALLIUM_DRIVER=llvmpipe,KWIN_COMPOSE=Q
 
 [Theme]
@@ -326,7 +333,7 @@ Current=novaos
 [X11]
 SessionCommand=/usr/share/sddm/scripts/Xsession
 Session=novaos-plasma.desktop
-ServerArguments=-nolisten tcp -dpi 96
+ServerArguments=-nolisten tcp
 DisplayCommand=/usr/share/sddm/scripts/Xsetup
 DisplayStopCommand=/usr/share/sddm/scripts/Xstop
 
@@ -497,6 +504,9 @@ systemctl enable novaos-desktop-verify.service
 ########################################
 systemctl enable sddm.service
 systemctl enable NetworkManager.service
+systemctl enable bluetooth.service 2>/dev/null || true
+systemctl enable upower.service 2>/dev/null || true
+systemctl enable power-profiles-daemon.service 2>/dev/null || true
 systemctl set-default graphical.target
 
 # Do NOT mask getty@tty1 — that can prevent logind from creating a graphical seat0,

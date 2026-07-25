@@ -68,7 +68,7 @@ Priorità: **PC di sviluppo del team** + VM di riferimento.
 | Wi-Fi needs out-of-tree | No rete | Ethernet/tethering per debug |
 | Old GPU no GLES | Shell effects crash | Disabilitare effetti; composizione soft |
 | USB stick lento/corrotto | Boot random fail | Verificare SHA256; altro stick |
-| Secure Boot | Blocco | Disabilitare in BIOS per fase M0.1 dev |
+| Secure Boot | Blocco | **Non supportato** per produzione M2: disabilitare in firmware. Vedi `qa/M2-HARDWARE-READINESS.md` (M2-02). |
 | Hybrid graphics switch | Black screen | Kernel params documentati (nomodeset emergenza) |
 
 ### Escape hatch di boot

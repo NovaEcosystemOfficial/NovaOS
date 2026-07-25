@@ -46,6 +46,32 @@ P0 gate (`make p0-gate`) must be **PASS** on the freeze ISO before tagging.
 
 ---
 
+## [Unreleased] — M2 Real Hardware Readiness (branch `m2-hw-readiness`)
+
+Audit + minimal fixes for live evaluation on real UEFI hardware. No installer
+product, no Secure Boot signing, no dual-boot feature.
+
+### Added
+
+- Checklist `qa/M2-HARDWARE-READINESS.md` (PASS / WARNING / TODO / FAIL)
+- Packages: `linux-firmware`, `alsa-sof-firmware`, `upower`, `power-profiles-daemon`,
+  `bluez`, `bluedevil`, `pipewire-pulseaudio`, `pipewire-alsa`, `mokutil`, `efibootmgr`
+
+### Changed
+
+- Software GL / `KWIN_COMPOSE=Q` applied only when `systemd-detect-virt -q` (bare metal uses Mesa)
+- Removed forced SDDM `-dpi 96` (HiDPI-friendly)
+- Enable `bluetooth`, `upower`, `power-profiles-daemon` services
+
+### Documented limitations
+
+- **Secure Boot:** not supported for production; disable in firmware for M2
+- **Installer:** live-only (FAIL for disk install) — deferred
+- **Dual boot:** TODO — deferred
+- **GPT install layout:** WARNING — no on-disk installer to apply it
+
+---
+
 ## [Unreleased] — M1 Nova Identity (branch `m1-nova-identity`)
 
 Branding-only milestone on top of Foundation 0.1. No kernel/bootloader/cmdline,

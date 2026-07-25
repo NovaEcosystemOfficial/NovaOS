@@ -93,6 +93,17 @@
         <package name="glibc-langpack-it"/>
         <package name="plymouth"/>
         <package name="plymouth-system-theme"/>
+        <!-- M2 real-HW readiness (firmware / power / BT / audio / SB inspect) -->
+        <package name="linux-firmware"/>
+        <package name="alsa-sof-firmware"/>
+        <package name="upower"/>
+        <package name="power-profiles-daemon"/>
+        <package name="bluez"/>
+        <package name="bluedevil"/>
+        <package name="pipewire-pulseaudio"/>
+        <package name="pipewire-alsa"/>
+        <package name="mokutil"/>
+        <package name="efibootmgr"/>
 
         <!-- Graphical stack: Plasma + SDDM (stock; not Nova Shell product) -->
         <package name="sddm"/>

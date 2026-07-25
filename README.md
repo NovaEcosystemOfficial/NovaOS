@@ -81,7 +81,9 @@ La missione di NovaOS è:
 | Elemento | Stato |
 |----------|--------|
 | **Foundation** | Congelata — tag `v0.1.0-foundation` |
-| **Milestone attiva** | **M1 Nova Identity** — branch `m1-nova-identity` |
+| **Milestone attiva** | **M2 Real Hardware Readiness** — branch `m2-hw-readiness` |
+| **Identity** | M1 branding on branch history (`m1-nova-identity`) |
+| **HW audit** | [`qa/M2-HARDWARE-READINESS.md`](qa/M2-HARDWARE-READINESS.md) |
 | **ISO** | `iso/NovaOS_0.1.iso` (live, x86_64) |
 | **Desktop** | Plasma X11 + SDDM + branding Nova (logo, wallpaper, tema) |
 | **Nova Shell / Ryuk / AI** | Non inclusi (fuori scope) |
@@ -89,14 +91,18 @@ La missione di NovaOS è:
 | **Identity QA** | [`qa/M1-IDENTITY.md`](qa/M1-IDENTITY.md) |
 | **Guida build** | [`DEV-WORKSPACE.md`](DEV-WORKSPACE.md) |
 
-### Foundation 0.1 + M1 Identity
+### Foundation 0.1 + M1 Identity + M2 HW readiness
 
 Foundation: boot → login → desktop stabile (P0).  
-M1: identità visiva NovaOS (asset + SDDM + KSplash + palette + wallpaper) **senza** toccare cmdline, servizi o pipeline.
+M1: identità visiva NovaOS.  
+M2: audit hardware reale + fix minimi (firmware, power/BT/audio, GL bare-metal).  
+**Secure Boot:** non supportato in produzione — disabilitare in firmware.  
+**Install su disco:** non disponibile (live-only) — vedi checklist M2.
 
 ```bash
-git checkout m1-nova-identity   # lavoro M1
-git checkout v0.1.0-foundation  # ripristino Foundation pura
+git checkout m2-hw-readiness    # lavoro M2
+git checkout m1-nova-identity   # solo Identity
+git checkout v0.1.0-foundation  # Foundation pura
 ```
 
 
