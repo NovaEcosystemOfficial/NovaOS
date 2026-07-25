@@ -47,14 +47,17 @@ git revert <commit-of-m1-rp-3-defaults>
 
 ## Checklist visiva
 
-- [ ] SDDM greeter shows NovaOS mark + ink card (theme `novaos`)
-- [ ] Desktop wallpaper is NovaOS Ink Field
-- [ ] Color scheme / window chrome follows Nova dark ink + stellar accents
-- [ ] Brief KSplash (org.novaos.desktop) on session start
-- [ ] About / `os-release` shows `NAME=NovaOS`, `LOGO=novaos`
-- [ ] VirtualBox VMSVGA 3D OFF still reaches desktop
-- [ ] VMware / open-vm-tools path still reaches desktop
-- [ ] `make smoke` PASS (virtio + qxl)
+- [x] Static ISO: SDDM theme `novaos`, LookAndFeel, colors, wallpaper, KSplash, `LOGO=novaos` (`_m1-verify-identity.sh` PASS — 2026-07-25)
+- [ ] Manual: SDDM greeter shows NovaOS mark + ink card (theme `novaos`)
+- [ ] Manual: Desktop wallpaper is NovaOS Ink Field
+- [ ] Manual: Color scheme / window chrome follows Nova dark ink + stellar accents
+- [ ] Manual: Brief KSplash (org.novaos.desktop) on session start
+- [x] About / `os-release` shows `NAME=NovaOS`, `LOGO=novaos` (static PASS)
+- [ ] Manual: VirtualBox VMSVGA 3D OFF still reaches desktop
+- [ ] Manual: VMware / open-vm-tools path still reaches desktop
+- [x] `make smoke` PASS (virtio + qxl) — `kwin-plasma` 2026-07-25 (`smoke-20260725T180703Z`)
+
+ISO SHA256 (M1 rebuild): `1fe0531b50bc5ee6ec6206893811343be2108cdb699bf7008e0486848cf81ab4`
 
 ## Rebuild
 
