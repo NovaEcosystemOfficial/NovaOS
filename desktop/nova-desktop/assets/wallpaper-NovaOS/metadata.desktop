@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=NovaOS Ink Field
+Comment=Official NovaOS M1 wallpaper — Luminous Precision
+X-KDE-PluginInfo-Name=NovaOS
+X-KDE-PluginInfo-Author=Nova
+X-KDE-PluginInfo-Email=engineering@novaos.local
+X-KDE-PluginInfo-License=LicenseRef-NovaOS
+X-KDE-PluginInfo-Website=https://novaos.local
+
+[Wallpaper]
+Image=contents/images/1920x1080.png

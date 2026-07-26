@@ -1,0 +1,18 @@
+[SddmGreeterTheme]
+Name=NovaOS
+Name[it]=NovaOS
+Description=NovaOS login theme (no virtual keyboard)
+Author=NovaOS Team
+Copyright=(c) 2026 NovaOS
+License=MIT
+Type=sddm-theme
+Version=0.2.4
+Website=https://novaos.local
+Screenshot=preview.png
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=translations
+Email=dev@novaos.local
+Theme-Id=novaos
+Theme-API=2.0
+QtVersion=6

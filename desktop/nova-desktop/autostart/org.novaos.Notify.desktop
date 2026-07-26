@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Nova Notifications
+Name[it]=Notifiche Nova
+Comment=Watches Nova Update and posts desktop notifications
+Comment[it]=Monitora Nova Update e mostra notifiche desktop
+Exec=nova-notify-agent
+TryExec=nova-notify-agent
+Icon=novaos
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel
+X-NovaOS-Component=nova-notify-agent

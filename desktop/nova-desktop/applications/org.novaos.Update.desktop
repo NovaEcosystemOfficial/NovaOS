@@ -1,0 +1,21 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Nova Update
+Name[it]=Nova Update
+GenericName=Software Updates
+GenericName[it]=Aggiornamenti software
+Comment=Check and apply NovaOS updates
+Comment[it]=Controlla e applica gli aggiornamenti di NovaOS
+Exec=nova-update-gui
+TryExec=nova-update-gui
+Icon=novaos
+Terminal=false
+Categories=Qt;GTK;Settings;System;PackageManager;X-NovaOS;
+Keywords=update;dnf;rpm;nova;software;aggiornamenti;
+StartupNotify=true
+X-KDE-StartupNotify=true
+X-GNOME-UsesNotifications=true
+X-NovaOS-Component=nova-update-gui
+X-NovaOS-API=system.update.v1
+X-NovaOS-Version=0.2.4

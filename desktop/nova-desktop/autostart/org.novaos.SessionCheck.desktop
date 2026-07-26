@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Nova Session Check
+Name[it]=Verifica sessione Nova
+Comment=Validates nova-updated, Nova Center and Nova Update after login
+Exec=nova-session-check
+TryExec=nova-session-check
+Icon=novaos
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel
+X-NovaOS-Component=nova-session-check

@@ -1,0 +1,3 @@
+# Disabled: Fedora Welcome leftovers — Nova Welcome is the official first-run.
+[General]
+ShouldShow=false

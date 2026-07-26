@@ -1,0 +1,11 @@
+# Hide leftover Fedora look-and-feel entries from Plasma selectors (overlay).
+# Real packages remain installed; defaults point to org.novaos.desktop.
+
+[General]
+Name=NovaOS
+Version=0.2.4
+LogoPath=/usr/share/pixmaps/novaos.png
+Website=https://novaos.local
+BugAddress=https://novaos.local
+VersionId=0.2.4
+Variant=Installable

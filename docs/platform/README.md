@@ -46,6 +46,7 @@ Nova Shell ◄─────┼──────── Ryuk (system service, N
 | 13 | [`13-Nova-WiFi.md`](13-Nova-WiFi.md) | Wi-Fi / NetworkManager / wpa_supplicant |
 | 13† | [`13-Nova-Welcome.md`](13-Nova-Welcome.md) | Alias → Welcome (vedi 14) |
 | 14 | [`14-Nova-Welcome.md`](14-Nova-Welcome.md) | First-boot Nova Welcome (Sprint 17) |
+| 14† | [`14-Nova-Desktop.md`](14-Nova-Desktop.md) | Desktop Experience (Sprint 18) |
 
 ## Vincoli Sprint 3
 

@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "engineering@novaos.local",
+                "Name": "Nova"
+            }
+        ],
+        "Category": "",
+        "Description": "NovaOS M1 look and feel — Luminous Precision",
+        "Id": "org.novaos.desktop",
+        "License": "MIT",
+        "Name": "NovaOS",
+        "Website": "https://novaos.local"
+    },
+    "X-KDE-ParentApp": "plasmashell",
+    "Keywords": "Desktop;Workspace;Appearance;Lookandfeel;NovaOS;",
+    "X-Plasma-APIVersion": "2"
+}
