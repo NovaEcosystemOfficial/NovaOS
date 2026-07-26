@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Nova Hub
+Name[it]=Nova Hub
+GenericName=NovaOS Home
+GenericName[it]=Home NovaOS
+Comment=Official NovaOS home — ecosystem, status, and quick actions
+Comment[it]=Home ufficiale di NovaOS — ecosistema, stato e azioni rapide
+Exec=nova-hub
+TryExec=nova-hub
+Icon=novaos
+Terminal=false
+Categories=GTK;System;Utility;
+Keywords=nova;hub;home;ecosystem;center;update;
+StartupNotify=true
+X-KDE-StartupNotify=true
+X-NovaOS-Component=nova-hub
+X-NovaOS-API=hub.v1
+X-NovaOS-Version=0.2.7

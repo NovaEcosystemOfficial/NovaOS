@@ -1,0 +1,24 @@
+{
+  "updated": "2026-07-26",
+  "source": "local",
+  "items": [
+    {
+      "id": "hub-launch",
+      "title": "Nova Hub è la nuova Home",
+      "summary": "Un unico punto di accesso a Center, Update e all'ecosistema Nova.",
+      "date": "2026-07-26"
+    },
+    {
+      "id": "platform-foundation",
+      "title": "Nova Platform attiva",
+      "summary": "CPU, RAM, disco e salute sistema arrivano da platform.v1.",
+      "date": "2026-07-26"
+    },
+    {
+      "id": "identity",
+      "title": "Identità NovaOS 0.2.7",
+      "summary": "Branding, asset condivisi e release train via Nova Update.",
+      "date": "2026-07-26"
+    }
+  ]
+}

@@ -12,3 +12,4 @@ Directory per i file RPM `.spec` dei pacchetti NovaOS.
 | [`nova-desktop.spec`](nova-desktop.spec) | Desktop Experience (Sprint 18) |
 | [`nova-platform.spec`](nova-platform.spec) | Platform Service (Sprint 19) |
 | [`nova-identity.spec`](nova-identity.spec) | Identity branding & tools (Sprint 20) |
+| [`nova-hub.spec`](nova-hub.spec) | Nova Hub home (Sprint 21) |

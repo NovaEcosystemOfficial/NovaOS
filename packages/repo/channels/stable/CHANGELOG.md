@@ -1,5 +1,12 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-26 — nova-hub 0.2.7 (NovaOS v0.2.7)
+
+- Pacchetto: `nova/x86_64/nova-hub-0.2.7-1.nova.noarch.rpm`
+- Companion: `nova/x86_64/novaos-release-0.2.7-1.nova.noarch.rpm`
+- Changelog: [`docs/releases/0.2.7-nova-hub.md`](../../../../docs/releases/0.2.7-nova-hub.md)
+- Sprint 21: Home ufficiale Hub — dashboard, azioni, ecosistema, news
+
 ## 2026-07-26 — nova-identity 0.2.6 (NovaOS v0.2.6)
 
 - Pacchetto: `nova/x86_64/nova-identity-0.2.6-1.nova.noarch.rpm`

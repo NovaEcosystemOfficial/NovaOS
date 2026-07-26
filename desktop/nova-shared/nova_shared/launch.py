@@ -7,6 +7,21 @@ import subprocess
 from pathlib import Path
 
 
+def open_nova_hub() -> bool:
+    cmd = shutil.which("nova-hub")
+    if not cmd:
+        repo = Path(__file__).resolve().parents[2] / "nova-hub" / "bin" / "nova-hub"
+        if repo.is_file():
+            cmd = str(repo)
+    if not cmd:
+        return False
+    try:
+        subprocess.Popen([cmd], start_new_session=True)  # noqa: S603
+        return True
+    except OSError:
+        return False
+
+
 def open_nova_center() -> bool:
     cmd = shutil.which("nova-center")
     if not cmd:
