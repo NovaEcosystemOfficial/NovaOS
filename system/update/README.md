@@ -7,7 +7,9 @@ Update Broker ufficiale di NovaOS.
 | `nova_update/` | Libreria Python condivisa (`system.update.v1`) |
 | `bin/nova-updated` | Demone Update Broker |
 | `bin/nova-updater` | Entry point CLI (wrapper; packaging installa in `/usr/bin`) |
-| `systemd/nova-updated.service` | Unità systemd |
+| `systemd/nova-updated.service` | Unità servizio |
+| `systemd/nova-updated.socket` | Socket activation (`root:nova` 0660) |
+| `sysusers.d/nova.conf` | Gruppo di sistema `nova` |
 | `conf/nova-update.conf` | Config di default |
 
 ## Quick start (dev)
@@ -30,7 +32,8 @@ NOVA_UPDATE_SOCKET=/tmp/nova-update.sock \
 `scripts/build-iso.sh` stages this tree into the KIWI `root/` overlay so every
 new live/installable image includes Nova Update without manual setup:
 
-- `/usr/libexec/nova-updated` + systemd unit (enabled)
+- `/usr/libexec/nova-updated` + systemd **socket + service** (enabled)
+- `/run/nova/update.sock` → `root:nova` mode `0660` (no sudo for clients in group `nova`)
 - `/usr/bin/nova-updater`, `/usr/bin/nova-update-gui`
 - `/etc/yum.repos.d/novaos-*.repo` + `/etc/pki/novaos/RPM-GPG-KEY-novaos`
 - `/usr/share/applications/org.novaos.Update.desktop`

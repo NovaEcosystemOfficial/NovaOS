@@ -1,0 +1,18 @@
+[Unit]
+Description=NovaOS Update Broker socket
+Documentation=file:///usr/share/doc/novaos-update/README.md
+PartOf=nova-updated.service
+
+[Socket]
+# Listening socket for system.update.v1 (JSON over Unix stream).
+# Ownership: root:nova mode 0660 — desktop users in group "nova" connect
+# without sudo; Apply remains privileged inside the broker.
+ListenStream=/run/nova/update.sock
+SocketUser=root
+SocketGroup=nova
+SocketMode=0660
+DirectoryMode=0755
+Service=nova-updated.service
+
+[Install]
+WantedBy=sockets.target

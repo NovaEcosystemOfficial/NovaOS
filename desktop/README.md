@@ -14,7 +14,8 @@ Ambiente desktop di NovaOS: **Nova Shell** (Experience Layer).
 
 | Path | Sprint | Descrizione |
 |------|--------|-------------|
-| [`nova-update/`](nova-update/README.md) | 15 | Basi GUI **Nova Update** (stub QML + `.desktop`) |
+| [`nova-update/`](nova-update/README.md) | 15 | GUI **Nova Update** (GTK + `.desktop`) |
+| [`nova-center/`](nova-center/README.md) | 16 | Pannello di controllo **Nova Center** (`center.v1`) |
 
 ## Specifica di design
 

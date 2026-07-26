@@ -33,6 +33,8 @@ required=(
   system/update/bin/nova-update-gui
   system/update/nova_update/broker.py
   system/update/systemd/nova-updated.service
+  system/update/systemd/nova-updated.socket
+  system/update/sysusers.d/nova.conf
   system/update/systemd/80-novaos-update.preset
   system/update/conf/nova-update.conf
   shell/nova-updater/nova-updater
@@ -77,6 +79,8 @@ overlay_required=(
   usr/lib/nova/update/nova_update/broker.py
   etc/nova/update/nova-update.conf
   usr/lib/systemd/system/nova-updated.service
+  usr/lib/systemd/system/nova-updated.socket
+  usr/lib/sysusers.d/nova.conf
   usr/lib/systemd/system-preset/80-novaos-update.preset
   etc/yum.repos.d/novaos-stable.repo
   etc/pki/novaos/RPM-GPG-KEY-novaos
@@ -100,11 +104,24 @@ if grep -q '^Exec=nova-update-gui' "${OVERLAY}/usr/share/applications/org.novaos
 else
   fail "desktop must Exec=nova-update-gui"
 fi
-if grep -q 'enable nova-updated.service' \
+if grep -q 'enable nova-updated.socket' \
+  "${OVERLAY}/usr/lib/systemd/system-preset/80-novaos-update.preset" \
+  && grep -q 'enable nova-updated.service' \
   "${OVERLAY}/usr/lib/systemd/system-preset/80-novaos-update.preset"; then
-  pass "systemd preset enables nova-updated"
+  pass "systemd preset enables nova-updated socket+service"
 else
-  fail "preset must enable nova-updated"
+  fail "preset must enable nova-updated.socket and nova-updated.service"
+fi
+if grep -q 'SocketGroup=nova' "${OVERLAY}/usr/lib/systemd/system/nova-updated.socket" \
+  && grep -q 'SocketMode=0660' "${OVERLAY}/usr/lib/systemd/system/nova-updated.socket"; then
+  pass "socket unit root:nova 0660"
+else
+  fail "nova-updated.socket must set SocketGroup=nova SocketMode=0660"
+fi
+if grep -q '^g nova' "${OVERLAY}/usr/lib/sysusers.d/nova.conf"; then
+  pass "sysusers defines group nova"
+else
+  fail "sysusers.d/nova.conf must define group nova"
 fi
 rm -rf "${OVERLAY}"
 

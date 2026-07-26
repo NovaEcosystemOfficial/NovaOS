@@ -52,10 +52,18 @@ chmod 644 /etc/novaos/install-state
 ########################################
 # Users — PUBLIC DEMO passwords (M0.1 only)
 ########################################
+# Create IPC group before assigning membership (Nova Update / Nova Center)
+if [[ -f /usr/lib/sysusers.d/nova.conf ]] && command -v systemd-sysusers >/dev/null 2>&1; then
+    systemd-sysusers nova.conf || true
+fi
+if ! getent group nova >/dev/null 2>&1; then
+    groupadd -r nova || true
+fi
+
 if ! id -u nova >/dev/null 2>&1; then
-    useradd -m -U -G wheel,video,render,audio,input -s /bin/bash nova
+    useradd -m -U -G wheel,video,render,audio,input,nova -s /bin/bash nova
 else
-    usermod -aG wheel,video,render,audio,input nova
+    usermod -aG wheel,video,render,audio,input,nova nova
 fi
 
 echo 'root:novaos' | chpasswd
@@ -506,7 +514,15 @@ systemctl set-default graphical.target
 ########################################
 # Nova Update Broker — always on for live + install base
 ########################################
+# System group for IPC socket access (root:nova 0660)
+if [[ -f /usr/lib/sysusers.d/nova.conf ]] && command -v systemd-sysusers >/dev/null 2>&1; then
+  systemd-sysusers nova.conf || true
+elif ! getent group nova >/dev/null 2>&1; then
+  groupadd -r nova || true
+fi
+
 if [[ -x /usr/libexec/nova-updated ]] && [[ -f /usr/lib/systemd/system/nova-updated.service ]]; then
+  systemctl enable nova-updated.socket 2>/dev/null || true
   systemctl enable nova-updated.service
   chmod 755 /usr/bin/nova-updater /usr/bin/nova-update-gui /usr/libexec/nova-updated 2>/dev/null || true
   if [[ -f /usr/share/applications/org.novaos.Update.desktop ]]; then

@@ -1,7 +1,7 @@
 # Roadmap di NovaOS
 
 **Documento di roadmap di prodotto e piattaforma**  
-**Sprint corrente:** Sprint 15 — Nova Update Foundation *(fondazione update; ISO resta su traccia M0.x)*.  
+**Sprint corrente:** Sprint 16 — Nova Center Foundation *(pannello di controllo; ISO resta su traccia M0.x)*.  
 **Lingua:** italiano
 
 ---
@@ -379,6 +379,7 @@ NovaOS offre vantaggi AI **non replicabili** installando un chatbot su una distr
 | **M0.1** | ISO avviabile: boot, logo, login, Nova Shell iniziale, terminale, settings, power |
 | **M0.0-infra** | Workspace Sprint 5 pronto (configs/scripts/vm) |
 | **M-update-0** | Fondazione Nova Update (Sprint 15): broker + CLI + repo layout |
+| **M-center-0** | Fondazione Nova Center (Sprint 16): control panel + `center.v1` |
 | **M2** | Prima Platform API stabile (bozza implementata) |
 | **M3** | Prima esperienza desktop/installer riconoscibile |
 | **M4** | Primo duo di app ecosistema native |
@@ -439,12 +440,38 @@ Check/Apply/Channel funzionano via broker (mock o DNF); i canali e la layout rep
 
 ---
 
-## 15. Prossimo passo immediato
+## 15. Sprint 16 — Nova Center Foundation
 
-1. Validare update foundation: `make validate-update`.
-2. Dimostrare aggiornamento incrementale: `make test-update`.
-3. Continuare traccia ISO M0.x su host Fedora.
-4. Integrare `novaos-update` nell’immagine quando System Core è pronto.
-5. Prima delle release pubbliche: firme in `enforce` + mirror repo.
+### Obiettivo
+
+Introdurre **Nova Center**, pannello di controllo ufficiale di NovaOS, con dati di sistema reali e ponte verso Nova Update / futuri servizi (Ryuk).
+
+### Deliverable
+
+- [x] Specifica [`platform/12-Nova-Center.md`](platform/12-Nova-Center.md)
+- [x] Applicazione `desktop/nova-center/` (GUI GTK + backend + API `center.v1`)
+- [x] Sezioni Dashboard, Hardware, Rete, Sistema, Nova Services, Aggiornamenti
+- [x] Stub integrazione Ryuk (catalogo servizi, non implementato)
+- [x] RPM `nova-center` + launcher menu Applicazioni
+- [x] Distribuzione via Nova Update senza rebuild ISO
+
+### Explicitamente escluso
+
+- Assistente Ryuk operativo
+- PolicyKit / Nova Bus di produzione
+- Rewrite Qt/Plasma del control panel
+
+### Criterio di uscita
+
+App avviabile, collector live, installabile con `nova-updater` sul canale locale.
+
+---
+
+## 16. Prossimo passo immediato
+
+1. Validare Nova Center su host: `scripts/update-test/release-nova-center-0.2.2.sh`.
+2. Continuare traccia ISO M0.x e includere `nova-center` nell’overlay quando pronto.
+3. Pianificare integrazione Ryuk su `center.v1`.
+4. Prima delle release pubbliche: firme in `enforce` + mirror repo.
 
 Rif: [`DEV-WORKSPACE.md`](../DEV-WORKSPACE.md), [`platform/11-Nova-Update.md`](platform/11-Nova-Update.md).

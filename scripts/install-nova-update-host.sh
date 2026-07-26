@@ -39,13 +39,19 @@ else
   exit 1
 fi
 
-# Runtime dirs for the daemon
+# Runtime dirs + IPC group for the daemon
 mkdir -p /run/nova /var/lib/nova/update
 chmod 755 /run/nova /var/lib/nova/update
 
-echo "==> Enabling and starting nova-updated"
+# shellcheck source=lib/ensure-nova-group.sh
+source "${ROOT}/scripts/lib/ensure-nova-group.sh"
+add_login_users_to_nova_group
+
+echo "==> Enabling and starting nova-updated (socket + service)"
 systemctl daemon-reload
+systemctl enable nova-updated.socket
 systemctl enable nova-updated.service
+systemctl restart nova-updated.socket
 systemctl restart nova-updated.service
 
 # Brief wait for socket
@@ -75,6 +81,7 @@ nova-updater check
 echo
 echo "PASS — Nova Update installed on live system"
 echo "    service: $(systemctl is-enabled nova-updated.service) / $(systemctl is-active nova-updated.service)"
-echo "    socket:  $( [[ -S /run/nova/update.sock ]] && echo present || echo missing )"
+echo "    socket:  $(systemctl is-enabled nova-updated.socket 2>/dev/null || echo n/a) / $( [[ -S /run/nova/update.sock ]] && stat -c '%U:%G %a' /run/nova/update.sock || echo missing )"
+echo "    group:   $(getent group nova || echo 'MISSING')"
 echo "    key:     /etc/pki/novaos/RPM-GPG-KEY-novaos"
 echo "    repos:   /etc/yum.repos.d/novaos-*.repo"

@@ -1,7 +1,8 @@
 [Unit]
 Description=NovaOS Update Broker (nova-updated)
 Documentation=file:///usr/share/doc/novaos-update/README.md
-After=network-online.target
+After=network-online.target nova-updated.socket
+Requires=nova-updated.socket
 Wants=network-online.target
 PartOf=nova-system.target
 
@@ -10,7 +11,8 @@ Type=simple
 ExecStart=/usr/libexec/nova-updated --foreground
 Restart=on-failure
 RestartSec=5
-RuntimeDirectory=nova
+# /run/nova/update.sock is provided by nova-updated.socket
+# (SocketUser=root SocketGroup=nova SocketMode=0660).
 StateDirectory=nova/update
 ConfigurationDirectory=nova/update
 # Capability bounding can be tightened once PolicyKit is wired.
@@ -18,4 +20,4 @@ ConfigurationDirectory=nova/update
 
 [Install]
 WantedBy=multi-user.target
-Also=nova-system.target
+Also=nova-updated.socket nova-system.target

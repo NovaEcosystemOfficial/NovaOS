@@ -30,6 +30,7 @@ mkdir -p \
   "${ROOT_OVERLAY}/etc/nova/update" \
   "${ROOT_OVERLAY}/usr/lib/systemd/system" \
   "${ROOT_OVERLAY}/usr/lib/systemd/system-preset" \
+  "${ROOT_OVERLAY}/usr/lib/sysusers.d" \
   "${ROOT_OVERLAY}/etc/yum.repos.d" \
   "${ROOT_OVERLAY}/etc/pki/novaos" \
   "${ROOT_OVERLAY}/usr/share/applications" \
@@ -56,13 +57,17 @@ else
   install -m 0755 "${UPDATE_SRC}/bin/nova-update-gui" "${ROOT_OVERLAY}/usr/bin/nova-update-gui"
 fi
 
-# Config + unit + preset (enable by default)
+# Config + unit + socket + preset + sysusers (enable by default)
 install -m 0644 "${UPDATE_SRC}/conf/nova-update.conf" \
   "${ROOT_OVERLAY}/etc/nova/update/nova-update.conf"
 install -m 0644 "${UPDATE_SRC}/systemd/nova-updated.service" \
   "${ROOT_OVERLAY}/usr/lib/systemd/system/nova-updated.service"
+install -m 0644 "${UPDATE_SRC}/systemd/nova-updated.socket" \
+  "${ROOT_OVERLAY}/usr/lib/systemd/system/nova-updated.socket"
 install -m 0644 "${UPDATE_SRC}/systemd/80-novaos-update.preset" \
   "${ROOT_OVERLAY}/usr/lib/systemd/system-preset/80-novaos-update.preset"
+install -m 0644 "${UPDATE_SRC}/sysusers.d/nova.conf" \
+  "${ROOT_OVERLAY}/usr/lib/sysusers.d/nova.conf"
 
 # DNF repo channel files
 install -m 0644 "${REPO_SRC}/conf/"*.repo "${ROOT_OVERLAY}/etc/yum.repos.d/"
@@ -91,7 +96,8 @@ install -m 0644 "${UPDATE_SRC}/README.md" \
 chmod 644 "${ROOT_OVERLAY}/etc/yum.repos.d/novaos-"*.repo
 chmod 644 "${ROOT_OVERLAY}/etc/pki/novaos/RPM-GPG-KEY-novaos"
 
-echo "    installed: nova-updated, nova-updater, nova-update-gui"
+echo "    installed: nova-updated (+socket), nova-updater, nova-update-gui"
+echo "    group:     sysusers nova → /run/nova/update.sock root:nova 0660"
 echo "    repos:     $(ls -1 "${ROOT_OVERLAY}/etc/yum.repos.d/novaos-"*.repo | wc -l) channel files"
 echo "    key:       /etc/pki/novaos/RPM-GPG-KEY-novaos"
 echo "    desktop:   org.novaos.Update.desktop"

@@ -108,10 +108,28 @@ else
   fail "services-systemd.conf must enable nova-updated.service"
 fi
 
+if grep -q 'nova-updated.socket' "${SRC}/modules/services-systemd.conf"; then
+  pass "services-systemd enables nova-updated.socket"
+else
+  fail "services-systemd.conf must enable nova-updated.socket"
+fi
+
+if grep -q 'name: nova' "${SRC}/modules/users.conf"; then
+  pass "Calamares users defaultGroups includes nova"
+else
+  fail "users.conf must add installer account to group nova"
+fi
+
 if grep -q 'systemctl enable nova-updated' "${SRC}/scripts/novaos-post-install.sh"; then
   pass "post-install enables nova-updated"
 else
   fail "novaos-post-install.sh must enable nova-updated"
+fi
+
+if grep -q 'usermod -aG nova' "${SRC}/scripts/novaos-post-install.sh"; then
+  pass "post-install adds users to group nova"
+else
+  fail "post-install must usermod -aG nova for login users"
 fi
 
 if grep -q 'systemctl enable nova-updated' "${ROOT}/configs/kiwi/novaos-m01/config.sh"; then

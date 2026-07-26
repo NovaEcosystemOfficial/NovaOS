@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import grp
 import logging
 import os
+import pwd
 import signal
 import socket
 import sys
@@ -17,6 +19,62 @@ from .protocol import decode_line, encode
 
 log = logging.getLogger("nova-updated")
 
+# systemd passes listening fds starting at SD_LISTEN_FDS_START.
+_SD_LISTEN_FDS_START = 3
+_NOVA_GROUP = "nova"
+
+
+def _systemd_listen_sockets() -> list[socket.socket]:
+    """Adopt listening sockets from systemd socket activation (LISTEN_FDS)."""
+    listen_pid = os.environ.get("LISTEN_PID")
+    listen_fds = os.environ.get("LISTEN_FDS")
+    if not listen_pid or not listen_fds:
+        return []
+    try:
+        if int(listen_pid) != os.getpid():
+            return []
+        count = int(listen_fds)
+    except ValueError:
+        return []
+    if count < 1:
+        return []
+
+    socks: list[socket.socket] = []
+    for offset in range(count):
+        fd = _SD_LISTEN_FDS_START + offset
+        try:
+            os.set_inheritable(fd, False)
+        except OSError:
+            pass
+        socks.append(socket.socket(fileno=fd))
+
+    # Avoid leaking activation env to child processes.
+    os.environ.pop("LISTEN_PID", None)
+    os.environ.pop("LISTEN_FDS", None)
+    os.environ.pop("LISTEN_FDNAMES", None)
+    return socks
+
+
+def _secure_socket_perms(path: Path) -> None:
+    """Ensure root:nova 0660 for self-bound sockets (dev / non-activation)."""
+    try:
+        os.chmod(path, 0o660)
+    except OSError as exc:
+        log.warning("chmod %s failed: %s", path, exc)
+    try:
+        gid = grp.getgrnam(_NOVA_GROUP).gr_gid
+    except KeyError:
+        log.warning("group %r missing — socket stays root-only until sysusers runs", _NOVA_GROUP)
+        return
+    try:
+        uid = pwd.getpwnam("root").pw_uid
+    except KeyError:
+        uid = 0
+    try:
+        os.chown(path, uid, gid)
+    except OSError as exc:
+        log.warning("chown %s root:%s failed: %s", path, _NOVA_GROUP, exc)
+
 
 class BrokerServer:
     def __init__(self, broker: UpdateBroker, socket_path: Path) -> None:
@@ -24,21 +82,41 @@ class BrokerServer:
         self.socket_path = socket_path
         self._stop = threading.Event()
         self._server: socket.socket | None = None
+        self._socket_activated = False
 
     def start(self) -> None:
-        self.socket_path.parent.mkdir(parents=True, exist_ok=True)
-        if self.socket_path.exists():
-            self.socket_path.unlink()
-        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server.bind(str(self.socket_path))
-        try:
-            os.chmod(self.socket_path, 0o660)
-        except OSError:
-            pass
-        server.listen(8)
+        inherited = _systemd_listen_sockets()
+        if inherited:
+            self._socket_activated = True
+            server = inherited[0]
+            for extra in inherited[1:]:
+                try:
+                    extra.close()
+                except OSError:
+                    pass
+            log.info(
+                "listening via systemd socket activation on %s (backend=%s)",
+                self.socket_path,
+                self.broker.backend.name,
+            )
+        else:
+            self._socket_activated = False
+            self.socket_path.parent.mkdir(parents=True, exist_ok=True)
+            if self.socket_path.exists():
+                self.socket_path.unlink()
+            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            server.bind(str(self.socket_path))
+            _secure_socket_perms(self.socket_path)
+            server.listen(8)
+            log.info(
+                "listening on %s (backend=%s, self-bound root:%s 0660)",
+                self.socket_path,
+                self.broker.backend.name,
+                _NOVA_GROUP,
+            )
+
         server.settimeout(1.0)
         self._server = server
-        log.info("listening on %s (backend=%s)", self.socket_path, self.broker.backend.name)
         while not self._stop.is_set():
             try:
                 conn, _ = server.accept()
@@ -62,9 +140,9 @@ class BrokerServer:
                 message = decode_line(data.splitlines()[0])
                 reply = self.broker.dispatch(message)
                 conn.sendall(encode(reply))
-            except Exception as exc:
+            except Exception:
                 log.exception("client handler error")
-                conn.sendall(encode({"api": "system.update.v1", "error": str(exc)}))
+                conn.sendall(encode({"api": "system.update.v1", "error": "internal error"}))
 
     def stop(self) -> None:
         self._stop.set()
@@ -73,6 +151,10 @@ class BrokerServer:
                 self._server.close()
             except OSError:
                 pass
+            self._server = None
+        # systemd owns the path under socket activation — never unlink it.
+        if self._socket_activated:
+            return
         if self.socket_path.exists():
             try:
                 self.socket_path.unlink()

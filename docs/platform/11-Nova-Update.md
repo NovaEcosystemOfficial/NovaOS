@@ -111,14 +111,18 @@ Tutti transitano dallo stesso broker; i metadata RPM (`Provides`/`Group`) distin
 | `/etc/nova/update/nova-update.conf` | Config broker |
 | `/etc/yum.repos.d/novaos-*.repo` | Repo DNF per canale |
 | `/var/lib/nova/update/state.json` | Stato persistente |
-| `/run/nova/update.sock` | IPC JSON |
+| `/run/nova/update.sock` | IPC JSON — `root:nova` mode `0660` (systemd socket activation) |
+| `/usr/lib/sysusers.d/nova.conf` | Gruppo di sistema `nova` |
 | `/usr/share/nova/update/ui/` | Asset GUI (futuro) |
 
 ---
 
 ## 8. Sicurezza
 
-- `Apply` privilegiato (root / PolicyKit futuro).
+- Socket Unix `/run/nova/update.sock`: **SocketUser=root**, **SocketGroup=nova**, **SocketMode=0660**.
+- Account interattivi (installer Calamares + post-install) sono membri del gruppo `nova` →
+  Nova Center / `nova-updater` parlano col broker **senza sudo**.
+- `Apply` resta privilegiato (root nel demone / PolicyKit futuro).
 - Capability `system.update.apply` (Settings, Ryuk+confirm).
 - Audit su Check/Apply/SetChannel.
 - AI può riassumere changelog; **non** può forzare Apply/reboot.

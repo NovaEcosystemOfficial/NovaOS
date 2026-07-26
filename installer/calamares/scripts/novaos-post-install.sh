@@ -132,18 +132,35 @@ rm -f /usr/sbin/novaos-post-install.sh 2>/dev/null || true
 ########################################
 systemctl enable NetworkManager.service 2>/dev/null || true
 systemctl enable sddm.service 2>/dev/null || true
+systemctl enable nova-updated.socket 2>/dev/null || true
 systemctl enable nova-updated.service 2>/dev/null || true
 systemctl set-default graphical.target 2>/dev/null || true
 
 ########################################
-# Nova Update — verify stack survived unpackfs (do not remove)
+# Nova Update — IPC group + verify stack
 ########################################
+if [[ -f /usr/lib/sysusers.d/nova.conf ]] && command -v systemd-sysusers >/dev/null 2>&1; then
+  systemd-sysusers nova.conf 2>/dev/null || true
+elif ! getent group nova >/dev/null 2>&1; then
+  groupadd -r nova 2>/dev/null || true
+fi
+# Ensure every interactive account can talk to nova-updated without sudo
+getent passwd | awk -F: '$3>=1000 && $3<65534 {print $1}' | while read -r u; do
+  usermod -aG nova "$u" 2>/dev/null || true
+done
+
 if [[ ! -x /usr/libexec/nova-updated ]]; then
   log "WARN: nova-updated missing after install"
 elif [[ ! -x /usr/bin/nova-updater ]]; then
   log "WARN: nova-updater missing from PATH"
 else
   log "Nova Update present (nova-updated + nova-updater)"
+fi
+if [[ ! -f /usr/lib/systemd/system/nova-updated.socket ]]; then
+  log "WARN: nova-updated.socket unit missing"
+fi
+if [[ ! -f /usr/lib/sysusers.d/nova.conf ]]; then
+  log "WARN: sysusers nova.conf missing"
 fi
 if [[ ! -f /etc/pki/novaos/RPM-GPG-KEY-novaos ]]; then
   log "WARN: Nova RPM GPG key missing"

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Nova Center
+Name[it]=Nova Center
+GenericName=System Control Panel
+GenericName[it]=Pannello di controllo
+Comment=NovaOS system control panel
+Comment[it]=Pannello di controllo di NovaOS
+Exec=nova-center
+TryExec=nova-center
+Icon=preferences-system
+Terminal=false
+Categories=GTK;Settings;System;
+Keywords=nova;center;system;hardware;network;update;control;
+StartupNotify=true
+X-KDE-StartupNotify=true
+X-NovaOS-Component=nova-center
+X-NovaOS-API=center.v1
+X-NovaOS-Version=0.2.2
