@@ -1,5 +1,12 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-26 — nova-shell 0.2.8 (NovaOS v0.2.8)
+
+- Pacchetto: `nova/x86_64/nova-shell-0.2.8-1.nova.noarch.rpm`
+- Companion: `nova/x86_64/novaos-release-0.2.8-1.nova.noarch.rpm`
+- Changelog: [`docs/releases/0.2.8-nova-shell.md`](../../../../docs/releases/0.2.8-nova-shell.md)
+- Sprint 22: Horizon Bar, Launcher, Quick Search, Widgets, Dock API
+
 ## 2026-07-26 — nova-hub 0.2.7 (NovaOS v0.2.7)
 
 - Pacchetto: `nova/x86_64/nova-hub-0.2.7-1.nova.noarch.rpm`

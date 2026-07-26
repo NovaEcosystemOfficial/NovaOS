@@ -1,0 +1,21 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Nova Shell
+Name[it]=Nova Shell
+GenericName=NovaOS Shell
+GenericName[it]=Shell NovaOS
+Comment=NovaOS experience layer — Horizon Bar, Launcher, Widgets
+Comment[it]=Strato esperienza NovaOS — barra Horizon, Launcher, Widget
+Exec=nova-shell
+TryExec=nova-shell
+Icon=novaos
+Terminal=false
+Categories=GTK;System;Utility;
+Keywords=nova;shell;horizon;launcher;desktop;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel
+X-NovaOS-Component=nova-shell
+X-NovaOS-API=shell.v1
+X-NovaOS-Version=0.2.8

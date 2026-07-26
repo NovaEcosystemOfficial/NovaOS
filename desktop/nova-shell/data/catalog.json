@@ -1,0 +1,77 @@
+{
+  "api": "shell.catalog.v1",
+  "items": [
+    {
+      "id": "nova-hub",
+      "title": "Nova Hub",
+      "subtitle": "Home ufficiale NovaOS",
+      "category": "apps",
+      "action": "nova-hub",
+      "keywords": ["home", "hub", "ecosistema"],
+      "icon": "novaos"
+    },
+    {
+      "id": "nova-center",
+      "title": "Nova Center",
+      "subtitle": "Pannello di controllo",
+      "category": "apps",
+      "action": "nova-center",
+      "keywords": ["sistema", "hardware", "rete"],
+      "icon": "novaos"
+    },
+    {
+      "id": "nova-update",
+      "title": "Nova Update",
+      "subtitle": "Aggiornamenti di sistema",
+      "category": "apps",
+      "action": "nova-update-gui",
+      "keywords": ["update", "rpm", "patch"],
+      "icon": "system-software-update"
+    },
+    {
+      "id": "terminal",
+      "title": "Terminale",
+      "subtitle": "Console NovaOS",
+      "category": "apps",
+      "action": "konsole",
+      "keywords": ["shell", "console", "cli"],
+      "icon": "utilities-terminal"
+    },
+    {
+      "id": "files",
+      "title": "Gestione File",
+      "subtitle": "Esplora documenti",
+      "category": "documents",
+      "action": "dolphin",
+      "keywords": ["file", "cartelle", "documenti"],
+      "icon": "system-file-manager"
+    },
+    {
+      "id": "settings",
+      "title": "Impostazioni",
+      "subtitle": "Preferenze di sistema",
+      "category": "settings",
+      "action": "systemsettings",
+      "keywords": ["settings", "preferenze", "config"],
+      "icon": "preferences-system"
+    },
+    {
+      "id": "cmd-check-updates",
+      "title": "Controlla aggiornamenti",
+      "subtitle": "Apri Nova Update",
+      "category": "commands",
+      "action": "nova-update-gui",
+      "keywords": ["check", "aggiorna", "update"],
+      "icon": "system-software-update"
+    },
+    {
+      "id": "cmd-open-hub",
+      "title": "Apri Nova Hub",
+      "subtitle": "Comando rapido",
+      "category": "commands",
+      "action": "nova-hub",
+      "keywords": ["apri", "hub"],
+      "icon": "novaos"
+    }
+  ]
+}

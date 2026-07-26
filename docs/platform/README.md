@@ -50,6 +50,7 @@ Nova Shell ◄─────┼──────── Ryuk (system service, N
 | 15 | [`15-Nova-Platform.md`](15-Nova-Platform.md) | Platform Service foundation (Sprint 19) |
 | 16 | [`16-Nova-Identity.md`](16-Nova-Identity.md) | Identity branding & tools (Sprint 20) |
 | 17 | [`17-Nova-Hub.md`](17-Nova-Hub.md) | Home ufficiale Nova Hub (Sprint 21) |
+| 18 | [`18-Nova-Shell.md`](18-Nova-Shell.md) | Shell Foundation — Horizon/Launcher (Sprint 22) |
 
 ## Vincoli Sprint 3
 
