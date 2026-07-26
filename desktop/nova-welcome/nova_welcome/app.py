@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QDesktopServices, QFont
+from PySide6.QtGui import QDesktopServices, QFont, QPixmap
 from PySide6.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -34,7 +34,7 @@ for candidate in (_SHARED, _DEV_SHARED):
 
 from nova_shared.hostname import get_hostname, set_hostname, validate_hostname  # noqa: E402
 from nova_shared.launch import open_nova_center  # noqa: E402
-from nova_shared.paths import is_welcome_completed, mark_welcome_completed  # noqa: E402
+from nova_shared.paths import is_welcome_completed, logo_png, mark_welcome_completed  # noqa: E402
 from nova_shared.theme import apply_theme_preference, list_themes  # noqa: E402
 
 from .state import WelcomeState  # noqa: E402
@@ -155,6 +155,20 @@ class NovaWelcomeWindow(QMainWindow):
         return card
 
     def _page_welcome(self) -> QWidget:
+        logo = QLabel()
+        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        logo_path = logo_png()
+        if logo_path is not None:
+            pix = QPixmap(str(logo_path))
+            if not pix.isNull():
+                logo.setPixmap(
+                    pix.scaled(
+                        96,
+                        96,
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation,
+                    )
+                )
         brand = QLabel("NovaOS")
         brand.setObjectName("brand")
         brand.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -169,7 +183,7 @@ class NovaWelcomeWindow(QMainWindow):
         body.setObjectName("body")
         body.setWordWrap(True)
         body.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        return self._card(brand, title, body)
+        return self._card(logo, brand, title, body)
 
     def _page_hostname(self) -> QWidget:
         title = QLabel("Nome del computer")

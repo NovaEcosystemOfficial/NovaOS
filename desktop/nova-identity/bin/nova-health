@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""nova-health — JSON health via Nova Platform."""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+
+def _path() -> None:
+    for root in (Path("/usr/share/nova/identity"), Path(__file__).resolve().parents[1] / "lib"):
+        if (root / "nova_identity").is_dir() and str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+            return
+
+
+_path()
+from nova_identity.facts import collect_health  # noqa: E402
+
+
+def main() -> int:
+    data = collect_health()
+    print(json.dumps(data, indent=2, ensure_ascii=False, default=str))
+    status = str(data.get("status") or "")
+    return 0 if status in ("ok",) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

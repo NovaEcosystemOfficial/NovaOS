@@ -1,5 +1,5 @@
 Name:           nova-welcome
-Version:        0.2.3
+Version:        0.2.6
 Release:        1%{?dist}
 Summary:        Nova Welcome — NovaOS first-boot experience
 License:        MIT
@@ -7,6 +7,7 @@ BuildArch:      noarch
 URL:            https://github.com/novaos/NovaOS
 Requires:       python3 >= 3.11
 Requires:       python3-pyside6
+Requires:       nova-identity >= 0.2.6
 Recommends:     nova-center
 
 %description
@@ -49,5 +50,8 @@ install -m 0644 %{_nova_root}/desktop/nova-welcome/README.md %{buildroot}/usr/sh
 /etc/skel/.config/autostart/org.novaos.Welcome.desktop
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.6-1
+- Shared Nova Identity logo; Icon=novaos; Requires nova-identity
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.3-1
 - First Nova Welcome first-boot wizard (Sprint 17)

@@ -13,7 +13,7 @@ from pathlib import Path
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import GLib, Gtk  # noqa: E402
+from gi.repository import GdkPixbuf, GLib, Gtk  # noqa: E402
 
 from nova_center import api  # noqa: E402
 
@@ -147,6 +147,15 @@ class NovaCenterWindow(Gtk.Window):
 
         title_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         header.pack_start(title_row, False, False, 0)
+
+        logo_path = "/usr/share/nova/assets/logo/novaos.png"
+        if Path(logo_path).is_file():
+            try:
+                pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(logo_path, 36, 36, True)
+                logo = Gtk.Image.new_from_pixbuf(pix)
+                title_row.pack_start(logo, False, False, 0)
+            except Exception:
+                pass
 
         title = Gtk.Label(label="Nova Center")
         title.set_halign(Gtk.Align.START)

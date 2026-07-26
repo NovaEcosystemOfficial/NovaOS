@@ -1,0 +1,9 @@
+[General]
+ColorScheme=NovaOS
+Name=NovaOS
+
+[KDE]
+LookAndFeelPackage=org.novaos.desktop
+
+[Icons]
+Theme=breeze-dark

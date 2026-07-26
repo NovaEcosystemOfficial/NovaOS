@@ -48,6 +48,7 @@ Nova Shell ◄─────┼──────── Ryuk (system service, N
 | 14 | [`14-Nova-Welcome.md`](14-Nova-Welcome.md) | First-boot Nova Welcome (Sprint 17) |
 | 14† | [`14-Nova-Desktop.md`](14-Nova-Desktop.md) | Desktop Experience (Sprint 18) |
 | 15 | [`15-Nova-Platform.md`](15-Nova-Platform.md) | Platform Service foundation (Sprint 19) |
+| 16 | [`16-Nova-Identity.md`](16-Nova-Identity.md) | Identity branding & tools (Sprint 20) |
 
 ## Vincoli Sprint 3
 

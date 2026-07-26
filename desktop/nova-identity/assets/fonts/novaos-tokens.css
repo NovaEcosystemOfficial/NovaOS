@@ -1,0 +1,13 @@
+/* NovaOS identity CSS tokens — shared by Qt/GTK apps that load this file. */
+:root {
+  --nova-bg-deep: #070B12;
+  --nova-bg-panel: #0F2744;
+  --nova-fg-primary: #E9EEF6;
+  --nova-fg-muted: #40566E;
+  --nova-accent-warm: #E8A54B;
+  --nova-accent-cool: #3DD6C6;
+  --nova-brand-blue: #1F6FEB;
+  --nova-brand-navy: #0B3D6E;
+  --nova-font-ui: "Noto Sans", "Source Sans 3", sans-serif;
+  --nova-font-mono: "Noto Sans Mono", "Source Code Pro", monospace;
+}

@@ -1,0 +1,27 @@
+{
+  "name": "NovaOS Identity Palette",
+  "version": "0.2.6",
+  "colors": {
+    "bg_deep": "#070B12",
+    "bg_panel": "#0F2744",
+    "fg_primary": "#E9EEF6",
+    "fg_muted": "#40566E",
+    "accent_warm": "#E8A54B",
+    "accent_cool": "#3DD6C6",
+    "brand_blue": "#1F6FEB",
+    "brand_navy": "#0B3D6E"
+  },
+  "fonts": {
+    "ui": "Noto Sans",
+    "mono": "Noto Sans Mono",
+    "display": "Noto Sans"
+  },
+  "paths": {
+    "logo_png": "/usr/share/nova/assets/logo/novaos.png",
+    "logo_svg": "/usr/share/nova/assets/logo/novaos.svg",
+    "mark_png": "/usr/share/nova/assets/splash/images/novaos-mark.png",
+    "wallpaper": "/usr/share/nova/assets/wallpaper/NovaOS",
+    "colorscheme": "/usr/share/nova/assets/colors/NovaOS.colors",
+    "splash_qml": "/usr/share/nova/assets/splash/Splash.qml"
+  }
+}

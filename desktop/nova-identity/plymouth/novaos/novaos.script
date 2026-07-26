@@ -1,0 +1,24 @@
+# NovaOS Plymouth script theme (simple centered mark + progress).
+# Works when plymouth is enabled; harmless if plymouth.enable=0.
+
+wallpaper_image = Image("wallpaper.png");
+logo_image = Image("logo.png");
+
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+
+if (wallpaper_image.GetWidth() > 0) {
+  wallpaper_sprite = Sprite(wallpaper_image.Scale(screen_width, screen_height));
+  wallpaper_sprite.SetPosition(0, 0, -100);
+}
+
+logo_sprite = Sprite(logo_image);
+logo_sprite.SetX(screen_width / 2 - logo_image.GetWidth() / 2);
+logo_sprite.SetY(screen_height / 2 - logo_image.GetHeight() / 2 - 40);
+
+progress = 0;
+fun progress_callback(progress_val) {
+  progress = progress_val;
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);

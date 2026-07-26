@@ -1,5 +1,12 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-26 — nova-identity 0.2.6 (NovaOS v0.2.6)
+
+- Pacchetto: `nova/x86_64/nova-identity-0.2.6-1.nova.noarch.rpm`
+- Companion: `novaos-release`, `nova-center`, `nova-welcome`, `nova-desktop`, `nova-update-gui` 0.2.6
+- Changelog: [`docs/releases/0.2.6-nova-identity.md`](../../../../docs/releases/0.2.6-nova-identity.md)
+- Sprint 20: asset `/usr/share/nova/assets`, terminale, `nova-about` e tool CLI
+
 ## 2026-07-26 — nova-platform 0.2.5 (NovaOS v0.2.5)
 
 - Pacchetto: `nova/x86_64/nova-platform-0.2.5-1.nova.noarch.rpm`

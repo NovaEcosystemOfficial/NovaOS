@@ -1,0 +1,16 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Nova",
+                "Email": "engineering@novaos.local"
+            }
+        ],
+        "Id": "NovaOS",
+        "Name": "NovaOS Ink Field",
+        "Description": "Official NovaOS M1 wallpaper — Luminous Precision",
+        "Category": "Plasma Wallpaper",
+        "License": "LicenseRef-NovaOS",
+        "Website": "https://novaos.local"
+    }
+}
