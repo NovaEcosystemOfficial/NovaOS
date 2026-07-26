@@ -1,7 +1,7 @@
 # Roadmap di NovaOS
 
 **Documento di roadmap di prodotto e piattaforma**  
-**Sprint corrente:** Sprint 17 — NovaOS Wi-Fi Foundation *(NM + wpa_supplicant; ISO su traccia M0.x)*.  
+**Sprint corrente:** Sprint 17 — Nova Welcome (First Boot) · train **v0.2.3**.
 **Lingua:** italiano
 
 ---
@@ -489,11 +489,31 @@ Rendere il Wi-Fi stabile su Live e installato: NetworkManager + `wpa_supplicant`
 
 ---
 
-## 17. Prossimo passo immediato
+## 17. Sprint 17 — Nova Welcome (First Boot)
 
-1. Su host: `bash scripts/fix-nova-wifi.sh` poi verificare in Nova Center → Rete.
-2. Alla prossima ISO: includere i pacchetti Sprint 17 (già in `appliance.kiwi`).
+### Obiettivo
+
+Wizard brandizzato **Nova Welcome** al primo login; nessun first-run Fedora/KDE.
+
+### Deliverable
+
+- [x] Specifica [`platform/14-Nova-Welcome.md`](platform/14-Nova-Welcome.md) (+ alias 13)
+- [x] App Qt/PySide6 `desktop/nova-welcome/`
+- [x] Shared `desktop/nova-shared/` (hostname, temi, launch)
+- [x] Autostart XDG + marker `~/.config/nova/welcome-completed`
+- [x] RPM `nova-welcome` 0.2.3 su canale stable (OTA)
+
+### Criterio di uscita
+
+Pacchetto pubblicabile via Nova Update; al primo login (post-install OTA/ISO) parte Welcome una sola volta e apre Nova Center.
+
+---
+
+## 18. Prossimo passo immediato
+
+1. Installare `nova-welcome` **solo** via Nova Update sul sistema di prova.
+2. Verificare first-boot marker e apertura Nova Center.
 3. Continuare Ryuk / Platform API.
 4. Prima delle release pubbliche: firme in `enforce` + mirror repo.
 
-Rif: [`DEV-WORKSPACE.md`](../DEV-WORKSPACE.md), [`platform/13-Nova-WiFi.md`](platform/13-Nova-WiFi.md).
+Rif: [`platform/14-Nova-Welcome.md`](platform/14-Nova-Welcome.md).

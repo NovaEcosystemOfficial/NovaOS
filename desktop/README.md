@@ -15,7 +15,9 @@ Ambiente desktop di NovaOS: **Nova Shell** (Experience Layer).
 | Path | Sprint | Descrizione |
 |------|--------|-------------|
 | [`nova-update/`](nova-update/README.md) | 15 | GUI **Nova Update** (GTK + `.desktop`) |
-| [`nova-center/`](nova-center/README.md) | 16–17 | Pannello di controllo **Nova Center** (`center.v1`, Wi-Fi dettagliato) |
+| [`nova-center/`](nova-center/README.md) | 16–17 | Pannello di controllo **Nova Center** (`center.v1`) |
+| [`nova-welcome/`](nova-welcome/README.md) | 17 | **Nova Welcome** — first boot (`welcome.v1`) |
+| [`nova-shared/`](nova-shared/) | 17 | Helper condivisi Welcome/Center (`desktop.shared.v1`) |
 
 ## Specifica di design
 

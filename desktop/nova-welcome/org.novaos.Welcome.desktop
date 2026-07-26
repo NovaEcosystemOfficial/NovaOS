@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Nova Welcome
+Name[it]=Nova Welcome
+GenericName=First Boot Setup
+GenericName[it]=Configurazione primo avvio
+Comment=NovaOS first-boot welcome experience
+Comment[it]=Esperienza di primo avvio di NovaOS
+Exec=nova-welcome
+TryExec=nova-welcome
+Icon=preferences-desktop-theme
+Terminal=false
+Categories=Qt;Settings;System;
+Keywords=nova;welcome;setup;firstboot;onboarding;
+StartupNotify=true
+NoDisplay=true
+X-NovaOS-Component=nova-welcome
+X-NovaOS-API=welcome.v1
+X-NovaOS-Version=0.2.3

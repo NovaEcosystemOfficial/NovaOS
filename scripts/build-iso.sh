@@ -110,6 +110,7 @@ fi
 # Canonical sources: system/update, packages/repo, desktop/nova-update
 ########################################
 bash "${ROOT}/scripts/lib/sync-nova-update-overlay.sh" "${ROOT_OVERLAY}" "${ROOT}"
+bash "${ROOT}/scripts/lib/sync-nova-welcome-overlay.sh" "${ROOT_OVERLAY}" "${ROOT}"
 
 python3 - "${DESC_WORK}/appliance.kiwi" "${FEDORA_VERSION}" "${FEDORA_ARCH}" <<'PY'
 import re, sys

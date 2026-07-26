@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""nova-welcome launcher installed to /usr/bin."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+GUI_ROOT = Path("/usr/share/nova/welcome")
+SHARED_ROOT = Path("/usr/share/nova/shared")
+DEV_ROOT = Path(__file__).resolve().parents[1]
+DEV_SHARED = Path(__file__).resolve().parents[2] / "nova-shared"
+
+for root in (GUI_ROOT, DEV_ROOT):
+    if (root / "nova_welcome" / "app.py").is_file():
+        sys.path.insert(0, str(root))
+        break
+
+for shared in (SHARED_ROOT, DEV_SHARED):
+    if (shared / "nova_shared").is_dir() and str(shared) not in sys.path:
+        sys.path.insert(0, str(shared))
+        break
+
+from nova_welcome.app import main
+
+if __name__ == "__main__":
+    sys.exit(main())

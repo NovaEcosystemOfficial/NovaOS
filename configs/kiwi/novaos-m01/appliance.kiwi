@@ -123,6 +123,9 @@
         <package name="gdb"/>
         <package name="python3"/>
         <package name="python3-pip"/>
+        <package name="python3-gobject"/>
+        <package name="python3-pyside6"/>
+        <package name="gtk3"/>
         <package name="strace"/>
         <package name="which"/>
         <package name="curl"/>
