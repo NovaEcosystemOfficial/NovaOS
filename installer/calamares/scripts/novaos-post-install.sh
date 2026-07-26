@@ -44,9 +44,10 @@ Relogin=false
 [General]
 DisplayServer=x11
 Numlock=none
+InputMethod=
 
 [Theme]
-Current=breeze
+Current=novaos
 
 [X11]
 SessionCommand=/usr/share/sddm/scripts/Xsession

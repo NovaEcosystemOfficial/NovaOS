@@ -1,5 +1,5 @@
 Name:           nova-desktop
-Version:        0.2.6
+Version:        0.2.7
 Release:        1%{?dist}
 Summary:        NovaOS Desktop Experience (login, session, notifications)
 License:        MIT and LGPLv2+
@@ -45,6 +45,8 @@ if [ -f %{_nova_root}/desktop/nova-identity/assets/sddm/theme.conf ]; then
 fi
 install -m 0644 ${ROOT}/config/zzz-novaos-desktop.conf \
   %{buildroot}/etc/sddm.conf.d/zzz-novaos-desktop.conf
+install -m 0644 ${ROOT}/config/zzzz-novaos-no-vkeyboard.conf \
+  %{buildroot}/etc/sddm.conf.d/zzzz-novaos-no-vkeyboard.conf
 
 install -m 0644 ${ROOT}/config/plasma-welcomerc %{buildroot}/etc/xdg/plasma-welcomerc
 install -m 0755 ${ROOT}/config/novaos-desktop-env.sh \
@@ -88,6 +90,7 @@ exit 0
 %{_datadir}/nova/desktop/
 %{_datadir}/sddm/themes/novaos/
 %config(noreplace) /etc/sddm.conf.d/zzz-novaos-desktop.conf
+/etc/sddm.conf.d/zzzz-novaos-no-vkeyboard.conf
 %config(noreplace) /etc/xdg/plasma-welcomerc
 /etc/xdg/plasma-workspace/env/novaos-desktop-env.sh
 /etc/xdg/autostart/org.novaos.Notify.desktop
@@ -97,6 +100,9 @@ exit 0
 /usr/local/share/applications/
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.7-1
+- Kill SDDM on-screen keyboard via InputMethod=; drop Virtual Keyboard button
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.6-1
 - Branding assets moved to nova-identity; SDDM theme uses shared paths
 

@@ -19,9 +19,10 @@ rendere login, branding, sessione e notifiche coerenti con l’identità NovaOS.
 - Tema SDDM ufficiale: **`novaos`** (`/usr/share/sddm/themes/novaos`)
 - `VirtualKeyboardLoader` sostituito da stub inerte (nessun Qt Virtual Keyboard)
 - Pulsante “Virtual Keyboard” nascosto
-- Drop-in `/etc/sddm.conf.d/zzz-novaos-desktop.conf`:
+- Drop-in `/etc/sddm.conf.d/zzz-novaos-desktop.conf` + `zzzz-novaos-no-vkeyboard.conf`:
   - `Current=novaos`
-  - `GreeterEnvironment=QT_IM_MODULE=,QT_VIRTUALKEYBOARD_FORCE_DISABLE=1,…`
+  - `InputMethod=` (kill switch SDDM per qtvirtualkeyboard)
+  - `GreeterEnvironment=QT_IM_MODULE=compose,QT_VIRTUALKEYBOARD_DESKTOP_DISABLE=1,…`
 - Login: solo tastiera fisica
 
 ## 3. Branding Nova
