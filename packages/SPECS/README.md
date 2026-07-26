@@ -10,3 +10,4 @@ Directory per i file RPM `.spec` dei pacchetti NovaOS.
 | [`nova-center.spec`](nova-center.spec) | Nova Center control panel (Sprint 16+) |
 | [`nova-welcome.spec`](nova-welcome.spec) | Nova Welcome first-boot wizard (Sprint 17) |
 | [`nova-desktop.spec`](nova-desktop.spec) | Desktop Experience (Sprint 18) |
+| [`nova-platform.spec`](nova-platform.spec) | Platform Service (Sprint 19) |

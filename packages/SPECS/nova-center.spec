@@ -1,5 +1,5 @@
 Name:           nova-center
-Version:        0.2.4
+Version:        0.2.5
 Release:        1%{?dist}
 Summary:        Nova Center — official NovaOS control panel
 License:        MIT
@@ -8,6 +8,7 @@ URL:            https://github.com/novaos/NovaOS
 Requires:       python3 >= 3.11
 Requires:       python3-gobject
 Requires:       gtk3
+Requires:       nova-platform >= 0.2.5
 Recommends:     novaos-update
 Recommends:     nova-update-gui
 
@@ -37,6 +38,9 @@ install -m 0644 %{_nova_root}/desktop/nova-center/README.md %{buildroot}/usr/sha
 %{_datadir}/applications/org.novaos.Center.desktop
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.5-1
+- Migrate collectors to Nova Platform API (platform.v1)
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.4-1
 - Aggiornamenti: Controlla/Installa aggiornamenti in-panel (non solo Apri Nova Update)
 

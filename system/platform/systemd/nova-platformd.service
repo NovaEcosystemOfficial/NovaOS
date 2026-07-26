@@ -1,0 +1,21 @@
+[Unit]
+Description=NovaOS Platform Service (nova-platformd)
+Documentation=file:///usr/share/doc/nova-platform/README.md
+After=network-online.target nova-platformd.socket
+Requires=nova-platformd.socket
+Wants=network-online.target
+PartOf=nova-system.target
+
+[Service]
+Type=simple
+ExecStart=/usr/libexec/nova-platformd --foreground
+Restart=on-failure
+RestartSec=5
+StateDirectory=nova/platform
+ConfigurationDirectory=nova/platform
+LogsDirectory=nova
+# LogsDirectory creates /var/log/nova owned appropriately
+
+[Install]
+WantedBy=multi-user.target
+Also=nova-platformd.socket

@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""Entry point for nova-platformd."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+def _ensure_path() -> None:
+    here = Path(__file__).resolve()
+    for root in (
+        here.parents[1],
+        Path("/usr/lib/nova/platform"),
+        here.parent,
+    ):
+        if (root / "nova_platform").is_dir() and str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+            return
+
+
+_ensure_path()
+from nova_platform.daemon import main  # noqa: E402
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -48,4 +48,5 @@ DISPLAY= ./desktop/nova-center/bin/nova-center
 
 ## Packaging
 
-RPM `nova-center` (`packages/SPECS/nova-center.spec`) — distribuibile via Nova Update.
+Requires **nova-platform** ≥ 0.2.5 — Dashboard/Hardware/Rete/Sistema/Services
+usano esclusivamente `platform.v1` (nessuna lettura diretta di `/proc` da parte della GUI).

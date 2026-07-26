@@ -1,0 +1,15 @@
+[Unit]
+Description=NovaOS Platform Service socket
+Documentation=file:///usr/share/doc/nova-platform/README.md
+PartOf=nova-platformd.service
+
+[Socket]
+ListenStream=/run/nova/platform.sock
+SocketUser=root
+SocketGroup=nova
+SocketMode=0660
+DirectoryMode=0755
+Service=nova-platformd.service
+
+[Install]
+WantedBy=sockets.target

@@ -1,5 +1,12 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-26 — nova-platform 0.2.5 (NovaOS v0.2.5)
+
+- Pacchetto: `nova/x86_64/nova-platform-0.2.5-1.nova.noarch.rpm`
+- Companion: `nova-center-0.2.5`, `novaos-release-0.2.5`
+- Changelog: [`docs/releases/0.2.5-nova-platform.md`](../../../../docs/releases/0.2.5-nova-platform.md)
+- Sprint 19: platform.v1, nova-platformd, health CLI, Center via Platform API
+
 ## 2026-07-26 — nova-desktop 0.2.4 (NovaOS v0.2.4)
 
 - Pacchetto: `nova/x86_64/nova-desktop-0.2.4-1.nova.noarch.rpm`

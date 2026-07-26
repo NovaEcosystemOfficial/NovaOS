@@ -1,5 +1,5 @@
 Name:           novaos-release
-Version:        0.2.4
+Version:        0.2.5
 Release:        1%{?dist}
 Summary:        NovaOS release identity (/etc/os-release)
 License:        MIT
@@ -14,11 +14,11 @@ way to bump the OS version without rebuilding the ISO (via Nova Update).
 mkdir -p %{buildroot}/usr/lib %{buildroot}/etc/novaos %{buildroot}/usr/share/doc/%{name}
 cat > %{buildroot}/usr/lib/os-release <<'EOF'
 NAME="NovaOS"
-VERSION="0.2.4"
+VERSION="0.2.5"
 ID=novaos
 ID_LIKE="fedora"
-VERSION_ID="0.2.4"
-PRETTY_NAME="NovaOS 0.2.4"
+VERSION_ID="0.2.5"
+PRETTY_NAME="NovaOS 0.2.5"
 ANSI_COLOR="0;36"
 HOME_URL="https://novaos.local"
 DOCUMENTATION_URL="https://novaos.local"
@@ -29,8 +29,8 @@ VARIANT="Installable"
 VARIANT_ID="m02"
 EOF
 ln -sfn ../usr/lib/os-release %{buildroot}/etc/os-release
-printf '%s\n' '0.2.4' > %{buildroot}/etc/novaos/version
-printf '%s\n' 'milestone=0.2.4' 'channel=stable' 'delivered_by=nova-update' \
+printf '%s\n' '0.2.5' > %{buildroot}/etc/novaos/version
+printf '%s\n' 'milestone=0.2.5' 'channel=stable' 'delivered_by=nova-update' \
   > %{buildroot}/etc/novaos/release-info
 install -m 0644 %{_nova_root}/packages/novaos-release/README.md \
   %{buildroot}/usr/share/doc/%{name}/README.md
@@ -43,6 +43,9 @@ install -m 0644 %{_nova_root}/packages/novaos-release/README.md \
 %config(noreplace) /etc/novaos/release-info
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.5-1
+- NovaOS v0.2.5 identity (Platform Foundation train)
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.4-1
 - NovaOS v0.2.4 identity (Desktop Experience train)
 

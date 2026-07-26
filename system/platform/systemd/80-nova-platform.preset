@@ -1,0 +1,2 @@
+enable nova-platformd.socket
+enable nova-platformd.service
