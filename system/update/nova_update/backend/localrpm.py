@@ -177,11 +177,66 @@ class LocalRpmBackend(UpdateBackend):
             }
 
         self._save_installed(installed)
+        if self._is_live_root():
+            self._activate_systemd_units(
+                [p.name for p in targets],
+                progress_cb=progress_cb,
+            )
         return Progress(
             phase="done",
             percent=100,
             message=f"installed {len(targets)} package(s) into {self.install_root}",
         )
+
+    def _is_live_root(self) -> bool:
+        root = self.install_root.resolve()
+        return str(self.install_root) in ("/", "/.") or root == Path("/")
+
+    # Packages that ship systemd units localrpm must enable (cpio skips %post).
+    _UNIT_BY_PACKAGE: dict[str, tuple[str, ...]] = {
+        "nova-platform": ("nova-platformd.socket", "nova-platformd.service"),
+        "novaos-update": ("nova-updated.socket", "nova-updated.service"),
+    }
+
+    def _activate_systemd_units(self, package_names: list[str], progress_cb=None) -> None:
+        """Enable/start units that RPM %post would have handled.
+
+        localrpm extracts payload only (rpm2cpio|cpio), so socket activation
+        never runs. Without this, Center fails with ``No such file or directory``
+        on ``/run/nova/platform.sock``.
+        """
+        units: list[str] = []
+        for name in package_names:
+            units.extend(self._UNIT_BY_PACKAGE.get(name, ()))
+        if not units:
+            return
+        seen: set[str] = set()
+        ordered: list[str] = []
+        for unit in units:
+            if unit not in seen:
+                seen.add(unit)
+                ordered.append(unit)
+        if progress_cb:
+            progress_cb(
+                Progress(
+                    phase="applying",
+                    percent=98,
+                    message=f"enable systemd: {', '.join(ordered)}",
+                )
+            )
+        subprocess.run(
+            ["systemctl", "daemon-reload"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        for unit in ordered:
+            subprocess.run(
+                ["systemctl", "enable", "--now", unit],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
 
     def _repair_usrmerge(self) -> None:
         """Keep /usr/sbin → bin after naive cpio extracts (Wi-Fi / wpa_supplicant)."""

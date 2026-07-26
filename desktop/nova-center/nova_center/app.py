@@ -326,6 +326,13 @@ class NovaCenterWindow(Gtk.Window):
         self._set_status("Lettura dati di sistema…")
 
         def work() -> None:
+            # Updates use update.sock; rest need platform.sock — keep Updates usable
+            # if Platform is down (common after localrpm apply without %post).
+            updates: dict = {}
+            try:
+                updates = api.get_updates()
+            except Exception:  # noqa: BLE001
+                updates = {"available": False, "service": "non raggiungibile", "pending": []}
             try:
                 data = {
                     "dashboard": api.get_dashboard(),
@@ -333,11 +340,11 @@ class NovaCenterWindow(Gtk.Window):
                     "network": api.get_network(),
                     "system": api.get_system(),
                     "services": api.get_services(),
-                    "updates": api.get_updates(),
+                    "updates": updates,
                 }
                 GLib.idle_add(self._refresh_done, data, None)
             except Exception as exc:  # noqa: BLE001 — surface to UI
-                GLib.idle_add(self._refresh_done, None, exc)
+                GLib.idle_add(self._refresh_done, {"updates": updates}, exc)
 
         import threading
 
@@ -346,6 +353,8 @@ class NovaCenterWindow(Gtk.Window):
     def _refresh_done(self, data, error) -> bool:
         self._refreshing = False
         self.btn_refresh.set_sensitive(True)
+        if data and "updates" in data:
+            self._render_updates(data["updates"])
         if error:
             self._set_status(f"Errore: {error}")
             return False
@@ -355,7 +364,6 @@ class NovaCenterWindow(Gtk.Window):
         self._render_network(data["network"])
         self._render_system(data["system"])
         self._render_services(data["services"])
-        self._render_updates(data["updates"])
         ver = data["dashboard"].get("novaos_version") or "—"
         self.subtitle.set_text(
             f"{data['dashboard'].get('pretty_name') or 'NovaOS'} · Center "

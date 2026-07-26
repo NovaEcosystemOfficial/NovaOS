@@ -1,5 +1,5 @@
 Name:           novaos-update
-Version:        0.2.2
+Version:        0.2.3
 Release:        1%{?dist}
 Summary:        NovaOS Update Broker and CLI
 License:        MIT
@@ -89,6 +89,9 @@ fi
 systemctl daemon-reload >/dev/null 2>&1 || :
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.3-1
+- localrpm: enable platform/update systemd units after live-root apply
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.2-1
 - Socket activation root:nova 0660; sysusers group nova; no sudo for clients
 

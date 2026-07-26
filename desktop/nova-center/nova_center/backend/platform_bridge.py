@@ -23,9 +23,13 @@ except ImportError:  # pragma: no cover
     PlatformConfig = None  # type: ignore
 
 
+class PlatformUnavailable(RuntimeError):
+    """platform.sock missing or daemon not reachable."""
+
+
 def client() -> "PlatformClient":
     if PlatformClient is None or PlatformConfig is None:
-        raise RuntimeError(
+        raise PlatformUnavailable(
             "libreria nova_platform assente — installare nova-platform via Nova Update"
         )
     cfg = PlatformConfig.load()
@@ -34,4 +38,33 @@ def client() -> "PlatformClient":
 
 
 def call(method: str, params: dict | None = None) -> dict:
-    return client().call(method, params)
+    try:
+        return client().call(method, params)
+    except FileNotFoundError as exc:
+        sock = Path(
+            os.environ.get(
+                "NOVA_PLATFORM_SOCKET",
+                PlatformConfig.load().socket_path if PlatformConfig else "/run/nova/platform.sock",
+            )
+        )
+        raise PlatformUnavailable(
+            f"Nova Platform non attivo ({sock} assente). "
+            "Abilitare con: sudo systemctl enable --now nova-platformd.socket"
+        ) from exc
+    except ConnectionError as exc:
+        raise PlatformUnavailable(
+            "Nova Platform non raggiungibile — "
+            "sudo systemctl restart nova-platformd.socket"
+        ) from exc
+    except ConnectionRefusedError as exc:
+        raise PlatformUnavailable(
+            "Nova Platform non in ascolto — "
+            "sudo systemctl enable --now nova-platformd.socket"
+        ) from exc
+    except OSError as exc:
+        if getattr(exc, "errno", None) == 2:
+            raise PlatformUnavailable(
+                "Nova Platform non attivo (socket assente). "
+                "sudo systemctl enable --now nova-platformd.socket"
+            ) from exc
+        raise
