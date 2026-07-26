@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""Launch Nova Update UI (foundation).
+
+Prefers QML when a QML runtime is available; otherwise opens a terminal
+session with nova-updater status/check so the app is usable from the menu.
+"""
+from __future__ import annotations
+
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+QML_MAIN = Path("/usr/share/nova/update/ui/NovaUpdate/Main.qml")
+# Dev-tree fallback when run from the monorepo
+_DEV_QML = (
+    Path(__file__).resolve().parents[3] / "desktop" / "nova-update" / "qml" / "NovaUpdate" / "Main.qml"
+)
+
+
+def _qml_main() -> Path | None:
+    for candidate in (QML_MAIN, _DEV_QML):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _run_qml(qml_path: Path) -> int:
+    for binary in ("qml6", "qml", "qmlscene"):
+        exe = shutil.which(binary)
+        if not exe:
+            continue
+        return subprocess.call([exe, str(qml_path)])
+    return 127
+
+
+def _run_terminal_fallback() -> int:
+    script = (
+        "echo '=== Nova Update ==='; "
+        "nova-updater status || true; "
+        "echo; "
+        "nova-updater check || true; "
+        "echo; "
+        "read -r -p 'Press Enter to close…' _"
+    )
+    for term in (
+        ["konsole", "-e", "bash", "-lc", script],
+        ["gnome-terminal", "--", "bash", "-lc", script],
+        ["xterm", "-e", "bash", "-lc", script],
+    ):
+        if shutil.which(term[0]):
+            return subprocess.call(term)
+    # Last resort: foreground CLI
+    print("Nova Update (CLI fallback)", file=sys.stderr)
+    subprocess.call(["nova-updater", "status"])
+    return subprocess.call(["nova-updater", "check"])
+
+
+def main() -> int:
+    os.environ.setdefault("QT_QPA_PLATFORM", os.environ.get("QT_QPA_PLATFORM", "xcb"))
+    qml = _qml_main()
+    if qml is not None:
+        rc = _run_qml(qml)
+        if rc != 127:
+            return rc
+    return _run_terminal_fallback()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

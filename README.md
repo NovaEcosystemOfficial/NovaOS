@@ -125,6 +125,7 @@ Dettagli: [`SECURITY.md`](SECURITY.md), [`qa/INSTALL-CHECKLIST.md`](qa/INSTALL-C
 | **Sprint 3** | Architettura software | Platform, AI Core, Ryuk, Services, SDK, Security |
 | **Sprint 4** | Boot Foundation | Pipeline ISO, boot flow, Milestone 0.1 |
 | **Sprint 5** | Dev Infrastructure | Workspace build/configs/assets/iso/packages/vm/tools |
+| **Sprint 15** | Nova Update Foundation | `nova-updated`, `nova-updater`, repo RPM multi-canale |
 | **Fase 1** | Platform Base | Toolchain attiva, packaging, **prima ISO (M0.1)** |
 | **Fase 2** | System Core | Componenti di sistema, servizi, integrazioni AI di base |
 | **Fase 3** | Experience Layer | Implementazione Nova Shell, installer, UI in prodotto |
@@ -154,7 +155,7 @@ NovaOS/
 ├── installer/        # Installer (spec in boot-foundation)
 ├── apps/             # Futuro ecosistema
 ├── ai/               # Futuro Nova AI Core
-├── system/           # Futuro system / Ryuk
+├── system/           # System layer (update broker Sprint 15; Ryuk futuro)
 ├── .github/          # CI/CD futuro
 ├── DEV-WORKSPACE.md  # Guida infrastruttura Sprint 5
 ├── CHANGELOG.md      # Storia release (Foundation 0.1+)

@@ -2,4 +2,6 @@
 
 Directory per i file RPM `.spec` dei pacchetti NovaOS.
 
-Stato Sprint 5: vuota di spec reali — riservata.
+| Spec | Pacchetto |
+|------|-----------|
+| [`novaos-update.spec`](novaos-update.spec) | Update Broker + CLI (Sprint 15) |

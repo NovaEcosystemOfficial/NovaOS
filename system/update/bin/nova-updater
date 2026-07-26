@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""Entry point for nova-updater."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+def _ensure_path() -> None:
+    here = Path(__file__).resolve()
+    candidates = [
+        here.parents[1],  # system/update (dev tree)
+        Path("/usr/lib/nova/update"),
+        here.parent,
+    ]
+    for root in candidates:
+        if (root / "nova_update").is_dir() and str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+            return
+
+
+_ensure_path()
+from nova_update.cli import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -15,4 +15,4 @@ Documentazione ufficiale del progetto. Lingua: **italiano**.
 
 Workspace di sviluppo: [`../DEV-WORKSPACE.md`](../DEV-WORKSPACE.md) · [`../README.md`](../README.md).
 
-**Sprint corrente:** Sprint 5 — Development Infrastructure (workspace di build; nessuna ISO/Shell/AI ancora).
+**Sprint corrente:** Sprint 15 — Nova Update Foundation (broker/CLI/repo; ISO resta su traccia M0.x).

@@ -9,7 +9,12 @@ KIWI NG description for NovaOS **0.2** live + installable ISO (profile name kept
 | `iso-esp-excludes.yaml` | ESP file filter (Fedora KIWI practice) |
 | `PUBLIC_DEMO_CREDENTIALS.txt` | Public demo login for **live** only (not a secret) |
 
-Installer configs are **not** stored here permanently: `scripts/build-iso.sh` syncs `installer/calamares/` into the description `root/` overlay at build time.
+Installer configs are **not** stored here permanently: `scripts/build-iso.sh` syncs
+`installer/calamares/` into the description `root/` overlay at build time.
+
+Nova Update is also synced at build time from `system/update/`, `packages/repo/`,
+and `desktop/nova-update/` via `scripts/lib/sync-nova-update-overlay.sh`
+(`nova-updated` enabled in `config.sh`).
 
 Also see repository root `SECURITY.md`, `installer/README.md`, ADR-008.
 

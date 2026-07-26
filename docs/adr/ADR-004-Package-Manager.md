@@ -108,7 +108,7 @@ In concreto:
 | Evoluzione | Descrizione | Quando |
 |------------|-------------|--------|
 | **DNF5 ovunque** | Standardizzare su DNF5 non appena stabile nei target Nova | Allineamento alle release Fedora adottate |
-| **Repo Nova a canali** | `stable`, `beta`, `dev` | Con primo programma di release |
+| **Repo Nova a canali** | `stable`, `beta`, `developer`, `nightly` | Sprint 15 (ADR-009) |
 | **Flatpak come canale app sandboxed** | Complementare, non sostitutivo | ADR futura dedicata |
 | **Firmare e attestare pacchetti** | Sigstore/GPG policy | Prima di release pubblica |
 | **Packaging monorepo → RPM** | Pipeline da `apps/` e `system/` a artefatti | Fase Ecosystem Native |

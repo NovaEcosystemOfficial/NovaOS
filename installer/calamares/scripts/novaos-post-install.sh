@@ -132,7 +132,29 @@ rm -f /usr/sbin/novaos-post-install.sh 2>/dev/null || true
 ########################################
 systemctl enable NetworkManager.service 2>/dev/null || true
 systemctl enable sddm.service 2>/dev/null || true
+systemctl enable nova-updated.service 2>/dev/null || true
 systemctl set-default graphical.target 2>/dev/null || true
+
+########################################
+# Nova Update — verify stack survived unpackfs (do not remove)
+########################################
+if [[ ! -x /usr/libexec/nova-updated ]]; then
+  log "WARN: nova-updated missing after install"
+elif [[ ! -x /usr/bin/nova-updater ]]; then
+  log "WARN: nova-updater missing from PATH"
+else
+  log "Nova Update present (nova-updated + nova-updater)"
+fi
+if [[ ! -f /etc/pki/novaos/RPM-GPG-KEY-novaos ]]; then
+  log "WARN: Nova RPM GPG key missing"
+fi
+if [[ ! -f /usr/share/applications/org.novaos.Update.desktop ]]; then
+  log "WARN: Nova Update desktop entry missing"
+fi
+# Keep stable channel enabled on fresh installs
+if [[ -f /etc/yum.repos.d/novaos-stable.repo ]]; then
+  sed -i 's/^enabled=.*/enabled=1/' /etc/yum.repos.d/novaos-stable.repo || true
+fi
 
 log "done"
 exit 0

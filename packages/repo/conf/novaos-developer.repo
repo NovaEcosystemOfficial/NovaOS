@@ -1,0 +1,10 @@
+[novaos-developer]
+name=NovaOS Updates — Developer
+baseurl=https://updates.novaos.dev/developer/$basearch/
+enabled=0
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/novaos/RPM-GPG-KEY-novaos
+priority=10
+metadata_expire=1h
+skip_if_unavailable=True

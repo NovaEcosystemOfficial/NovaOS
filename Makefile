@@ -1,10 +1,12 @@
 # NovaOS — common developer targets (Linux build host)
 
-.PHONY: help setup check validate iso vm smoke verify-desktop p0-gate install-gate validate-installer clean lint
+.PHONY: help setup check validate validate-update test-update iso vm smoke verify-desktop p0-gate install-gate validate-installer clean lint
 
 help:
 	@echo "NovaOS build targets:"
 	@echo "  make validate            - static pipeline checks (no root)"
+	@echo "  make validate-update     - Nova Update foundation smoke (no root)"
+	@echo "  make test-update         - local RPM repo e2e (check→apply, no ISO)"
 	@echo "  make validate-installer  - static Calamares installer checks (no root)"
 	@echo "  make setup               - install host dependencies (root)"
 	@echo "  make check               - validate build host environment"
@@ -21,6 +23,13 @@ validate:
 	bash ./scripts/validate-pipeline.sh
 	python3 ./tools/lint/validate-static.py
 	bash ./scripts/validate-installer.sh
+	bash ./scripts/validate-update.sh
+
+validate-update:
+	bash ./scripts/validate-update.sh
+
+test-update:
+	bash ./scripts/update-test/run-e2e-update-flow.sh
 
 validate-installer:
 	bash ./scripts/validate-installer.sh

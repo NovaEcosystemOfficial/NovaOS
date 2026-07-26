@@ -165,8 +165,9 @@ L’architettura prevede, nel tempo, un insieme di **contratti di piattaforma**.
 ### 5.6 Update & Packaging
 
 - aggiornamento OS e componenti Nova;
-- canali (stable/beta/dev);
-- firma e verificabilità.
+- canali (`stable` / `beta` / `developer` / `nightly`);
+- firma e verificabilità;
+- agente ufficiale: `nova-updated` + CLI `nova-updater` (ADR-009, Sprint 15).
 
 ### 5.7 Permissions & Security
 

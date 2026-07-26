@@ -1,0 +1,12 @@
+[novaos-stable]
+name=NovaOS Updates — Stable
+baseurl=https://updates.novaos.dev/stable/$basearch/
+# Local foundation fallback (enable for offline/dev mirrors):
+# baseurl=file:///usr/share/nova/repo/channels/stable
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/novaos/RPM-GPG-KEY-novaos
+priority=10
+metadata_expire=6h
+skip_if_unavailable=True

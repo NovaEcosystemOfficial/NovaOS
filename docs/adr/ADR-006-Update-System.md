@@ -104,7 +104,8 @@ In concreto:
 | **NovaOS Atomic edition** | Default utente finale su rpm-ostree | Post-MVP Experience, con ADR update |
 | **Canali ostree** | `stable`, `beta` | Con programma di release |
 | **bootc** | Image build container-native per host | Valutazione quando maturo sul target |
-| **Update agent Nova** | Demone/UI unica per OS+policy | System Core / Experience |
+| **Update agent Nova** | Demone/UI unica per OS+policy — **fondazione in Sprint 15** (`nova-updated`, ADR-009) | System Core / Experience |
+| **Canali a quattro vie** | `stable`, `beta`, `developer`, `nightly` | Sprint 15 |
 | **Policy dual-track** | Dev mutabile (DNF), Prod atomica | Quando esistono entrambe le edizioni |
 | **Rollback UX** | Flusso assistito anche con AI “cosa è cambiato” | AI-First OS |
 

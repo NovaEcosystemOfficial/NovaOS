@@ -41,6 +41,7 @@ Nova Shell ◄─────┼──────── Ryuk (system service, N
 | 08 | [`08-Nova-SDK.md`](08-Nova-SDK.md) | SDK e superficie developer |
 | 09 | [`09-Security.md`](09-Security.md) | Trust, AuthZ, AI/Ryuk/Skills security |
 | 10 | [`10-Boot-Sequence.md`](10-Boot-Sequence.md) | Boot, sessione, shutdown, failure |
+| 11 | [`11-Nova-Update.md`](11-Nova-Update.md) | Update Broker, canali, repo RPM, firme (Sprint 15) |
 
 ## Vincoli Sprint 3
 

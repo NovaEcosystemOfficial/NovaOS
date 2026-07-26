@@ -1,12 +1,6 @@
 # `packages/`
 
-Sorgenti e metadati dei **pacchetti Nova** (RPM) destinati alle immagini.
-
-## Scopo (Sprint 5)
-
-Preparare l’alberatura packaging senza ancora implementare Nova Shell, Ryuk o AI.
-
-I primi pacchetti previsti per M0.1 saranno di **branding e identity**, non di piattaforma AI.
+Sorgenti e metadati dei **pacchetti Nova** (RPM) destinati alle immagini e agli aggiornamenti.
 
 ## Motivazione
 
@@ -17,28 +11,33 @@ ADR-004 (DNF/RPM): tutto ciò che Nova aggiunge al rootfs dovrebbe arrivare come
 ```text
 packages/
 ├── README.md
-├── SPECS/              # file .spec (futuri)
-├── novaos-branding/    # fonti pacchetto branding
-├── novaos-release/     # os-release / identity (futuro)
-├── novaos-sddm-theme/  # tema login (futuro)
-└── README-PACKAGING.md
+├── README-PACKAGING.md
+├── SPECS/                 # file .spec
+├── repo/                  # repository Nova Update (canali + .repo)
+├── novaos-update/         # pacchetto Update Broker (Sprint 15)
+├── novaos-branding/       # fonti pacchetto branding
+├── novaos-release/        # os-release / identity (futuro)
+└── novaos-sddm-theme/     # tema login (futuro)
 ```
 
-## Pacchetti M0.1 (pianificati, non implementati ora)
+## Pacchetti
 
-| Pacchetto | Contenuto |
-|-----------|-----------|
-| `novaos-release` | `/etc/os-release` NovaOS |
-| `novaos-branding` | logo, wallpaper refs |
-| `novaos-sddm-theme` | greeter |
-| `novaos-shell-defaults` | defaults desktop *iniziali* (dopo, non Sprint 5) |
+| Pacchetto | Stato | Contenuto |
+|-----------|-------|-----------|
+| `novaos-update` | Fondazione Sprint 15 | `nova-updated`, `nova-updater`, conf, unit, repo files |
+| `novaos-release` | Pianificato | `/etc/os-release` NovaOS |
+| `novaos-branding` | Pianificato | logo, wallpaper refs |
+| `novaos-sddm-theme` | Pianificato | greeter |
 
-## Esplicitamente non in Sprint 5 / M0.1 early
+## Repository aggiornamenti
 
-- `novaos-ryuk`
-- `novaos-ai-core`
-- App ecosistema
+Vedi [`repo/README.md`](repo/README.md) — canali `stable` / `beta` / `developer` / `nightly`.
 
-## Stato Sprint 5
+## Test e2e (senza ISO)
 
-Solo documentazione e cartelle riservate.
+Pacchetto di prova [`test/hello-nova-update/`](test/hello-nova-update/) + harness
+[`scripts/update-test/`](../scripts/update-test/README.md):
+
+```bash
+make test-update
+```

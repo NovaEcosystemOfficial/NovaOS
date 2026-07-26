@@ -1,6 +1,6 @@
 # `shell/`
 
-Futura shell e interfacce a linea di comando / TUI di NovaOS.
+Shell e interfacce a linea di comando / TUI di NovaOS.
 
 ## Responsabilità previste
 
@@ -8,8 +8,13 @@ Futura shell e interfacce a linea di comando / TUI di NovaOS.
 - Assistenza AI controllata in shell
 - Tooling di sistema per power user e sviluppatori
 
-## Stato — Sprint 0
+## Implementato
 
-Nessun codice. Implementazione prevista dalla Fase 3 — Experience Layer.
+| Path | Sprint | Descrizione |
+|------|--------|-------------|
+| [`nova-updater/`](nova-updater/README.md) | 15 | CLI ufficiale aggiornamenti (client di `nova-updated`) |
 
-Vedi: [`docs/ui-guidelines.md`](../docs/ui-guidelines.md).
+## Specifica
+
+- [`docs/ui-guidelines.md`](../docs/ui-guidelines.md)
+- [`docs/platform/11-Nova-Update.md`](../docs/platform/11-Nova-Update.md)

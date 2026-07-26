@@ -96,6 +96,30 @@ else
   fail "build-iso.sh must sync installer/calamares"
 fi
 
+if grep -q 'sync-nova-update-overlay' "${ROOT}/scripts/build-iso.sh"; then
+  pass "build-iso syncs Nova Update overlay"
+else
+  fail "build-iso.sh must sync Nova Update into root overlay"
+fi
+
+if grep -q 'nova-updated.service' "${SRC}/modules/services-systemd.conf"; then
+  pass "services-systemd enables nova-updated"
+else
+  fail "services-systemd.conf must enable nova-updated.service"
+fi
+
+if grep -q 'systemctl enable nova-updated' "${SRC}/scripts/novaos-post-install.sh"; then
+  pass "post-install enables nova-updated"
+else
+  fail "novaos-post-install.sh must enable nova-updated"
+fi
+
+if grep -q 'systemctl enable nova-updated' "${ROOT}/configs/kiwi/novaos-m01/config.sh"; then
+  pass "config.sh enables nova-updated"
+else
+  fail "config.sh must enable nova-updated.service"
+fi
+
 if [[ -f "${ROOT}/docs/adr/ADR-008-Installer-Engine.md" ]]; then
   pass "ADR-008 present"
 else

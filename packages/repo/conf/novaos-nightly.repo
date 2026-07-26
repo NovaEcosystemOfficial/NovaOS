@@ -1,0 +1,11 @@
+[novaos-nightly]
+name=NovaOS Updates — Nightly
+baseurl=https://updates.novaos.dev/nightly/$basearch/
+enabled=0
+gpgcheck=0
+repo_gpgcheck=0
+# Nightly may ship unsigned CI artifacts until enforce is mandatory.
+gpgkey=file:///etc/pki/novaos/RPM-GPG-KEY-novaos
+priority=15
+metadata_expire=30m
+skip_if_unavailable=True

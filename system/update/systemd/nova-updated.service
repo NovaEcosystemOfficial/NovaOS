@@ -1,0 +1,21 @@
+[Unit]
+Description=NovaOS Update Broker (nova-updated)
+Documentation=file:///usr/share/doc/novaos-update/README.md
+After=network-online.target
+Wants=network-online.target
+PartOf=nova-system.target
+
+[Service]
+Type=simple
+ExecStart=/usr/libexec/nova-updated --foreground
+Restart=on-failure
+RestartSec=5
+RuntimeDirectory=nova
+StateDirectory=nova/update
+ConfigurationDirectory=nova/update
+# Capability bounding can be tightened once PolicyKit is wired.
+# NoNewPrivileges is intentionally off so DNF transactions can run when configured.
+
+[Install]
+WantedBy=multi-user.target
+Also=nova-system.target

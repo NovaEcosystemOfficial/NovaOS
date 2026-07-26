@@ -1,0 +1,2 @@
+# NovaOS — enable Update Broker by default on new installs
+enable nova-updated.service

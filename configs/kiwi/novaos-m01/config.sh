@@ -503,6 +503,23 @@ systemctl enable sddm.service
 systemctl enable NetworkManager.service
 systemctl set-default graphical.target
 
+########################################
+# Nova Update Broker — always on for live + install base
+########################################
+if [[ -x /usr/libexec/nova-updated ]] && [[ -f /usr/lib/systemd/system/nova-updated.service ]]; then
+  systemctl enable nova-updated.service
+  chmod 755 /usr/bin/nova-updater /usr/bin/nova-update-gui /usr/libexec/nova-updated 2>/dev/null || true
+  if [[ -f /usr/share/applications/org.novaos.Update.desktop ]]; then
+    chmod 644 /usr/share/applications/org.novaos.Update.desktop
+  fi
+  # Ensure GPG key path matches yum.repos.d novaos-*.repo
+  if [[ ! -f /etc/pki/novaos/RPM-GPG-KEY-novaos ]]; then
+    echo "WARN: /etc/pki/novaos/RPM-GPG-KEY-novaos missing" >&2
+  fi
+else
+  echo "WARN: Nova Update not present in root overlay — rebuild with build-iso.sh sync" >&2
+fi
+
 # Do NOT mask getty@tty1 — that can prevent logind from creating a graphical seat0,
 # which makes SDDM skip autologin. SDDM already Conflicts=getty@tty1.service.
 systemctl disable serial-getty@ttyS0.service 2>/dev/null || true

@@ -16,6 +16,7 @@ Questo elenco raccoglie le decisioni architetturali ufficiali del progetto. Ogni
 | [ADR-006](ADR-006-Update-System.md) | Update System | Proposta | DNF nel breve; traiettoria verso rpm-ostree |
 | [ADR-007](ADR-007-AI-Architecture.md) | AI Architecture | Proposta | Architettura ibrida (Ollama locale + API cloud) |
 | [ADR-008](ADR-008-Installer-Engine.md) | Installer Engine | Accettato | Calamares su Live KIWI (M0.2); Anaconda candidata futura |
+| [ADR-009](ADR-009-Nova-Update-Agent.md) | Nova Update Agent | Accettato | `nova-updated` + `nova-updater`; canali stable/beta/developer/nightly |
 
 ## Formato ADR
 
@@ -37,7 +38,8 @@ ADR-001 Base Linux
    ├── ADR-004 Package Manager
    ├── ADR-005 Display Manager
    ├── ADR-006 Update System
-   └── ADR-008 Installer Engine (Calamares @ M0.2)
+   ├── ADR-008 Installer Engine (Calamares @ M0.2)
+   └── ADR-009 Nova Update Agent (nova-updated; dipende da ADR-004/006)
 ADR-007 AI Architecture (trasversale, ma influenza system/ e ai/)
 ```
 

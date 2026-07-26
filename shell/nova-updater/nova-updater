@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+"""User-facing CLI wrapper — delegates to system/update nova_update.cli."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_UPDATE_ROOT = Path(__file__).resolve().parents[2] / "system" / "update"
+if str(_UPDATE_ROOT) not in sys.path:
+    sys.path.insert(0, str(_UPDATE_ROOT))
+
+from nova_update.cli import main
+
+if __name__ == "__main__":
+    sys.exit(main())

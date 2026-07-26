@@ -141,8 +141,11 @@ Settings App / Shell → Config Store → evento config.changed
 | Metodo | Descrizione |
 |--------|-------------|
 | `Check()` / `Apply()` | secondo backend |
-| `GetChannel()` / `SetChannel()` | stable/beta/dev |
+| `GetChannel()` / `SetChannel()` | `stable` / `beta` / `developer` / `nightly` (alias `dev` → `developer`) |
 | `GetProgress()` | stato |
+| `GetStatus()` / `VerifySignatures()` | snapshot broker; policy firme |
+
+Implementazione fondazione: [`11-Nova-Update.md`](11-Nova-Update.md), ADR-009, `system/update/`.
 
 ### `system.supervisor.v1`
 

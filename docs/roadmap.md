@@ -1,7 +1,7 @@
 # Roadmap di NovaOS
 
 **Documento di roadmap di prodotto e piattaforma**  
-**Sprint corrente:** Sprint 5 — Development Infrastructure *(fase corrente)*.  
+**Sprint corrente:** Sprint 15 — Nova Update Foundation *(fondazione update; ISO resta su traccia M0.x)*.  
 **Lingua:** italiano
 
 ---
@@ -378,6 +378,7 @@ NovaOS offre vantaggi AI **non replicabili** installando un chatbot su una distr
 | **M1c** | Accettazione architettura Sprint 3 (`docs/platform`) |
 | **M0.1** | ISO avviabile: boot, logo, login, Nova Shell iniziale, terminale, settings, power |
 | **M0.0-infra** | Workspace Sprint 5 pronto (configs/scripts/vm) |
+| **M-update-0** | Fondazione Nova Update (Sprint 15): broker + CLI + repo layout |
 | **M2** | Prima Platform API stabile (bozza implementata) |
 | **M3** | Prima esperienza desktop/installer riconoscibile |
 | **M4** | Primo duo di app ecosistema native |
@@ -409,14 +410,41 @@ Ogni aggiornamento rilevante deve riflettersi anche in `architecture.md` e, se n
 
 ---
 
-## 14. Prossimo passo immediato
+## 14. Sprint 15 — Nova Update Foundation
 
-Dopo Sprint 5 (workspace pronto):
+### Obiettivo
 
-1. preparare host Fedora e completare `scripts/setup-build-host.sh`;
-2. scrivere ricetta `configs/kiwi/novaos-m01/`;
-3. implementare `scripts/build-iso.sh` per la prima ISO vanilla → branded M0.1;
-4. validare con `scripts/run-vm.sh` + checklist Tier 0–2;
-5. solo dopo M0.1: Shell avanzata / AI / Ryuk.
+Introdurre il **sistema ufficiale di aggiornamento** basato su RPM e repository dedicati, così NovaOS può ricevere patch incrementali senza nuova ISO.
 
-Rif: [`DEV-WORKSPACE.md`](../DEV-WORKSPACE.md) nella root del repository.
+### Deliverable
+
+- [x] Specifica [`platform/11-Nova-Update.md`](platform/11-Nova-Update.md) + [ADR-009](adr/ADR-009-Nova-Update-Agent.md)
+- [x] Servizio **`nova-updated`** (Update Broker / `system.update.v1`)
+- [x] Comando **`nova-updater`**
+- [x] Struttura repository multi-canale (`stable` / `beta` / `developer` / `nightly`)
+- [x] Predisposizione verifica firme pacchetti
+- [x] Basi GUI **Nova Update** in `desktop/nova-update/`
+- [x] Inclusione pacchetto / overlay `novaos-update` nell’ISO di default
+- [ ] Pubblicazione repo remoto + chiavi produzione
+
+### Explicitamente escluso (in questo sprint)
+
+- Backend rpm-ostree completo
+- PolicyKit / Nova Bus di produzione
+- GUI Qt completa (solo fondazione / stub)
+
+### Criterio di uscita
+
+Check/Apply/Channel funzionano via broker (mock o DNF); i canali e la layout repo sono documentati e validabili offline.
+
+---
+
+## 15. Prossimo passo immediato
+
+1. Validare update foundation: `make validate-update`.
+2. Dimostrare aggiornamento incrementale: `make test-update`.
+3. Continuare traccia ISO M0.x su host Fedora.
+4. Integrare `novaos-update` nell’immagine quando System Core è pronto.
+5. Prima delle release pubbliche: firme in `enforce` + mirror repo.
+
+Rif: [`DEV-WORKSPACE.md`](../DEV-WORKSPACE.md), [`platform/11-Nova-Update.md`](platform/11-Nova-Update.md).

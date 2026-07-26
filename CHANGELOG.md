@@ -7,6 +7,24 @@ Versioning follows foundation/installable tags (`v0.1.0-foundation`, `v0.2.0-ins
 
 ---
 
+## [0.2.1] — 2026-07-26
+
+Official incremental update delivered **only via Nova Update** (no ISO rebuild).
+
+### Added
+
+- GTK GUI **Nova Update** (`nova-update-gui`) in the Applications menu
+- RPM packages: `nova-update-gui`, `novaos-release`, `novaos-update` 0.2.1
+- Broker APIs: `GetHistory`, `GetSystemInfo`
+- Release harness: `scripts/update-test/release-0.2.1.sh`
+
+### Changed
+
+- System identity `VERSION` / `PRETTY_NAME` → **NovaOS 0.2.1**
+- `configs/fedora/release.env` → `NOVAOS_VERSION=0.2.1`
+
+---
+
 ## [0.2.0-installable] — 2026-07-25
 
 Installable milestone: live ISO remains supported; Calamares enables disk install with dual-boot safety.
