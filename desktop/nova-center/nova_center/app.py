@@ -13,7 +13,7 @@ from pathlib import Path
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import GLib, Gtk, Pango  # noqa: E402
+from gi.repository import GLib, Gtk  # noqa: E402
 
 from nova_center import api  # noqa: E402
 
@@ -25,6 +25,39 @@ SECTIONS = [
     ("services", "Nova Services"),
     ("updates", "Aggiornamenti"),
 ]
+
+DASHBOARD_POLL_MS = 2000
+
+CSS = b"""
+window {
+  background-color: #f4f6f8;
+}
+.nova-title {
+  font-weight: bold;
+  font-size: 18pt;
+  color: #0f2744;
+}
+.nova-subtitle {
+  color: #4a5d73;
+}
+.health-ok { color: #1b7a4e; font-weight: bold; }
+.health-warn { color: #9a6b00; font-weight: bold; }
+.health-critical { color: #a32020; font-weight: bold; }
+.meter-label { color: #334155; }
+.sidebar-row {
+  padding: 4px 0;
+}
+progressbar trough {
+  min-height: 12px;
+  border-radius: 6px;
+  background-color: #d9e2ec;
+}
+progressbar progress {
+  min-height: 12px;
+  border-radius: 6px;
+  background-color: #1f6feb;
+}
+"""
 
 
 def _fmt_ts(value) -> str:
@@ -70,27 +103,63 @@ def _scroll(child: Gtk.Widget) -> Gtk.ScrolledWindow:
     return scroll
 
 
+def _meter_row(title: str, fraction: float | None, text: str) -> Gtk.Box:
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+    label = Gtk.Label(label=title, xalign=0)
+    label.get_style_context().add_class("meter-label")
+    bar = Gtk.ProgressBar()
+    bar.set_show_text(True)
+    if fraction is None:
+        bar.set_fraction(0.0)
+        bar.set_text(text or "—")
+    else:
+        bar.set_fraction(max(0.0, min(1.0, fraction)))
+        bar.set_text(text)
+    box.pack_start(label, False, False, 0)
+    box.pack_start(bar, False, False, 0)
+    box._progress = bar  # type: ignore[attr-defined]
+    return box
+
+
 class NovaCenterWindow(Gtk.Window):
     def __init__(self) -> None:
         super().__init__(title="Nova Center")
-        self.set_default_size(920, 640)
+        self.set_default_size(960, 680)
         self.set_border_width(0)
+        self._dash_widgets: dict[str, Gtk.Widget] = {}
+        self._poll_id = 0
+        self._refreshing = False
+
+        css = Gtk.CssProvider()
+        css.load_from_data(CSS)
+        Gtk.StyleContext.add_provider_for_screen(
+            self.get_screen(),
+            css,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+        )
 
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(outer)
 
-        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        header = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         header.set_border_width(16)
         outer.pack_start(header, False, False, 0)
 
+        title_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        header.pack_start(title_row, False, False, 0)
+
         title = Gtk.Label(label="Nova Center")
         title.set_halign(Gtk.Align.START)
-        title.override_font(Pango.FontDescription("Sans Bold 18"))
-        header.pack_start(title, True, True, 0)
+        title.get_style_context().add_class("nova-title")
+        title_row.pack_start(title, True, True, 0)
 
         self.btn_refresh = Gtk.Button(label="Aggiorna")
         self.btn_refresh.connect("clicked", lambda *_: self.refresh())
-        header.pack_end(self.btn_refresh, False, False, 0)
+        title_row.pack_end(self.btn_refresh, False, False, 0)
+
+        self.subtitle = Gtk.Label(label="Pannello di controllo NovaOS", xalign=0)
+        self.subtitle.get_style_context().add_class("nova-subtitle")
+        header.pack_start(self.subtitle, False, False, 0)
 
         body = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         outer.pack_start(body, True, True, 0)
@@ -101,6 +170,7 @@ class NovaCenterWindow(Gtk.Window):
         for sid, label in SECTIONS:
             row = Gtk.ListBoxRow()
             row._section_id = sid  # type: ignore[attr-defined]
+            row.get_style_context().add_class("sidebar-row")
             lbl = Gtk.Label(label=label, xalign=0)
             lbl.set_margin_start(12)
             lbl.set_margin_end(12)
@@ -135,6 +205,7 @@ class NovaCenterWindow(Gtk.Window):
 
         self.sidebar.select_row(self.sidebar.get_row_at_index(0))
         self.refresh()
+        self._poll_id = GLib.timeout_add(DASHBOARD_POLL_MS, self._poll_dashboard)
 
     def _on_section(self, _listbox, row) -> None:
         if row is None:
@@ -151,7 +222,97 @@ class NovaCenterWindow(Gtk.Window):
     def _set_status(self, text: str) -> None:
         self.status_bar.set_text(text)
 
+    def _poll_dashboard(self) -> bool:
+        if self._refreshing:
+            return True
+        if self.stack.get_visible_child_name() != "dashboard":
+            return True
+        if not self._dash_widgets:
+            return True
+
+        def work() -> None:
+            try:
+                data = api.get_dashboard()
+                GLib.idle_add(self._update_dashboard_live, data)
+            except Exception:  # noqa: BLE001
+                pass
+
+        import threading
+
+        threading.Thread(target=work, daemon=True).start()
+        return True
+
+    def _update_dashboard_live(self, d: dict) -> bool:
+        w = self._dash_widgets
+        if not w:
+            return False
+        health = d.get("health") or {}
+        if "health_label" in w:
+            lbl: Gtk.Label = w["health_label"]  # type: ignore[assignment]
+            ctx = lbl.get_style_context()
+            for cls in ("health-ok", "health-warn", "health-critical"):
+                ctx.remove_class(cls)
+            level = health.get("level") or "ok"
+            ctx.add_class(f"health-{level}")
+            notes = health.get("notes") or []
+            note = f" — {'; '.join(notes)}" if notes else ""
+            lbl.set_text(f"{health.get('label') or '—'}{note}")
+        if "uptime" in w:
+            w["uptime"].set_text(str(d.get("uptime_human") or "—"))  # type: ignore[union-attr]
+        cpu = d.get("cpu_percent")
+        if "cpu_bar" in w:
+            bar: Gtk.ProgressBar = w["cpu_bar"]  # type: ignore[assignment]
+            if cpu is None:
+                bar.set_fraction(0.0)
+                bar.set_text("—")
+            else:
+                bar.set_fraction(cpu / 100.0)
+                bar.set_text(f"{cpu:.1f}%")
+        mem = d.get("memory") or {}
+        mp = mem.get("percent_used")
+        if "ram_bar" in w:
+            bar = w["ram_bar"]  # type: ignore[assignment]
+            if mp is None:
+                bar.set_fraction(0.0)
+                bar.set_text("—")
+            else:
+                bar.set_fraction(float(mp) / 100.0)
+                bar.set_text(
+                    f"{mp}% · {mem.get('used_human')} / {mem.get('total_human')}"
+                )
+        disk = d.get("disk_root") or {}
+        if "disk_bar" in w:
+            bar = w["disk_bar"]  # type: ignore[assignment]
+            pct = None
+            if disk.get("percent"):
+                try:
+                    pct = float(str(disk["percent"]).rstrip("%"))
+                except ValueError:
+                    pct = None
+            if pct is None:
+                bar.set_fraction(0.0)
+                bar.set_text("—")
+            else:
+                bar.set_fraction(pct / 100.0)
+                bar.set_text(
+                    f"{disk.get('percent')} · {disk.get('used_human')} / {disk.get('size_human')}"
+                )
+        bat = d.get("battery")
+        if "battery_line" in w and bat and bat.get("present"):
+            cap = bat.get("capacity_percent")
+            w["battery_line"].set_text(  # type: ignore[union-attr]
+                f"{bat.get('status') or '—'} · {cap}%" if cap is not None else str(bat.get("status") or "—")
+            )
+        self._set_status(
+            f"Live · CPU {cpu if cpu is not None else '—'}% · "
+            f"RAM {mp if mp is not None else '—'}% · uptime {d.get('uptime_human') or '—'}"
+        )
+        return False
+
     def refresh(self) -> None:
+        if self._refreshing:
+            return
+        self._refreshing = True
         self.btn_refresh.set_sensitive(False)
         self._set_status("Lettura dati di sistema…")
 
@@ -174,6 +335,7 @@ class NovaCenterWindow(Gtk.Window):
         threading.Thread(target=work, daemon=True).start()
 
     def _refresh_done(self, data, error) -> bool:
+        self._refreshing = False
         self.btn_refresh.set_sensitive(True)
         if error:
             self._set_status(f"Errore: {error}")
@@ -185,27 +347,131 @@ class NovaCenterWindow(Gtk.Window):
         self._render_system(data["system"])
         self._render_services(data["services"])
         self._render_updates(data["updates"])
-        self._set_status(
-            f"Aggiornato · NovaOS {data['dashboard'].get('novaos_version') or '—'} · "
-            f"API {data['dashboard'].get('api')}"
+        ver = data["dashboard"].get("novaos_version") or "—"
+        self.subtitle.set_text(
+            f"{data['dashboard'].get('pretty_name') or 'NovaOS'} · Center "
+            f"{data['dashboard'].get('center_version') or ''}"
         )
+        self._set_status(f"Aggiornato · NovaOS {ver} · API {data['dashboard'].get('api')}")
         return False
 
     def _render_dashboard(self, d: dict) -> None:
         self._clear_page("dashboard")
+        self._dash_widgets = {}
         page = self.pages["dashboard"]
+
+        health = d.get("health") or {}
+        health_lbl = Gtk.Label(xalign=0)
+        level = health.get("level") or "ok"
+        health_lbl.get_style_context().add_class(f"health-{level}")
+        notes = health.get("notes") or []
+        note = f" — {'; '.join(notes)}" if notes else ""
+        health_lbl.set_text(f"{health.get('label') or '—'}{note}")
+        self._dash_widgets["health_label"] = health_lbl
+        page.pack_start(_frame("Stato generale", health_lbl), False, False, 0)
+
+        uptime_lbl = Gtk.Label(label=str(d.get("uptime_human") or "—"), xalign=0)
+        uptime_lbl.set_selectable(True)
+        self._dash_widgets["uptime"] = uptime_lbl
         page.pack_start(
             _frame(
-                "Panoramica sistema",
+                "Identità",
                 _kv_grid(
                     [
                         ("Versione NovaOS", str(d.get("novaos_version") or "—")),
                         ("Nome", str(d.get("pretty_name") or "—")),
                         ("Hostname", str(d.get("hostname") or "—")),
-                        ("Uptime", str(d.get("uptime_human") or "—")),
                         ("Kernel", str(d.get("kernel") or "—")),
                         ("Architettura", str(d.get("architecture") or "—")),
-                        ("Stato Nova Update", str(d.get("update_service") or "—")),
+                    ]
+                ),
+            ),
+            False,
+            False,
+            0,
+        )
+        page.pack_start(_frame("Uptime", uptime_lbl), False, False, 0)
+
+        meters = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        cpu = d.get("cpu_percent")
+        cpu_row = _meter_row(
+            f"CPU · {d.get('cpu_cores') or '—'} core",
+            (cpu / 100.0) if cpu is not None else None,
+            f"{cpu:.1f}%" if cpu is not None else "—",
+        )
+        self._dash_widgets["cpu_bar"] = cpu_row._progress  # type: ignore[attr-defined]
+        meters.pack_start(cpu_row, False, False, 0)
+
+        mem = d.get("memory") or {}
+        mp = mem.get("percent_used")
+        ram_row = _meter_row(
+            "RAM",
+            (float(mp) / 100.0) if mp is not None else None,
+            (
+                f"{mp}% · {mem.get('used_human')} / {mem.get('total_human')}"
+                if mp is not None
+                else "—"
+            ),
+        )
+        self._dash_widgets["ram_bar"] = ram_row._progress  # type: ignore[attr-defined]
+        meters.pack_start(ram_row, False, False, 0)
+
+        disk = d.get("disk_root") or {}
+        dp = None
+        if disk.get("percent"):
+            try:
+                dp = float(str(disk["percent"]).rstrip("%"))
+            except ValueError:
+                dp = None
+        disk_row = _meter_row(
+            f"Disco · {disk.get('mount') or '/'}",
+            (dp / 100.0) if dp is not None else None,
+            (
+                f"{disk.get('percent')} · {disk.get('used_human')} / {disk.get('size_human')}"
+                if disk
+                else "—"
+            ),
+        )
+        self._dash_widgets["disk_bar"] = disk_row._progress  # type: ignore[attr-defined]
+        meters.pack_start(disk_row, False, False, 0)
+        page.pack_start(_frame("Utilizzo in tempo reale", meters), False, False, 0)
+
+        bat = d.get("battery")
+        if bat and bat.get("present"):
+            bat_lbl = Gtk.Label(xalign=0)
+            cap = bat.get("capacity_percent")
+            bat_lbl.set_text(
+                f"{bat.get('status') or '—'} · {cap}%"
+                if cap is not None
+                else str(bat.get("status") or "—")
+            )
+            bat_lbl.set_selectable(True)
+            self._dash_widgets["battery_line"] = bat_lbl
+            page.pack_start(
+                _frame(
+                    "Batteria",
+                    _kv_grid(
+                        [
+                            ("Stato", str(bat.get("status") or "—")),
+                            (
+                                "Carica",
+                                f"{cap}%" if cap is not None else "—",
+                            ),
+                            ("Modello", str(bat.get("name") or "—")),
+                        ]
+                    ),
+                ),
+                False,
+                False,
+                0,
+            )
+
+        page.pack_start(
+            _frame(
+                "Nova Update",
+                _kv_grid(
+                    [
+                        ("Servizio", str(d.get("update_service") or "—")),
                         ("Canale", str(d.get("update_channel") or "—")),
                         ("Ultimo controllo", _fmt_ts(d.get("last_check"))),
                         ("Aggiornamenti in sospeso", str(d.get("pending_count", 0))),
@@ -360,7 +626,67 @@ class NovaCenterWindow(Gtk.Window):
             page.pack_start(_frame(title, box), False, False, 0)
 
         _dev_list("Ethernet", n.get("ethernet") or [])
-        _dev_list("Wi-Fi", n.get("wifi") or [])
+
+        wifi_details = n.get("wifi_details") or []
+        if wifi_details:
+            for w in wifi_details:
+                sig = w.get("signal_percent")
+                page.pack_start(
+                    _frame(
+                        f"Wi-Fi · {w.get('device') or 'scheda'}",
+                        _kv_grid(
+                            [
+                                ("Scheda wireless", str(w.get("device") or "—")),
+                                ("Stato", str(w.get("status") or w.get("state") or "—")),
+                                ("SSID", str(w.get("ssid") or "—")),
+                                (
+                                    "Intensità segnale",
+                                    f"{sig}%" if sig is not None else "—",
+                                ),
+                                ("Indirizzo IP", str(w.get("ipv4") or "—")),
+                                ("Sicurezza", str(w.get("security") or "—")),
+                                (
+                                    "Riconnessione automatica",
+                                    (
+                                        "sì"
+                                        if w.get("autoconnect") is True
+                                        else "no"
+                                        if w.get("autoconnect") is False
+                                        else "—"
+                                    ),
+                                ),
+                                ("Profilo NM", str(w.get("connection") or "—")),
+                            ]
+                        ),
+                    ),
+                    False,
+                    False,
+                    0,
+                )
+        else:
+            _dev_list("Wi-Fi", n.get("wifi") or [])
+
+        radio = n.get("wifi_radio") or {}
+        supp = n.get("supplicant") or {}
+        page.pack_start(
+            _frame(
+                "Stack wireless",
+                _kv_grid(
+                    [
+                        ("Radio Wi-Fi", str(radio.get("wifi") or "—")),
+                        ("Hardware Wi-Fi", str(radio.get("wifi_hw") or "—")),
+                        ("wpa_supplicant", str(supp.get("wpa_supplicant") or "—")),
+                        (
+                            "usrmerge (/usr/sbin→bin)",
+                            "ok" if supp.get("usrmerge_ok") else "rotto",
+                        ),
+                    ]
+                ),
+            ),
+            False,
+            False,
+            0,
+        )
         page.show_all()
 
     def _render_system(self, s: dict) -> None:

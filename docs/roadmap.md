@@ -1,7 +1,7 @@
 # Roadmap di NovaOS
 
 **Documento di roadmap di prodotto e piattaforma**  
-**Sprint corrente:** Sprint 16 — Nova Center Foundation *(pannello di controllo; ISO resta su traccia M0.x)*.  
+**Sprint corrente:** Sprint 17 — NovaOS Wi-Fi Foundation *(NM + wpa_supplicant; ISO su traccia M0.x)*.  
 **Lingua:** italiano
 
 ---
@@ -380,6 +380,7 @@ NovaOS offre vantaggi AI **non replicabili** installando un chatbot su una distr
 | **M0.0-infra** | Workspace Sprint 5 pronto (configs/scripts/vm) |
 | **M-update-0** | Fondazione Nova Update (Sprint 15): broker + CLI + repo layout |
 | **M-center-0** | Fondazione Nova Center (Sprint 16): control panel + `center.v1` |
+| **M-wifi-0** | Fondazione Wi-Fi (Sprint 17): NM + wpa_supplicant + usrmerge |
 | **M2** | Prima Platform API stabile (bozza implementata) |
 | **M3** | Prima esperienza desktop/installer riconoscibile |
 | **M4** | Primo duo di app ecosistema native |
@@ -467,11 +468,32 @@ App avviabile, collector live, installabile con `nova-updater` sul canale locale
 
 ---
 
-## 16. Prossimo passo immediato
+## 16. Sprint 17 — NovaOS Wi-Fi Foundation
 
-1. Validare Nova Center su host: `scripts/update-test/release-nova-center-0.2.2.sh`.
-2. Continuare traccia ISO M0.x e includere `nova-center` nell’overlay quando pronto.
-3. Pianificare integrazione Ryuk su `center.v1`.
+### Obiettivo
+
+Rendere il Wi-Fi stabile su Live e installato: NetworkManager + `wpa_supplicant`, firmware in ISO, usrmerge integro, dettagli in Nova Center, riconnessione automatica dei profili salvati.
+
+### Deliverable
+
+- [x] Specifica [`platform/13-Nova-WiFi.md`](platform/13-Nova-WiFi.md)
+- [x] Riparazione usrmerge (`/usr/sbin → bin`) + script `fix-nova-wifi.sh`
+- [x] Pacchetti ISO: `wpa_supplicant`, `iw`, `wireless-regdb`, `linux-firmware`
+- [x] Policy NM `configs/network/20-novaos-wifi.conf`
+- [x] Nova Center: SSID, segnale, IP, sicurezza, autoconnect
+- [x] Guardrail in `build-iso.sh`, `config.sh`, post-install, `localrpm`
+
+### Criterio di uscita
+
+`nmcli` vede il device Wi-Fi non più `unavailable`; scan funzionante; profili salvati in autoconnect; Center mostra i campi wireless.
+
+---
+
+## 17. Prossimo passo immediato
+
+1. Su host: `bash scripts/fix-nova-wifi.sh` poi verificare in Nova Center → Rete.
+2. Alla prossima ISO: includere i pacchetti Sprint 17 (già in `appliance.kiwi`).
+3. Continuare Ryuk / Platform API.
 4. Prima delle release pubbliche: firme in `enforce` + mirror repo.
 
-Rif: [`DEV-WORKSPACE.md`](../DEV-WORKSPACE.md), [`platform/11-Nova-Update.md`](platform/11-Nova-Update.md).
+Rif: [`DEV-WORKSPACE.md`](../DEV-WORKSPACE.md), [`platform/13-Nova-WiFi.md`](platform/13-Nova-WiFi.md).

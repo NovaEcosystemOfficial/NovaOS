@@ -17,4 +17,4 @@ StartupNotify=true
 X-KDE-StartupNotify=true
 X-NovaOS-Component=nova-center
 X-NovaOS-API=center.v1
-X-NovaOS-Version=0.2.2
+X-NovaOS-Version=0.2.3

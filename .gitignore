@@ -93,6 +93,7 @@ iso/latest/**
 *.tar.xz
 *.deb
 *.rpm
+!packages/repo/**/*.rpm
 *.pkg.tar*
 *.apk
 *.flatpak

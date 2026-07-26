@@ -125,7 +125,7 @@ fi
 rm -rf /etc/calamares /usr/share/calamares/branding/novaos 2>/dev/null || true
 rm -f /usr/share/applications/novaos-installer.desktop 2>/dev/null || true
 rm -f /usr/share/applications/calamares.desktop 2>/dev/null || true
-rm -f /usr/sbin/novaos-post-install.sh 2>/dev/null || true
+rm -f /usr/sbin/novaos-post-install.sh /usr/bin/novaos-post-install.sh 2>/dev/null || true
 
 ########################################
 # Ensure critical services
@@ -135,6 +135,33 @@ systemctl enable sddm.service 2>/dev/null || true
 systemctl enable nova-updated.socket 2>/dev/null || true
 systemctl enable nova-updated.service 2>/dev/null || true
 systemctl set-default graphical.target 2>/dev/null || true
+
+########################################
+# Wi-Fi foundation — usrmerge + NM policy + radio
+########################################
+if [[ -x /usr/bin/wpa_supplicant ]] && [[ ! -e /usr/sbin/wpa_supplicant ]]; then
+  # Restore usrmerge if a real /usr/sbin directory broke the Fedora layout
+  if [[ -d /usr/sbin && ! -L /usr/sbin ]]; then
+    log "repairing broken usrmerge (/usr/sbin → bin) for Wi-Fi"
+    for f in /usr/sbin/*; do
+      [[ -e "${f}" ]] || continue
+      b="$(basename "${f}")"
+      if [[ ! -e "/usr/bin/${b}" ]]; then
+        mv "${f}" "/usr/bin/${b}" || true
+      else
+        rm -rf "${f}" || true
+      fi
+    done
+    rmdir /usr/sbin 2>/dev/null || rm -rf /usr/sbin
+    ln -sfn bin /usr/sbin
+  fi
+fi
+if [[ -f /etc/NetworkManager/conf.d/20-novaos-wifi.conf ]]; then
+  log "NetworkManager Wi-Fi policy present"
+else
+  log "WARN: /etc/NetworkManager/conf.d/20-novaos-wifi.conf missing"
+fi
+rfkill unblock wifi 2>/dev/null || true
 
 ########################################
 # Nova Update — IPC group + verify stack

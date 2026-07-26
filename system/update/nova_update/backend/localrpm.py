@@ -166,6 +166,8 @@ class LocalRpmBackend(UpdateBackend):
                     )
                 )
             self._extract_rpm(rpm_path)
+            if str(self.install_root) in ("/", "/.") or self.install_root.resolve() == Path("/"):
+                self._repair_usrmerge()
             installed[pkg.name] = {
                 "version": pkg.version,
                 "release": pkg.release,
@@ -180,6 +182,31 @@ class LocalRpmBackend(UpdateBackend):
             percent=100,
             message=f"installed {len(targets)} package(s) into {self.install_root}",
         )
+
+    def _repair_usrmerge(self) -> None:
+        """Keep /usr/sbin → bin after naive cpio extracts (Wi-Fi / wpa_supplicant)."""
+        sbin = self.install_root / "usr" / "sbin"
+        bin_dir = self.install_root / "usr" / "bin"
+        bin_dir.mkdir(parents=True, exist_ok=True)
+        if sbin.is_symlink():
+            return
+        if sbin.is_dir():
+            for child in list(sbin.iterdir()):
+                dest = bin_dir / child.name
+                if dest.exists() or dest.is_symlink():
+                    if child.is_dir() and not child.is_symlink():
+                        shutil.rmtree(child, ignore_errors=True)
+                    else:
+                        child.unlink(missing_ok=True)
+                else:
+                    child.rename(dest)
+            try:
+                sbin.rmdir()
+            except OSError:
+                shutil.rmtree(sbin, ignore_errors=True)
+        elif sbin.exists():
+            sbin.unlink()
+        sbin.symlink_to("bin")
 
     def _extract_rpm(self, rpm_path: Path) -> None:
         # rpm2cpio | cpio into install_root (no chroot privileges required)

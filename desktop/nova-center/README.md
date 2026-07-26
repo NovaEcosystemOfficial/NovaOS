@@ -21,9 +21,9 @@ desktop/nova-center/
 
 ## Sezioni
 
-1. **Dashboard** — versione, uptime, host, kernel, arch, stato Nova Update  
+1. **Dashboard** — health, CPU/RAM/disco live, uptime, batteria, Nova Update  
 2. **Hardware** — CPU, RAM, disco, GPU, temperatura, batteria  
-3. **Rete** — connessione, ethernet, Wi-Fi, IP, NIC  
+3. **Rete** — connessione, ethernet, Wi-Fi (SSID, segnale, IP, sicurezza, autoconnect)  
 4. **Sistema** — os-release, cartelle Nova, servizi  
 5. **Nova Services** — `nova-updated`, Ryuk (predisposto), altri  
 6. **Aggiornamenti** — stato broker + **Apri Nova Update**

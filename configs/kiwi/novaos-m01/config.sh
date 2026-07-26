@@ -512,6 +512,40 @@ systemctl enable NetworkManager.service
 systemctl set-default graphical.target
 
 ########################################
+# Wi-Fi foundation (Sprint 17) — usrmerge + NM policy
+########################################
+# A real /usr/sbin directory breaks Fedora usrmerge and makes
+# ExecStart=/usr/sbin/wpa_supplicant fail (binary lives in /usr/bin).
+if [[ -d /usr/sbin && ! -L /usr/sbin ]]; then
+  for f in /usr/sbin/*; do
+    [[ -e "${f}" ]] || continue
+    b="$(basename "${f}")"
+    if [[ ! -e "/usr/bin/${b}" ]]; then
+      mv "${f}" "/usr/bin/${b}" || true
+    else
+      rm -rf "${f}" || true
+    fi
+  done
+  rmdir /usr/sbin 2>/dev/null || rm -rf /usr/sbin
+  ln -sfn bin /usr/sbin
+fi
+mkdir -p /etc/NetworkManager/conf.d
+if [[ ! -f /etc/NetworkManager/conf.d/20-novaos-wifi.conf ]]; then
+  cat >/etc/NetworkManager/conf.d/20-novaos-wifi.conf <<'EOF'
+[main]
+
+[device]
+wifi.backend=wpa_supplicant
+wifi.scan-rand-mac-address=yes
+
+[connection]
+ipv6.ip6-privacy=0
+EOF
+fi
+rfkill unblock wifi 2>/dev/null || true
+rfkill unblock wlan 2>/dev/null || true
+
+########################################
 # Nova Update Broker — always on for live + install base
 ########################################
 # System group for IPC socket access (root:nova 0660)

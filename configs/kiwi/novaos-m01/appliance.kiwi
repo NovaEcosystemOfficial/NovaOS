@@ -95,6 +95,10 @@
         <package name="selinux-policy-targeted"/>
         <package name="NetworkManager"/>
         <package name="NetworkManager-wifi"/>
+        <package name="wpa_supplicant"/>
+        <package name="iw"/>
+        <package name="wireless-regdb"/>
+        <package name="linux-firmware"/>
         <package name="dhcp-client"/>
         <package name="tzdata"/>
         <package name="vim-minimal"/>

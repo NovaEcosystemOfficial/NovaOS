@@ -9,28 +9,16 @@ from __future__ import annotations
 from typing import Any
 
 from . import __version__
-from .backend import hardware, network, services, system_info, updates
+from .backend import dashboard, hardware, network, services, system_info, updates
 
 API_VERSION = "center.v1"
 
 
 def get_dashboard() -> dict[str, Any]:
-    sysinfo = system_info.collect()
-    upd = updates.collect()
     return {
         "api": API_VERSION,
         "center_version": __version__,
-        "novaos_version": sysinfo.get("version"),
-        "pretty_name": sysinfo.get("pretty_name"),
-        "uptime": sysinfo.get("uptime"),
-        "uptime_human": sysinfo.get("uptime_human"),
-        "hostname": sysinfo.get("hostname"),
-        "kernel": sysinfo.get("kernel"),
-        "architecture": sysinfo.get("architecture"),
-        "update_service": upd.get("service"),
-        "update_channel": upd.get("channel"),
-        "last_check": upd.get("last_check"),
-        "pending_count": upd.get("pending_count"),
+        **dashboard.collect(),
     }
 
 

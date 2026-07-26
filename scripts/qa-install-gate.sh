@@ -54,7 +54,7 @@ check() {
 check "CALAMARES_BIN" "[[ -x '${R}/usr/bin/calamares' ]]" "calamares binary"
 check "SETTINGS" "[[ -f '${R}/etc/calamares/settings.conf' ]]" "NovaOS settings"
 check "BRANDING" "[[ -f '${R}/etc/calamares/branding/novaos/branding.desc' ]]" "novaos branding"
-check "POSTINSTALL" "[[ -x '${R}/usr/sbin/novaos-post-install.sh' ]]" "post-install script"
+check "POSTINSTALL" "[[ -x '${R}/usr/bin/novaos-post-install.sh' ]] || [[ -x '${R}/usr/sbin/novaos-post-install.sh' ]]" "post-install script"
 check "DESKTOP" "[[ -f '${R}/usr/share/applications/novaos-installer.desktop' ]]" "desktop launcher"
 check "OS_PROBER" "[[ -x '${R}/usr/bin/os-prober' ]] || [[ -x '${R}/usr/sbin/os-prober' ]]" "os-prober"
 check "GIT" "[[ -x '${R}/usr/bin/git' ]]" "git"

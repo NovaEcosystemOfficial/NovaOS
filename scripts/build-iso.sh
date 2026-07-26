@@ -84,14 +84,21 @@ if [[ -d "${INSTALLER_SRC}" ]]; then
   mkdir -p \
     "${ROOT_OVERLAY}/etc/calamares/modules" \
     "${ROOT_OVERLAY}/etc/calamares/branding/novaos" \
-    "${ROOT_OVERLAY}/usr/sbin" \
-    "${ROOT_OVERLAY}/usr/share/applications"
+    "${ROOT_OVERLAY}/usr/bin" \
+    "${ROOT_OVERLAY}/usr/share/applications" \
+    "${ROOT_OVERLAY}/etc/NetworkManager/conf.d"
+  # IMPORTANT: never mkdir a real usr/sbin in the overlay — that breaks Fedora
+  # usrmerge (/usr/sbin → bin) and prevents wpa_supplicant from starting.
   cp -f "${INSTALLER_SRC}/settings.conf" "${ROOT_OVERLAY}/etc/calamares/settings.conf"
   cp -a "${INSTALLER_SRC}/modules/." "${ROOT_OVERLAY}/etc/calamares/modules/"
   cp -a "${INSTALLER_SRC}/branding/novaos/." "${ROOT_OVERLAY}/etc/calamares/branding/novaos/"
   cp -f "${INSTALLER_SRC}/scripts/novaos-post-install.sh" \
-        "${ROOT_OVERLAY}/usr/sbin/novaos-post-install.sh"
-  chmod 755 "${ROOT_OVERLAY}/usr/sbin/novaos-post-install.sh"
+        "${ROOT_OVERLAY}/usr/bin/novaos-post-install.sh"
+  chmod 755 "${ROOT_OVERLAY}/usr/bin/novaos-post-install.sh"
+  if [[ -f "${ROOT}/configs/network/20-novaos-wifi.conf" ]]; then
+    install -m 0644 "${ROOT}/configs/network/20-novaos-wifi.conf" \
+      "${ROOT_OVERLAY}/etc/NetworkManager/conf.d/20-novaos-wifi.conf"
+  fi
   cp -f "${INSTALLER_SRC}/desktop/novaos-installer.desktop" \
         "${ROOT_OVERLAY}/usr/share/applications/novaos-installer.desktop"
 else

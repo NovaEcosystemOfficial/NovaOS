@@ -43,6 +43,7 @@ Nova Shell ◄─────┼──────── Ryuk (system service, N
 | 10 | [`10-Boot-Sequence.md`](10-Boot-Sequence.md) | Boot, sessione, shutdown, failure |
 | 11 | [`11-Nova-Update.md`](11-Nova-Update.md) | Update Broker, canali, repo RPM, firme (Sprint 15) |
 | 12 | [`12-Nova-Center.md`](12-Nova-Center.md) | Pannello di controllo, API `center.v1` (Sprint 16) |
+| 13 | [`13-Nova-WiFi.md`](13-Nova-WiFi.md) | Wi-Fi / NetworkManager / wpa_supplicant (Sprint 17) |
 
 ## Vincoli Sprint 3
 

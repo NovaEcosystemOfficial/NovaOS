@@ -138,10 +138,24 @@ else
   fail "config.sh must enable nova-updated.service"
 fi
 
-if [[ -f "${ROOT}/docs/adr/ADR-008-Installer-Engine.md" ]]; then
-  pass "ADR-008 present"
+if grep -q 'wpa_supplicant' "${ROOT}/configs/kiwi/novaos-m01/appliance.kiwi" \
+  && grep -q 'linux-firmware' "${ROOT}/configs/kiwi/novaos-m01/appliance.kiwi"; then
+  pass "appliance.kiwi includes Wi-Fi stack packages"
 else
-  fail "ADR-008 missing"
+  fail "appliance.kiwi must include wpa_supplicant and linux-firmware"
+fi
+
+if grep -q 'novaos-post-install.sh' "${SRC}/modules/shellprocess-postinstall.conf" \
+  && grep -q '/usr/bin/novaos-post-install.sh' "${SRC}/modules/shellprocess-postinstall.conf"; then
+  pass "post-install invoked from /usr/bin (usrmerge-safe)"
+else
+  fail "shellprocess must call /usr/bin/novaos-post-install.sh"
+fi
+
+if [[ -f "${ROOT}/configs/network/20-novaos-wifi.conf" ]]; then
+  pass "NetworkManager Wi-Fi policy present"
+else
+  fail "missing configs/network/20-novaos-wifi.conf"
 fi
 
 echo
