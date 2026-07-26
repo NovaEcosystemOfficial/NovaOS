@@ -80,3 +80,19 @@ def collect() -> dict:
         base["error"] = str(exc)
         base["service"] = "errore"
         return base
+
+
+def check() -> dict:
+    """Run broker Check and return pending payload."""
+    client = _client()
+    if client is None:
+        raise RuntimeError("libreria nova_update assente")
+    return client.call("Check")
+
+
+def apply() -> dict:
+    """Run broker Apply for pending packages."""
+    client = _client()
+    if client is None:
+        raise RuntimeError("libreria nova_update assente")
+    return client.call("Apply")

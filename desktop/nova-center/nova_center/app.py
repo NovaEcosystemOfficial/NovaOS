@@ -804,13 +804,83 @@ class NovaCenterWindow(Gtk.Window):
         page.pack_start(_frame("Aggiornamenti disponibili", _scroll(tree)), True, True, 0)
 
         actions = Gtk.Box(spacing=8)
-        actions.set_halign(Gtk.Align.END)
-        btn = Gtk.Button(label="Apri Nova Update")
-        btn.get_style_context().add_class("suggested-action")
-        btn.connect("clicked", self._open_nova_update)
-        actions.pack_start(btn, False, False, 0)
+        actions.set_halign(Gtk.Align.START)
+        self.btn_upd_check = Gtk.Button(label="Controlla aggiornamenti")
+        self.btn_upd_install = Gtk.Button(label="Installa aggiornamenti")
+        self.btn_upd_install.get_style_context().add_class("suggested-action")
+        self.btn_upd_install.set_sensitive(bool(pending))
+        btn_open = Gtk.Button(label="Apri Nova Update")
+        self.btn_upd_check.connect("clicked", self._on_updates_check)
+        self.btn_upd_install.connect("clicked", self._on_updates_install)
+        btn_open.connect("clicked", self._open_nova_update)
+        actions.pack_start(self.btn_upd_check, False, False, 0)
+        actions.pack_start(self.btn_upd_install, False, False, 0)
+        actions.pack_start(btn_open, False, False, 0)
         page.pack_start(actions, False, False, 0)
         page.show_all()
+
+    def _on_updates_check(self, *_args) -> None:
+        self.btn_upd_check.set_sensitive(False)
+        self._set_status("Controllo aggiornamenti…")
+
+        def work() -> None:
+            try:
+                result = api.check_updates()
+                GLib.idle_add(self._updates_check_done, result, None)
+            except Exception as exc:
+                GLib.idle_add(self._updates_check_done, None, exc)
+
+        import threading
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _updates_check_done(self, result, error) -> bool:
+        btn = getattr(self, "btn_upd_check", None)
+        if btn is not None:
+            btn.set_sensitive(True)
+        if error:
+            self._set_status(f"Check fallito: {error}")
+            return False
+        pending = result.get("pending") or []
+        n = len(pending)
+        if n:
+            self._set_status(
+                f"Trovati {n} aggiornamenti. Premi «Installa aggiornamenti» per applicarli."
+            )
+        else:
+            self._set_status("Sistema aggiornato: nessun update.")
+        self.refresh()
+        return False
+
+    def _on_updates_install(self, *_args) -> None:
+        btn = getattr(self, "btn_upd_install", None)
+        if btn is not None:
+            btn.set_sensitive(False)
+        self._set_status("Installazione aggiornamenti…")
+
+        def work() -> None:
+            try:
+                result = api.apply_updates()
+                GLib.idle_add(self._updates_install_done, result, None)
+            except Exception as exc:
+                GLib.idle_add(self._updates_install_done, None, exc)
+
+        import threading
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _updates_install_done(self, result, error) -> bool:
+        if error:
+            self._set_status(f"Installazione fallita: {error}")
+            btn = getattr(self, "btn_upd_install", None)
+            if btn is not None:
+                btn.set_sensitive(True)
+            return False
+        applied = result.get("applied") or []
+        names = ", ".join(p.get("name", "?") for p in applied) or "nessuno"
+        self._set_status(f"Installati: {names}")
+        self.refresh()
+        return False
 
     def _open_nova_update(self, *_args) -> None:
         cmd = shutil.which("nova-update-gui")

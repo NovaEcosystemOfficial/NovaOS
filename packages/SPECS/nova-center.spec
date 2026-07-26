@@ -1,5 +1,5 @@
 Name:           nova-center
-Version:        0.2.3
+Version:        0.2.4
 Release:        1%{?dist}
 Summary:        Nova Center — official NovaOS control panel
 License:        MIT
@@ -37,6 +37,9 @@ install -m 0644 %{_nova_root}/desktop/nova-center/README.md %{buildroot}/usr/sha
 %{_datadir}/applications/org.novaos.Center.desktop
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.4-1
+- Aggiornamenti: Controlla/Installa aggiornamenti in-panel (non solo Apri Nova Update)
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.3-1
 - Live dashboard: CPU/RAM/disk meters, uptime, battery, system health
 

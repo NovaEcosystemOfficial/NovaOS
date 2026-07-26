@@ -26,7 +26,7 @@ desktop/nova-center/
 3. **Rete** — connessione, ethernet, Wi-Fi (SSID, segnale, IP, sicurezza, autoconnect)  
 4. **Sistema** — os-release, cartelle Nova, servizi  
 5. **Nova Services** — `nova-updated`, Ryuk (predisposto), altri  
-6. **Aggiornamenti** — stato broker + **Apri Nova Update**
+6. **Aggiornamenti** — Controlla / Installa aggiornamenti + Apri Nova Update
 
 ## API interna
 

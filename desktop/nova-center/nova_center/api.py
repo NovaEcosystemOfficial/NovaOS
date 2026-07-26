@@ -42,6 +42,14 @@ def get_updates() -> dict[str, Any]:
     return {"api": API_VERSION, **updates.collect()}
 
 
+def check_updates() -> dict[str, Any]:
+    return {"api": API_VERSION, **updates.check()}
+
+
+def apply_updates() -> dict[str, Any]:
+    return {"api": API_VERSION, **updates.apply()}
+
+
 def snapshot() -> dict[str, Any]:
     """Full snapshot for debugging / future export."""
     return {

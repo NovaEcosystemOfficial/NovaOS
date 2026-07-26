@@ -1,5 +1,5 @@
 Name:           nova-update-gui
-Version:        0.2.1
+Version:        0.2.3
 Release:        1%{?dist}
 Summary:        Nova Update graphical client for NovaOS
 License:        MIT
@@ -36,5 +36,9 @@ install -m 0644 %{_nova_root}/desktop/nova-update/README.md %{buildroot}/usr/sha
 %{_datadir}/applications/org.novaos.Update.desktop
 
 %changelog
+* Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.3-1
+- Move Controlla/Installa above lists so Install is always visible
+- Enable Installa only when pending updates exist
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.1-1
 - First official Nova Update GUI (v0.2.1)

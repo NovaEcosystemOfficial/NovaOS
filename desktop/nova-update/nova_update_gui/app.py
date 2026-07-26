@@ -103,6 +103,23 @@ class NovaUpdateWindow(Gtk.Window):
         info.attach(Gtk.Label(label="Servizio nova-updated:", xalign=0), 0, 2, 1, 1)
         info.attach(self.service_label, 1, 2, 1, 1)
 
+        # Primary actions always visible under the header (not below expanding lists).
+        actions = Gtk.Box(spacing=8)
+        actions.set_halign(Gtk.Align.START)
+        root.pack_start(actions, False, False, 0)
+
+        self.btn_refresh = Gtk.Button(label="Aggiorna stato")
+        self.btn_check = Gtk.Button(label="Controlla aggiornamenti")
+        self.btn_install = Gtk.Button(label="Installa aggiornamenti")
+        self.btn_install.get_style_context().add_class("suggested-action")
+        self.btn_install.set_sensitive(False)
+        self.btn_refresh.connect("clicked", lambda *_: self.refresh())
+        self.btn_check.connect("clicked", self._on_check)
+        self.btn_install.connect("clicked", self._on_install)
+        actions.pack_start(self.btn_refresh, False, False, 0)
+        actions.pack_start(self.btn_check, False, False, 0)
+        actions.pack_start(self.btn_install, False, False, 0)
+
         # Pending list
         pending_frame = Gtk.Frame(label="Aggiornamenti disponibili")
         root.pack_start(pending_frame, True, True, 0)
@@ -112,6 +129,7 @@ class NovaUpdateWindow(Gtk.Window):
             tree.append_column(Gtk.TreeViewColumn(title_col, Gtk.CellRendererText(), text=i))
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        scroll.set_min_content_height(140)
         scroll.add(tree)
         pending_frame.add(scroll)
 
@@ -126,30 +144,15 @@ class NovaUpdateWindow(Gtk.Window):
             )
         hist_scroll = Gtk.ScrolledWindow()
         hist_scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        hist_scroll.set_min_content_height(100)
         hist_scroll.add(hist_tree)
         hist_frame.add(hist_scroll)
 
         self.status_bar = Gtk.Label(label="Pronto.", xalign=0)
         root.pack_start(self.status_bar, False, False, 0)
 
-        buttons = Gtk.Box(spacing=8)
-        buttons.set_halign(Gtk.Align.END)
-        root.pack_start(buttons, False, False, 0)
-
-        self.btn_refresh = Gtk.Button(label="Aggiorna stato")
-        self.btn_check = Gtk.Button(label="Controlla aggiornamenti")
-        self.btn_install = Gtk.Button(label="Installa aggiornamenti")
-        self.btn_install.get_style_context().add_class("suggested-action")
-        self.btn_refresh.connect("clicked", lambda *_: self.refresh())
-        self.btn_check.connect("clicked", self._on_check)
-        self.btn_install.connect("clicked", self._on_install)
-        buttons.pack_start(self.btn_refresh, False, False, 0)
-        buttons.pack_start(self.btn_check, False, False, 0)
-        buttons.pack_start(self.btn_install, False, False, 0)
-
         self._suppress_channel = False
         self.refresh()
-
     def _make_client(self) -> UpdateClient:
         cfg = UpdateConfig.load()
         sock = Path(os.environ.get("NOVA_UPDATE_SOCKET", cfg.socket_path))
@@ -181,6 +184,7 @@ class NovaUpdateWindow(Gtk.Window):
             )
         except (FileNotFoundError, ConnectionRefusedError, PermissionError, OSError, RuntimeError) as exc:
             self._set_status(f"Broker non raggiungibile: {exc}")
+            self.btn_install.set_sensitive(False)
 
     def _fill_pending(self, pending: list[dict]) -> None:
         self.pending_store.clear()
@@ -192,6 +196,7 @@ class NovaUpdateWindow(Gtk.Window):
                     str(pkg.get("update_class", "")),
                 ]
             )
+        self.btn_install.set_sensitive(bool(pending))
 
     def _fill_history(self, history: list[dict]) -> None:
         self.history_store.clear()
@@ -243,9 +248,12 @@ class NovaUpdateWindow(Gtk.Window):
         self.pending = result.get("pending") or []
         self._fill_pending(self.pending)
         n = len(self.pending)
-        self._set_status(
-            f"Trovati {n} aggiornamenti." if n else "Sistema aggiornato: nessun update."
-        )
+        if n:
+            self._set_status(
+                f"Trovati {n} aggiornamenti. Premi «Installa aggiornamenti» per applicarli."
+            )
+        else:
+            self._set_status("Sistema aggiornato: nessun update.")
         try:
             hist = self.client.call("GetHistory")
             self._fill_history(hist.get("history") or [])
