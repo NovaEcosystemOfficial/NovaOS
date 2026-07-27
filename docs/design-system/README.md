@@ -12,6 +12,8 @@ Questo è il **sistema di design** che guida lo sviluppo futuro di NovaOS. Non c
 
 **Direzione artistica:** *Luminous Precision* — precisione luminosa (campo ink, accento stellar, segnale AI cyan, materiale Nova Glass).
 
+**Vision 2.0:** principi esperienza (minimalismo, Top Bar non invasiva, Hub, Dock, Control Center, Ryuk) in [`../vision/NovaOS-Vision-2.0.md`](../vision/NovaOS-Vision-2.0.md). Ogni sprint UI deve passarne il test: *migliora davvero l’esperienza?*
+
 **Nota architetturale (Sprint 3):** Pulse / AI Stage sono superfici UI di Nova Shell che invocano **Ryuk**, assistente nativo implementato come **servizio di sistema** (non come applicazione). L’orchestrazione dei modelli spetta a **Nova AI Core**. Dettaglio: [`../platform/`](../platform/README.md).
 
 ## Indice dei documenti

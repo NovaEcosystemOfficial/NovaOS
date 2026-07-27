@@ -2,6 +2,7 @@
 
 **Documento di visione strategica — Sprint 0 (Foundation)**  
 **Stato:** ufficiale per la fase fondativa  
+**Aggiornamento esperienza:** vedi [**NovaOS Vision 2.0**](vision/NovaOS-Vision-2.0.md) (guida UX/UI vincolante)  
 **Lingua:** italiano
 
 ---
