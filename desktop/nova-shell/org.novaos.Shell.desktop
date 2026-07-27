@@ -18,4 +18,4 @@ X-GNOME-Autostart-enabled=true
 X-KDE-autostart-after=panel
 X-NovaOS-Component=nova-shell
 X-NovaOS-API=shell.v1
-X-NovaOS-Version=0.2.8
+X-NovaOS-Version=0.2.9

@@ -15,6 +15,17 @@ progressivamente gli elementi desktop stock.
 | **Widgets** | CPU, RAM, Disco, Rete, Aggiornamenti (via Platform) |
 | **Dock API** | `shell.dock.v1` — preferiti / recent / open (open = stub compositor) |
 | **Animazioni** | Fade launcher, slide-in barra, hover CSS |
+| **TopBarManager** | Auto-hide / edge reveal / hide-on-maximized (Sprint 21.1) |
+
+### Top bar modes (Impostazioni Nova ⚙)
+
+| Mode | Comportamento |
+|------|----------------|
+| Sempre visibile | Barra fissa in alto |
+| Nascondi automaticamente (default) | Nascosta; reveal al bordo superiore (~180 ms); hide dopo 500 ms |
+| Nascondi con finestre massimizzate | Visibile sul desktop libero; si nasconde se c’è una finestra massimizzata |
+
+Launcher / Impostazioni / azioni dock forzano la ricomparsa della barra.
 
 ## 2. Architettura
 

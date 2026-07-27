@@ -1,7 +1,7 @@
 # Nova Shell
 
-Experience layer foundation (Sprint 22). Horizon Bar, Launcher, Quick Search,
-Widgets, Dock API — all metrics via Nova Platform (`platform.v1`).
+Experience layer foundation (Sprint 22 + 21.1). Horizon Bar with TopBarManager
+auto-hide, Launcher, Quick Search, Widgets, Dock API — metrics via Platform.
 
 ```bash
 nova-shell            # GUI

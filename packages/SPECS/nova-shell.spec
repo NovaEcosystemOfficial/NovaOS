@@ -1,5 +1,5 @@
 Name:           nova-shell
-Version:        0.2.8
+Version:        0.2.9
 Release:        1%{?dist}
 Summary:        Nova Shell — NovaOS experience layer foundation
 License:        MIT
@@ -13,11 +13,12 @@ Requires:       nova-identity >= 0.2.6
 Recommends:     nova-hub
 Recommends:     nova-center
 Recommends:     novaos-update
+Recommends:     libwnck3
 
 %description
-Nova Shell foundation (Sprint 22): Horizon Bar, Nova Launcher with Quick Search,
-system widgets, and Dock API. Live status via platform.v1 only — no direct
-/proc metrics in the shell. Internal APIs shell.v1 / shell.search.v1 / shell.dock.v1.
+Nova Shell foundation: Horizon Bar with TopBarManager auto-hide, Nova Launcher
+with Quick Search, system widgets, and Dock API. Live status via platform.v1.
+Internal APIs shell.v1 / shell.search.v1 / shell.dock.v1 / shell.topbar.v1.
 
 %install
 mkdir -p %{buildroot}/usr/bin
@@ -48,5 +49,8 @@ install -m 0644 %{_nova_root}/desktop/nova-shell/README.md \
 /etc/xdg/autostart/org.novaos.Shell.desktop
 
 %changelog
+* Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.9-1
+- Sprint 21.1: TopBarManager auto-hide, Impostazioni Nova bar modes
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.8-1
 - Sprint 22: Horizon Bar, Launcher, Quick Search, Widgets, Dock API

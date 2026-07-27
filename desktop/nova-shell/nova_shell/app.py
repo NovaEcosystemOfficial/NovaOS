@@ -14,8 +14,13 @@ from gi.repository import Gdk, GdkPixbuf, GLib, Gtk  # noqa: E402
 
 from nova_shell import api  # noqa: E402
 from nova_shell.backend import search as search_backend  # noqa: E402
+from nova_shell.prefs import TopBarMode  # noqa: E402
+from nova_shell.settings_ui import TopBarSettingsDialog  # noqa: E402
+from nova_shell.topbar_manager import TopBarManager  # noqa: E402
 
 BAR_HEIGHT = 42
+DOCK_HEIGHT = 48
+TOTAL_HEIGHT = BAR_HEIGHT + DOCK_HEIGHT
 POLL_MS = 3000
 
 CSS = b"""
@@ -125,7 +130,7 @@ def _pct(value) -> str:
 
 
 class LauncherWindow(Gtk.Window):
-    def __init__(self, on_close=None) -> None:
+    def __init__(self, on_open=None, on_close=None) -> None:
         super().__init__(type=Gtk.WindowType.TOPLEVEL)
         self.set_title("Nova Launcher")
         self.set_decorated(False)
@@ -135,6 +140,7 @@ class LauncherWindow(Gtk.Window):
         self.set_accept_focus(True)
         self.set_default_size(640, 480)
         self.get_style_context().add_class("launcher-window")
+        self._on_open = on_open
         self._on_close = on_close
         self._opacity = 0.0
         self.set_opacity(0.0)
@@ -183,7 +189,6 @@ class LauncherWindow(Gtk.Window):
         scroll.add(self.listbox)
 
         self.connect("key-press-event", self._on_key)
-        self.connect("focus-out-event", self._on_focus_out)
         self._render("")
 
     def _on_key(self, _w, event) -> bool:
@@ -192,11 +197,9 @@ class LauncherWindow(Gtk.Window):
             return True
         return False
 
-    def _on_focus_out(self, *_a) -> bool:
-        # Keep open while interacting; Escape / logo toggles close.
-        return False
-
     def show_animated(self) -> None:
+        if self._on_open:
+            self._on_open()
         screen = self.get_screen()
         monitor = screen.get_primary_monitor()
         geo = screen.get_monitor_geometry(monitor)
@@ -288,17 +291,22 @@ class HorizonBar(Gtk.Window):
         self.set_skip_taskbar_hint(True)
         self.set_skip_pager_hint(True)
         self.set_keep_above(True)
-        self.set_type_hint(Gdk.WindowTypeHint.DOCK)
+        self.set_accept_focus(False)
+        self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.get_style_context().add_class("horizon-bar")
         self._launcher: LauncherWindow | None = None
+        self._settings: TopBarSettingsDialog | None = None
         self._refreshing = False
         self._chips: dict[str, Gtk.Label] = {}
         self._widgets: dict[str, Gtk.Label] = {}
+        self._manager: TopBarManager | None = None
 
         css = Gtk.CssProvider()
         css.load_from_data(CSS)
         Gtk.StyleContext.add_provider_for_screen(
-            self.get_screen(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            self.get_screen(),
+            css,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
         )
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -362,7 +370,14 @@ class HorizonBar(Gtk.Window):
             self._chips[key] = lbl
             bar.pack_start(lbl, False, False, 0)
 
-        # Dock strip (API-backed favorites)
+        settings_btn = Gtk.Button(label="⚙")
+        settings_btn.set_relief(Gtk.ReliefStyle.NONE)
+        settings_btn.set_tooltip_text("Impostazioni Nova — Barra superiore")
+        settings_btn.get_style_context().add_class("horizon-logo-btn")
+        settings_btn.connect("clicked", lambda *_: self.open_settings())
+        bar.pack_end(settings_btn, False, False, 0)
+
+        # Dock strip (API-backed favorites: Hub, Center, Update, File, Terminal)
         self.dock_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
         self.dock_box.get_style_context().add_class("dock-strip")
         self.dock_box.set_halign(Gtk.Align.CENTER)
@@ -373,37 +388,52 @@ class HorizonBar(Gtk.Window):
         root.pack_start(self.dock_box, False, False, 0)
         self._rebuild_dock()
 
-        self.connect("destroy", Gtk.main_quit)
-        self._place()
+        self.connect("destroy", self._on_destroy)
         self.show_all()
-        # Slide-in: start slightly above and settle (visual presence)
-        self._slide_y = -BAR_HEIGHT
-        GLib.timeout_add(16, self._slide_in)
+
+        self._manager = TopBarManager(
+            self,
+            bar_height=TOTAL_HEIGHT,
+            on_mode_changed=lambda _m: None,
+        )
+        # Default auto-hide: start tucked away
+        if self._manager.mode == TopBarMode.AUTO_HIDE:
+            self._manager.recompute(force=True)
         self.refresh()
         GLib.timeout_add(POLL_MS, self._poll)
 
-    def _place(self) -> None:
-        screen = self.get_screen()
-        monitor = screen.get_primary_monitor()
-        geo = screen.get_monitor_geometry(monitor)
-        # Bar + dock strip
-        self.resize(geo.width, BAR_HEIGHT + 48)
-        self.move(geo.x, geo.y)
+    def _on_destroy(self, *_a) -> None:
+        if self._manager:
+            self._manager.destroy()
+        Gtk.main_quit()
 
-    def _slide_in(self) -> bool:
-        screen = self.get_screen()
-        monitor = screen.get_primary_monitor()
-        geo = screen.get_monitor_geometry(monitor)
-        self._slide_y = min(0, self._slide_y + 6)
-        self.move(geo.x, geo.y + self._slide_y)
-        return self._slide_y < 0
+    def open_settings(self) -> None:
+        if not self._manager:
+            return
+        self._manager.notify_menu_open()
+        dlg = TopBarSettingsDialog(self, self._manager)
+        dlg.connect("response", self._on_settings_done)
+        dlg.connect("destroy", self._on_settings_done)
+        dlg.present()
+        self._settings = dlg
+
+    def _on_settings_done(self, *args) -> None:
+        dlg = args[0] if args else None
+        if isinstance(dlg, Gtk.Dialog):
+            dlg.destroy()
+        self._settings = None
+        if self._manager:
+            self._manager.notify_menu_close()
 
     def toggle_launcher(self) -> None:
         if self._launcher and self._launcher.get_visible():
             self._launcher.hide_animated()
             return
         if self._launcher is None:
-            self._launcher = LauncherWindow()
+            self._launcher = LauncherWindow(
+                on_open=lambda: self._manager and self._manager.notify_menu_open(),
+                on_close=lambda: self._manager and self._manager.notify_menu_close(),
+            )
         self._launcher.show_animated()
 
     def _rebuild_dock(self) -> None:
@@ -415,12 +445,23 @@ class HorizonBar(Gtk.Window):
             btn.get_style_context().add_class("dock-btn")
             btn.set_relief(Gtk.ReliefStyle.NONE)
             action = str(item.get("action") or "")
-            btn.connect(
-                "clicked",
-                lambda _b, a=action: api.search_execute(a),
-            )
+
+            def _launch(_b, a=action) -> None:
+                if self._manager:
+                    self._manager.notify_menu_open()
+                api.search_execute(a)
+                # App leave focus — allow hide again shortly
+                if self._manager:
+                    GLib.timeout_add(400, self._menu_release)
+
+            btn.connect("clicked", _launch)
             self.dock_box.pack_start(btn, False, False, 0)
         self.dock_box.show_all()
+
+    def _menu_release(self) -> bool:
+        if self._manager and not (self._launcher and self._launcher.get_visible()):
+            self._manager.notify_menu_close()
+        return False
 
     def _poll(self) -> bool:
         if not self._refreshing:
@@ -496,7 +537,6 @@ def main(argv: list[str] | None = None) -> int:
         q = argv[idx + 1] if idx + 1 < len(argv) else ""
         print(json.dumps(api.search_query(q), indent=2, ensure_ascii=False))
         return 0
-    # Ensure search engine warm
     search_backend.get_engine()
     win = HorizonBar()
     win.show_all()

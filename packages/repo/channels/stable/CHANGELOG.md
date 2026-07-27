@@ -1,5 +1,10 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-27 — nova-shell 0.2.9 (Top Bar Auto-Hide)
+
+- Pacchetto: `nova/x86_64/nova-shell-0.2.9-1.nova.noarch.rpm`
+- Sprint 21.1: TopBarManager auto-hide, Impostazioni Nova (tre modalità barra)
+
 ## 2026-07-26 — nova-shell 0.2.8 (NovaOS v0.2.8)
 
 - Pacchetto: `nova/x86_64/nova-shell-0.2.8-1.nova.noarch.rpm`
