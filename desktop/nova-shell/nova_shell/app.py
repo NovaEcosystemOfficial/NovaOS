@@ -426,6 +426,21 @@ class HorizonBar(Gtk.Window):
             self._manager.notify_menu_close()
 
     def toggle_launcher(self) -> None:
+        # Prefer official nova-launcher when installed (Sprint 22).
+        import shutil
+        import subprocess
+
+        cmd = shutil.which("nova-launcher")
+        if cmd:
+            if self._manager:
+                self._manager.notify_menu_open()
+            try:
+                subprocess.Popen([cmd], start_new_session=True)  # noqa: S603
+            except OSError:
+                pass
+            if self._manager:
+                GLib.timeout_add(600, self._menu_release)
+            return
         if self._launcher and self._launcher.get_visible():
             self._launcher.hide_animated()
             return

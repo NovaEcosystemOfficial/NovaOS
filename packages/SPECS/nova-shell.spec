@@ -1,5 +1,5 @@
 Name:           nova-shell
-Version:        0.2.9
+Version:        0.2.10
 Release:        1%{?dist}
 Summary:        Nova Shell — NovaOS experience layer foundation
 License:        MIT
@@ -13,6 +13,7 @@ Requires:       nova-identity >= 0.2.6
 Recommends:     nova-hub
 Recommends:     nova-center
 Recommends:     novaos-update
+Recommends:     nova-launcher
 Recommends:     libwnck3
 
 %description
@@ -49,6 +50,9 @@ install -m 0644 %{_nova_root}/desktop/nova-shell/README.md \
 /etc/xdg/autostart/org.novaos.Shell.desktop
 
 %changelog
+* Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.10-1
+- Open official nova-launcher from Horizon logo when installed
+
 * Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.9-1
 - Sprint 21.1: TopBarManager auto-hide, Impostazioni Nova bar modes
 

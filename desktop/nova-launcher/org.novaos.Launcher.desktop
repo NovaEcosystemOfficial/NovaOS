@@ -1,0 +1,26 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Nova Launcher
+Name[it]=Nova Launcher
+GenericName=Application Launcher
+GenericName[it]=Avvio applicazioni
+Comment=Official NovaOS launcher (runs alongside the KDE menu)
+Comment[it]=Launcher ufficiale NovaOS (in parallelo al menu KDE)
+Exec=nova-launcher
+TryExec=nova-launcher
+Icon=novaos
+Terminal=false
+Categories=GTK;Utility;System;
+Keywords=nova;launcher;menu;apps;search;super;
+StartupNotify=true
+StartupWMClass=nova-launcher
+X-KDE-Shortcuts=Meta+Space
+X-NovaOS-Component=nova-launcher
+X-NovaOS-API=launcher.v1
+X-NovaOS-Version=0.2.10
+Actions=Settings;
+
+[Desktop Action Settings]
+Name=Impostazioni scorciatoia
+Exec=nova-launcher --set-shortcut Meta+Space

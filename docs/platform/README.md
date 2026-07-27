@@ -51,6 +51,7 @@ Nova Shell ◄─────┼──────── Ryuk (system service, N
 | 16 | [`16-Nova-Identity.md`](16-Nova-Identity.md) | Identity branding & tools (Sprint 20) |
 | 17 | [`17-Nova-Hub.md`](17-Nova-Hub.md) | Home ufficiale Nova Hub (Sprint 21) |
 | 18 | [`18-Nova-Shell.md`](18-Nova-Shell.md) | Shell Foundation — Horizon/Launcher (Sprint 22) |
+| 19 | [`19-Nova-Launcher.md`](19-Nova-Launcher.md) | Launcher ufficiale parallelo a KDE (Sprint 22) |
 
 ## Vincoli Sprint 3
 

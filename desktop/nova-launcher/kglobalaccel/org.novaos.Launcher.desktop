@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nova Launcher
+Comment=Toggle Nova Launcher (default Meta+Space — selectable as primary later)
+Exec=nova-launcher
+Icon=novaos
+NoDisplay=true
+X-KDE-GlobalAccel-Command=nova-launcher
+X-KDE-Shortcuts=Meta+Space

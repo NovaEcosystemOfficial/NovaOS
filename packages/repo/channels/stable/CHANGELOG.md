@@ -1,5 +1,12 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-27 — nova-launcher 0.2.10 (Nova Launcher ufficiale)
+
+- Pacchetto: `nova/x86_64/nova-launcher-0.2.10-1.nova.noarch.rpm`
+- Companion: `nova/x86_64/nova-shell-0.2.10-1.nova.noarch.rpm` (logo → nova-launcher)
+- Changelog: [`docs/releases/0.2.10-nova-launcher.md`](../../../../docs/releases/0.2.10-nova-launcher.md)
+- Sprint 22: launcher ufficiale in parallelo al menu KDE
+
 ## 2026-07-27 — nova-shell 0.2.9 (Top Bar Auto-Hide)
 
 - Pacchetto: `nova/x86_64/nova-shell-0.2.9-1.nova.noarch.rpm`
