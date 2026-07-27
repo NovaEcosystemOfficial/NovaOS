@@ -1,5 +1,5 @@
 Name:           nova-shell
-Version:        0.2.10
+Version:        0.2.11
 Release:        1%{?dist}
 Summary:        Nova Shell — NovaOS experience layer foundation
 License:        MIT
@@ -8,18 +8,18 @@ URL:            https://github.com/novaos/NovaOS
 Requires:       python3 >= 3.11
 Requires:       python3-gobject
 Requires:       gtk3
+Requires:       libX11
 Requires:       nova-platform >= 0.2.5
 Requires:       nova-identity >= 0.2.6
 Recommends:     nova-hub
 Recommends:     nova-center
 Recommends:     novaos-update
 Recommends:     nova-launcher
-Recommends:     libwnck3
 
 %description
-Nova Shell foundation: Horizon Bar with TopBarManager auto-hide, Nova Launcher
-with Quick Search, system widgets, and Dock API. Live status via platform.v1.
-Internal APIs shell.v1 / shell.search.v1 / shell.dock.v1 / shell.topbar.v1.
+Nova Shell foundation: Vision 2.0 Top Bar (fixed EWMH strut panel — never an
+overlay), Nova Launcher integration, Quick Search API, Dock API. Live status
+via platform.v1. Internal APIs shell.v1 / shell.search.v1 / shell.dock.v1.
 
 %install
 mkdir -p %{buildroot}/usr/bin
@@ -50,6 +50,9 @@ install -m 0644 %{_nova_root}/desktop/nova-shell/README.md \
 /etc/xdg/autostart/org.novaos.Shell.desktop
 
 %changelog
+* Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.11-1
+- Vision 2.0 Top Bar: EWMH strut panel, no overlay/auto-hide, minimal chrome
+
 * Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.10-1
 - Open official nova-launcher from Horizon logo when installed
 

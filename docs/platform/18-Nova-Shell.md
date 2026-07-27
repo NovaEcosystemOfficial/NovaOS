@@ -1,31 +1,23 @@
 # Nova Shell Foundation
 
-**Sprint 22** · Pacchetto `nova-shell` 0.2.8 · API `shell.v1`
+**Vision 2.0** · Pacchetto `nova-shell` 0.2.11 · API `shell.v1`
 
-Inizio dello strato esperienza Nova Shell: chrome proprietario che sostituirà
-progressivamente gli elementi desktop stock.
+Chrome esperienza Nova: Top Bar a strut (non overlay), launcher esterno,
+API search/dock per evoluzioni future.
 
-## 1. Componenti (0.2.8)
+## 1. Top Bar (Vision 2.0)
 
-| Componente | Stato |
-|------------|--------|
-| **Horizon Bar** | Barra superiore: logo, ora, data, batteria, rete, volume, update, Ryuk |
-| **Nova Launcher** | Click sul logo → ricerca istantanea (app/docs/comandi/settings) |
-| **Quick Search** | Motore `shell.search.v1` (catalogo pacchettizzato; Ryuk consumer futuro) |
-| **Widgets** | CPU, RAM, Disco, Rete, Aggiornamenti (via Platform) |
-| **Dock API** | `shell.dock.v1` — preferiti / recent / open (open = stub compositor) |
-| **Animazioni** | Fade launcher, slide-in barra, hover CSS |
-| **TopBarManager** | Auto-hide / edge reveal / hide-on-maximized (Sprint 21.1) |
+| Regola | Comportamento |
+|--------|----------------|
+| Strut | `_NET_WM_STRUT` / `_NET_WM_STRUT_PARTIAL` — ridimensiona l’area di lavoro |
+| No overlay | Mai sopra le finestre; la X di chiusura resta cliccabile |
+| No auto-hide | Rimosso il reveal al bordo superiore |
+| Layout | Logo (sx) · centro vuoto · Notifiche · Wi‑Fi · Audio · Batteria* · Ora |
 
-### Top bar modes (Impostazioni Nova ⚙)
+\*Batteria solo se presente. CPU/RAM/Disco/kernel **non** sono nella barra
+(→ futuro Control Center).
 
-| Mode | Comportamento |
-|------|----------------|
-| Sempre visibile | Barra fissa in alto |
-| Nascondi automaticamente (default) | Nascosta; reveal al bordo superiore (~180 ms); hide dopo 500 ms |
-| Nascondi con finestre massimizzate | Visibile sul desktop libero; si nasconde se c’è una finestra massimizzata |
-
-Launcher / Impostazioni / azioni dock forzano la ricomparsa della barra.
+`TopBarManager` posiziona il pannello `DOCK` e pubblica gli strut EWMH.
 
 ## 2. Architettura
 
@@ -34,13 +26,13 @@ nova-shell (GTK3)
    │
    ├─► platform.v1   get-dashboard / get-network / get-hardware / get-services
    ├─► shell.search.v1   QuickSearch.query / execute
-   └─► shell.dock.v1     favorites / recent / open_apps
+   └─► shell.dock.v1     favorites / recent / open_apps (API; UI dock non in questa release)
 ```
 
 **Regola:** nessuna lettura diretta di `/proc` o `/sys` nel processo Shell.
 Metriche solo da Nova Platform.
 
-Volume: mostrato quando Platform espone `audio`/`volume`; altrimenti `n/d`.
+Logo → `nova-launcher` se installato.
 
 ## 3. Percorsi
 
@@ -60,7 +52,7 @@ nova-shell --search "hub"  # Quick Search
 
 ## 5. Distribuzione
 
-Solo **Nova Update** stable. Companion `novaos-release` 0.2.8.
+Solo **Nova Update** stable.
 
 ```bash
 nova-updater check

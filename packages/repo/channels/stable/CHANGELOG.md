@@ -1,5 +1,11 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-27 — nova-shell 0.2.11 (Vision 2.0 Top Bar)
+
+- Pacchetto: `nova/x86_64/nova-shell-0.2.11-1.nova.noarch.rpm`
+- Changelog: [`docs/releases/0.2.11-nova-shell-topbar.md`](../../../../docs/releases/0.2.11-nova-shell-topbar.md)
+- Top Bar a strut EWMH (no overlay / no auto-hide); chrome minimo Vision 2.0
+
 ## 2026-07-27 — nova-launcher 0.2.10 (Nova Launcher ufficiale)
 
 - Pacchetto: `nova/x86_64/nova-launcher-0.2.10-1.nova.noarch.rpm`

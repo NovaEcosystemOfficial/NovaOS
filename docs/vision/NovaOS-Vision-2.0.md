@@ -145,7 +145,7 @@ Test: da uno screenshot l’utente deve poter dire *«Questo è NovaOS.»*
 
 | Visione 2.0 | Stato attuale (indicativo) |
 |-------------|----------------------------|
-| Top Bar sottile, strut, no overlay | `nova-shell` TopBarManager (auto-hide) — da allineare a strut + chrome minimo |
+| Top Bar sottile, strut, no overlay | `nova-shell` ≥ 0.2.11 — strut EWMH, chrome minimo, no auto-hide |
 | Metriche solo in Control Center | Widget CPU/RAM/Disco ancora in barra — da spostare |
 | Dock centrata | API dock in shell — UI da completare |
 | Nova Hub come cuore | `nova-hub` + `nova-launcher` in parallelo a KDE |

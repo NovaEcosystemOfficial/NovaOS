@@ -1,4 +1,7 @@
-"""Nova Shell top-bar preferences (Impostazioni Nova)."""
+"""Top bar preferences — Vision 2.0: fixed strut panel only.
+
+Legacy auto-hide modes are ignored; kept only for reading old config files.
+"""
 
 from __future__ import annotations
 
@@ -8,15 +11,17 @@ from pathlib import Path
 
 
 class TopBarMode(str, Enum):
+    """Deprecated enum — shell always uses a reserved strut panel."""
+
     ALWAYS_VISIBLE = "always_visible"
-    AUTO_HIDE = "auto_hide"  # default
+    AUTO_HIDE = "auto_hide"
     HIDE_MAXIMIZED = "hide_maximized"
 
 
 _LABELS = {
-    TopBarMode.ALWAYS_VISIBLE: "Sempre visibile",
-    TopBarMode.AUTO_HIDE: "Nascondi automaticamente",
-    TopBarMode.HIDE_MAXIMIZED: "Nascondi con finestre massimizzate",
+    TopBarMode.ALWAYS_VISIBLE: "Sempre visibile (strut)",
+    TopBarMode.AUTO_HIDE: "Nascondi automaticamente (rimosso)",
+    TopBarMode.HIDE_MAXIMIZED: "Nascondi con massimizzate (rimosso)",
 }
 
 
@@ -25,29 +30,27 @@ def prefs_path() -> Path:
 
 
 def mode_label(mode: TopBarMode) -> str:
-    return _LABELS[mode]
+    return _LABELS.get(mode, mode.value)
 
 
 def load_mode() -> TopBarMode:
-    path = prefs_path()
-    if not path.is_file():
-        return TopBarMode.AUTO_HIDE
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return TopBarMode.AUTO_HIDE
-    raw = str(data.get("mode") or TopBarMode.AUTO_HIDE.value)
-    try:
-        return TopBarMode(raw)
-    except ValueError:
-        return TopBarMode.AUTO_HIDE
+    return TopBarMode.ALWAYS_VISIBLE
 
 
 def save_mode(mode: TopBarMode) -> None:
     path = prefs_path()
     path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "api": "shell.topbar.v1",
-        "mode": mode.value,
-    }
-    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(
+            {
+                "api": "shell.topbar.v1",
+                "mode": TopBarMode.ALWAYS_VISIBLE.value,
+                "vision": "2.0",
+                "note": "auto-hide removed; strut panel only",
+                "requested": mode.value,
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )

@@ -1,11 +1,14 @@
-"""TopBarManager — auto-hide / edge reveal / maximized awareness.
+"""TopBarManager — fixed panel with workspace struts (Vision 2.0).
 
-Modular controller so notifications, Ryuk, global search and quick controls
-can hook into show/hide later without rewriting the Horizon Bar UI.
+The bar is never an overlay: it reserves the top of the work area via
+``_NET_WM_STRUT`` / ``_NET_WM_STRUT_PARTIAL`` so maximized windows and close
+buttons stay below the chrome. Edge-reveal / auto-hide are intentionally gone.
 """
 
 from __future__ import annotations
 
+import ctypes
+from ctypes import c_char_p, c_int, c_ulong, c_void_p
 from typing import Callable
 
 import gi
@@ -14,286 +17,124 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 
-from .prefs import TopBarMode, load_mode, save_mode
-
-SHOW_MS = 180
-HIDE_DELAY_MS = 500
-FRAME_MS = 16
-SENSOR_HEIGHT = 3
-EDGE_PX = 2
+# X11
+PropModeReplace = 0
+XA_CARDINAL = 6
 
 
-def _try_has_maximized() -> bool:
-    """Best-effort: any maximized window on the active workspace (Wnck)."""
+def _x11() -> ctypes.CDLL | None:
     try:
-        gi.require_version("Wnck", "3.0")
-        from gi.repository import Wnck  # type: ignore
-    except (ValueError, ImportError):
-        return False
-    try:
-        screen = Wnck.Screen.get_default()
-        if screen is None:
-            return False
-        screen.force_update()
-        for win in screen.get_windows() or []:
-            if win.is_skip_tasklist() or win.is_skip_pager():
-                continue
-            if win.get_window_type() != Wnck.WindowType.NORMAL:
-                continue
-            if win.is_maximized():
-                return True
-        return False
-    except Exception:  # noqa: BLE001
-        return False
+        lib = ctypes.CDLL("libX11.so.6")
+    except OSError:
+        return None
+    lib.XOpenDisplay.argtypes = [c_char_p]
+    lib.XOpenDisplay.restype = c_void_p
+    lib.XCloseDisplay.argtypes = [c_void_p]
+    lib.XCloseDisplay.restype = c_int
+    lib.XInternAtom.argtypes = [c_void_p, c_char_p, c_int]
+    lib.XInternAtom.restype = c_ulong
+    lib.XChangeProperty.argtypes = [
+        c_void_p,
+        c_ulong,
+        c_ulong,
+        c_ulong,
+        c_int,
+        c_int,
+        c_void_p,
+        c_int,
+    ]
+    lib.XChangeProperty.restype = c_int
+    lib.XFlush.argtypes = [c_void_p]
+    lib.XFlush.restype = c_int
+    return lib
 
 
 class TopBarManager:
-    """Owns visibility policy and slide animation for the top bar window."""
+    """Positions the top bar and publishes EWMH struts so the WM shrinks workarea."""
 
     def __init__(
         self,
         bar: Gtk.Window,
         *,
         bar_height: int,
-        on_mode_changed: Callable[[TopBarMode], None] | None = None,
+        on_geometry: Callable[[], None] | None = None,
     ) -> None:
         self._bar = bar
-        self._bar_height = max(bar_height, 24)
-        self._on_mode_changed = on_mode_changed
-        self._mode = load_mode()
-        self._visible = True
-        self._animating = False
-        self._anim_id = 0
-        self._hide_id = 0
+        self._bar_height = max(28, int(bar_height))
+        self._on_geometry = on_geometry
         self._poll_id = 0
-        self._pointer_on_bar = False
-        self._menu_open = False
-        self._progress = 0.0 if self._mode == TopBarMode.AUTO_HIDE else 1.0  # 0=hidden
         self._geo = self._monitor_geo()
+        self._xlib = _x11()
 
-        # Hot-edge sensor (always present; only interactive when bar hidden)
-        self._sensor = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-        self._sensor.set_decorated(False)
-        self._sensor.set_skip_taskbar_hint(True)
-        self._sensor.set_skip_pager_hint(True)
-        self._sensor.set_keep_above(True)
-        self._sensor.set_accept_focus(False)
-        self._sensor.set_type_hint(Gdk.WindowTypeHint.DOCK)
-        self._sensor.set_name("nova-topbar-sensor")
-        self._sensor.set_opacity(0.01)
-        sensor_box = Gtk.EventBox()
-        sensor_box.set_size_request(-1, SENSOR_HEIGHT)
-        sensor_box.set_visible_window(True)
-        self._sensor.add(sensor_box)
-        sensor_box.connect("enter-notify-event", self._on_sensor_enter)
-        self._sensor.connect("enter-notify-event", self._on_sensor_enter)
+        self._bar.set_type_hint(Gdk.WindowTypeHint.DOCK)
+        self._bar.set_decorated(False)
+        self._bar.set_skip_taskbar_hint(True)
+        self._bar.set_skip_pager_hint(True)
+        self._bar.set_accept_focus(False)
+        self._bar.stick()
+        # DOCK + strut: participate in workarea; do not float over clients.
+        self._bar.set_keep_above(False)
 
-        self._bar.add_events(
-            Gdk.EventMask.ENTER_NOTIFY_MASK
-            | Gdk.EventMask.LEAVE_NOTIFY_MASK
-            | Gdk.EventMask.POINTER_MOTION_MASK
-        )
-        self._bar.connect("enter-notify-event", self._on_bar_enter)
-        self._bar.connect("leave-notify-event", self._on_bar_leave)
+        self._bar.connect("realize", lambda *_: GLib.idle_add(self.apply))
+        self._bar.connect("map-event", lambda *_a: self.apply() or False)
+        self._bar.connect("configure-event", self._on_configure)
 
-        self._apply_window_hints()
-        self._place_windows(immediate=True)
-        self._sensor.show_all()
-        self._poll_id = GLib.timeout_add(250, self._poll)
-        self.recompute(force=True)
+        self.place()
+        self._poll_id = GLib.timeout_add(2000, self._poll)
 
     @property
-    def mode(self) -> TopBarMode:
-        return self._mode
+    def height(self) -> int:
+        return self._bar_height
 
-    @property
-    def is_shown(self) -> bool:
-        return self._progress > 0.85
+    def place(self) -> None:
+        self._geo = self._monitor_geo()
+        geo = self._geo
+        self._bar.set_size_request(geo.width, self._bar_height)
+        self._bar.resize(geo.width, self._bar_height)
+        self._bar.move(geo.x, geo.y)
+        if self._on_geometry:
+            self._on_geometry()
 
-    def set_mode(self, mode: TopBarMode) -> None:
-        if mode == self._mode:
-            return
-        self._mode = mode
-        save_mode(mode)
-        self._apply_window_hints()
-        if self._on_mode_changed:
-            self._on_mode_changed(mode)
-        self.recompute(force=True)
-
-    def notify_menu_open(self) -> None:
-        """Menus / launcher / settings force the bar visible."""
-        self._menu_open = True
-        self._cancel_hide()
-        self._animate_to(1.0)
-
-    def notify_menu_close(self) -> None:
-        self._menu_open = False
-        self.recompute()
-
-    def request_show(self) -> None:
-        self._cancel_hide()
-        self._animate_to(1.0)
-
-    def request_hide(self) -> None:
-        if self._menu_open or self._mode == TopBarMode.ALWAYS_VISIBLE:
-            return
-        self._animate_to(0.0)
+    def apply(self) -> bool:
+        """Re-assert geometry + struts (safe to call often)."""
+        self.place()
+        self._set_struts()
+        return False
 
     def destroy(self) -> None:
         if self._poll_id:
             GLib.source_remove(self._poll_id)
             self._poll_id = 0
-        self._cancel_hide()
-        self._cancel_anim()
-        try:
-            self._sensor.destroy()
-        except Exception:  # noqa: BLE001
-            pass
+        self._clear_struts()
 
-    def _apply_window_hints(self) -> None:
-        # Never reserve struts that shrink the work area permanently while
-        # auto-hiding — that would fight maximized windows.
-        if self._mode == TopBarMode.ALWAYS_VISIBLE:
-            self._bar.set_type_hint(Gdk.WindowTypeHint.DOCK)
-        else:
-            self._bar.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        self._bar.set_keep_above(True)
+    # --- API compatibility (Vision 2.0: bar never hides) ---
+
+    def notify_menu_open(self) -> None:
+        return
+
+    def notify_menu_close(self) -> None:
+        return
+
+    def request_show(self) -> None:
+        self.apply()
+
+    def request_hide(self) -> None:
+        return
 
     def _monitor_geo(self):
         screen = self._bar.get_screen()
         monitor = screen.get_primary_monitor()
         return screen.get_monitor_geometry(monitor)
 
-    def _place_windows(self, *, immediate: bool = False) -> None:
-        self._geo = self._monitor_geo()
-        geo = self._geo
-        self._bar.resize(geo.width, self._bar_height)
-        self._sensor.resize(geo.width, SENSOR_HEIGHT)
-        self._sensor.move(geo.x, geo.y)
-        if immediate:
-            y = self._y_for_progress(self._progress)
-            self._bar.move(geo.x, y)
-
-    def _y_for_progress(self, progress: float) -> int:
-        # progress 0 → fully above screen; 1 → flush with top
-        hidden_y = self._geo.y - self._bar_height + EDGE_PX
-        shown_y = self._geo.y
-        return int(hidden_y + (shown_y - hidden_y) * max(0.0, min(1.0, progress)))
-
-    def _on_sensor_enter(self, *_a) -> bool:
-        if self._mode == TopBarMode.ALWAYS_VISIBLE:
-            return False
-        self.request_show()
+    def _on_configure(self, *_a) -> bool:
+        geo = self._monitor_geo()
+        if self._bar.get_window() is not None:
+            x, y = self._bar.get_position()
+            if x != geo.x or y != geo.y:
+                self._bar.move(geo.x, geo.y)
         return False
-
-    def _on_bar_enter(self, _w, event) -> bool:
-        if event.detail == Gdk.NotifyType.INFERIOR:
-            return False
-        self._pointer_on_bar = True
-        self._cancel_hide()
-        if self._mode != TopBarMode.ALWAYS_VISIBLE:
-            self.request_show()
-        return False
-
-    def _on_bar_leave(self, _w, event) -> bool:
-        if event.detail == Gdk.NotifyType.INFERIOR:
-            return False
-        self._pointer_on_bar = False
-        self._schedule_hide()
-        return False
-
-    def _schedule_hide(self) -> None:
-        self._cancel_hide()
-        if self._menu_open or self._mode == TopBarMode.ALWAYS_VISIBLE:
-            return
-        self._hide_id = GLib.timeout_add(HIDE_DELAY_MS, self._hide_timeout)
-
-    def _hide_timeout(self) -> bool:
-        self._hide_id = 0
-        if self._pointer_on_bar or self._menu_open:
-            return False
-        if self._should_stay_visible():
-            return False
-        self._animate_to(0.0)
-        return False
-
-    def _cancel_hide(self) -> None:
-        if self._hide_id:
-            GLib.source_remove(self._hide_id)
-            self._hide_id = 0
-
-    def _cancel_anim(self) -> None:
-        if self._anim_id:
-            GLib.source_remove(self._anim_id)
-            self._anim_id = 0
-        self._animating = False
-
-    def _desired_progress(self) -> float:
-        if self._menu_open or self._pointer_on_bar:
-            return 1.0
-        if self._mode == TopBarMode.ALWAYS_VISIBLE:
-            return 1.0
-        if self._mode == TopBarMode.HIDE_MAXIMIZED:
-            return 0.0 if _try_has_maximized() else 1.0
-        # AUTO_HIDE
-        return 0.0
-
-    def _should_stay_visible(self) -> bool:
-        return self._desired_progress() >= 1.0
-
-    def recompute(self, *, force: bool = False) -> None:
-        self._place_windows(immediate=False)
-        want = self._desired_progress()
-        if force:
-            self._cancel_anim()
-            self._progress = want
-            self._bar.move(self._geo.x, self._y_for_progress(self._progress))
-            self._bar.set_opacity(0.0 if want < 0.01 else 1.0)
-            self._update_sensor_visibility()
-            return
-        self._animate_to(want)
-
-    def _animate_to(self, target: float) -> None:
-        target = max(0.0, min(1.0, target))
-        self._anim_target = target
-        if abs(target - self._progress) < 0.01 and not self._animating:
-            self._progress = target
-            self._bar.move(self._geo.x, self._y_for_progress(self._progress))
-            self._bar.set_opacity(0.0 if target < 0.01 else 1.0)
-            self._update_sensor_visibility()
-            return
-        if self._animating:
-            return
-        self._animating = True
-        self._anim_id = GLib.timeout_add(FRAME_MS, self._anim_frame)
-
-    def _anim_frame(self) -> bool:
-        target = getattr(self, "_anim_target", self._progress)
-        remaining = target - self._progress
-        if abs(remaining) < 0.02:
-            self._progress = target
-            self._bar.move(self._geo.x, self._y_for_progress(self._progress))
-            self._animating = False
-            self._anim_id = 0
-            self._update_sensor_visibility()
-            self._bar.set_opacity(0.0 if self._progress < 0.01 else 1.0)
-            return False
-        # Ease-out ~180ms without flicker
-        self._progress += remaining * 0.28
-        self._bar.move(self._geo.x, self._y_for_progress(self._progress))
-        self._bar.set_opacity(max(0.0, min(1.0, self._progress)))
-        return True
-
-    def _update_sensor_visibility(self) -> None:
-        # Sensor only needed when bar can hide
-        if self._mode == TopBarMode.ALWAYS_VISIBLE or self._progress > 0.5:
-            self._sensor.hide()
-        else:
-            self._sensor.show_all()
-            self._sensor.set_keep_above(True)
 
     def _poll(self) -> bool:
-        # Track maximized state + monitor geometry changes
         geo = self._monitor_geo()
         if (
             geo.x != self._geo.x
@@ -301,7 +142,75 @@ class TopBarManager:
             or geo.width != self._geo.width
             or geo.height != self._geo.height
         ):
-            self._place_windows(immediate=True)
-        if self._mode == TopBarMode.HIDE_MAXIMIZED and not self._menu_open and not self._pointer_on_bar:
-            self.recompute()
+            self.apply()
+        else:
+            self._set_struts()
         return True
+
+    def _window_xid(self) -> int | None:
+        gdk_win = self._bar.get_window()
+        if gdk_win is None:
+            return None
+        try:
+            gi.require_version("GdkX11", "3.0")
+            from gi.repository import GdkX11  # noqa: WPS433
+        except (ValueError, ImportError):
+            return None
+        if not isinstance(gdk_win, GdkX11.X11Window):
+            return None
+        return int(gdk_win.get_xid())
+
+    def _set_struts(self) -> None:
+        xid = self._window_xid()
+        if xid is None or self._xlib is None:
+            return
+        geo = self._geo
+        top = self._bar_height
+        strut = (c_ulong * 4)(0, 0, top, 0)
+        # left, right, top, bottom, left_start_y, left_end_y, right_start_y, right_end_y,
+        # top_start_x, top_end_x, bottom_start_x, bottom_end_x
+        partial = (c_ulong * 12)(
+            0,
+            0,
+            top,
+            0,
+            0,
+            0,
+            0,
+            0,
+            geo.x,
+            max(geo.x, geo.x + geo.width - 1),
+            0,
+            0,
+        )
+        self._xchange(xid, b"_NET_WM_STRUT", strut, 4)
+        self._xchange(xid, b"_NET_WM_STRUT_PARTIAL", partial, 12)
+
+    def _clear_struts(self) -> None:
+        xid = self._window_xid()
+        if xid is None or self._xlib is None:
+            return
+        self._xchange(xid, b"_NET_WM_STRUT", (c_ulong * 4)(0, 0, 0, 0), 4)
+        self._xchange(xid, b"_NET_WM_STRUT_PARTIAL", (c_ulong * 12)(*([0] * 12)), 12)
+
+    def _xchange(self, xid: int, name: bytes, data, nelements: int) -> None:
+        lib = self._xlib
+        assert lib is not None
+        dpy = lib.XOpenDisplay(None)
+        if not dpy:
+            return
+        try:
+            atom = lib.XInternAtom(dpy, name, 0)
+            lib.XChangeProperty(
+                dpy,
+                c_ulong(xid),
+                c_ulong(atom),
+                c_ulong(XA_CARDINAL),
+                32,
+                PropModeReplace,
+                ctypes.cast(data, c_void_p),
+                nelements,
+            )
+            lib.XFlush(dpy)
+        finally:
+            lib.XCloseDisplay(dpy)
