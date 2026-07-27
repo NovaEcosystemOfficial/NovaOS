@@ -7,7 +7,7 @@ fi
 NOVA_IDENTITY_LOADED=1
 
 export NOVA_ASSETS="${NOVA_ASSETS:-/usr/share/nova/assets}"
-export NOVA_IDENTITY_VERSION="${NOVA_IDENTITY_VERSION:-0.2.6}"
+export NOVA_IDENTITY_VERSION="${NOVA_IDENTITY_VERSION:-0.2.7}"
 
 # Prefer NovaOS hostname in prompts
 _nova_host="$(hostname -s 2>/dev/null || echo novaos)"

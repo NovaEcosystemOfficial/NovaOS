@@ -1,6 +1,6 @@
 {
   "name": "NovaOS Identity Palette",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "colors": {
     "bg_deep": "#070B12",
     "bg_panel": "#0F2744",

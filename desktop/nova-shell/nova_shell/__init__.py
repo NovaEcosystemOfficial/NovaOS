@@ -1,4 +1,4 @@
 """Nova Shell — experience layer foundation (shell.v1)."""
 
-__version__ = "0.2.11"
+__version__ = "0.3.0"
 API_VERSION = "shell.v1"

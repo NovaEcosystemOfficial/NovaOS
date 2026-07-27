@@ -1,7 +1,7 @@
 Name:           nova-shell
-Version:        0.2.11
+Version:        0.3.0
 Release:        1%{?dist}
-Summary:        Nova Shell — NovaOS experience layer foundation
+Summary:        Nova Shell — NovaOS Top Bar 3.0 experience layer
 License:        MIT
 BuildArch:      noarch
 URL:            https://github.com/novaos/NovaOS
@@ -15,11 +15,12 @@ Recommends:     nova-hub
 Recommends:     nova-center
 Recommends:     novaos-update
 Recommends:     nova-launcher
+Recommends:     qt6-qttools
 
 %description
-Nova Shell foundation: Vision 2.0 Top Bar (fixed EWMH strut panel — never an
-overlay), Nova Launcher integration, Quick Search API, Dock API. Live status
-via platform.v1. Internal APIs shell.v1 / shell.search.v1 / shell.dock.v1.
+Nova Shell Top Bar 3.0: glass strut panel (not Plasma chrome), EWMH workarea
+reservation, Control Center entry hook, and Plasma panel cleanup so Nova owns
+the top of the desktop. APIs shell.v1 / shell.search.v1 / shell.dock.v1.
 
 %install
 mkdir -p %{buildroot}/usr/bin
@@ -35,6 +36,8 @@ install -m 0644 %{_nova_root}/desktop/nova-shell/data/catalog.json \
 find %{buildroot}/usr/share/nova/shell -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true
 find %{buildroot}/usr/share/nova/shell -type f -name '*.pyc' -delete 2>/dev/null || true
 install -m 0755 %{_nova_root}/desktop/nova-shell/bin/nova-shell %{buildroot}/usr/bin/nova-shell
+install -m 0755 %{_nova_root}/desktop/nova-shell/bin/nova-hide-plasma-panels \
+  %{buildroot}/usr/bin/nova-hide-plasma-panels
 install -m 0644 %{_nova_root}/desktop/nova-shell/org.novaos.Shell.desktop \
   %{buildroot}/usr/share/applications/org.novaos.Shell.desktop
 install -m 0644 %{_nova_root}/desktop/nova-shell/autostart/org.novaos.Shell.desktop \
@@ -45,11 +48,15 @@ install -m 0644 %{_nova_root}/desktop/nova-shell/README.md \
 %files
 %doc /usr/share/doc/%{name}/README.md
 /usr/bin/nova-shell
+/usr/bin/nova-hide-plasma-panels
 /usr/share/nova/shell/
 /usr/share/applications/org.novaos.Shell.desktop
 /etc/xdg/autostart/org.novaos.Shell.desktop
 
 %changelog
+* Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.3.0-1
+- Top Bar 3.0: glass strut chrome, Control Center hook, hide Plasma panels
+
 * Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.11-1
 - Vision 2.0 Top Bar: EWMH strut panel, no overlay/auto-hide, minimal chrome
 

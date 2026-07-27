@@ -1,5 +1,12 @@
 # Canale Stable — note di pubblicazione
 
+## 2026-07-27 — nova-shell 0.3.0 (Top Bar 3.0)
+
+- Pacchetto: `nova/x86_64/nova-shell-0.3.0-1.nova.noarch.rpm`
+- Companion: `nova/x86_64/nova-identity-0.2.7-1.nova.noarch.rpm` (layout senza pannelli Plasma)
+- Changelog: [`docs/releases/0.3.0-nova-topbar.md`](../../../../docs/releases/0.3.0-nova-topbar.md)
+- Top Bar glass strut visibile; rimozione pannelli KDE; hook Control Center
+
 ## 2026-07-27 — nova-shell 0.2.11 (Vision 2.0 Top Bar)
 
 - Pacchetto: `nova/x86_64/nova-shell-0.2.11-1.nova.noarch.rpm`

@@ -1,5 +1,5 @@
 Name:           nova-identity
-Version:        0.2.6
+Version:        0.2.7
 Release:        1%{?dist}
 Summary:        NovaOS Identity — branding assets, terminal, and CLI tools
 License:        MIT
@@ -141,5 +141,8 @@ exit 0
 %config(noreplace) /etc/plymouth/plymouthd.conf
 
 %changelog
+* Mon Jul 27 2026 NovaOS Team <dev@novaos.local> - 0.2.7-1
+- Top Bar 3.0: Plasma LfF layout without defaultPanel (Nova owns top chrome)
+
 * Sun Jul 26 2026 NovaOS Team <dev@novaos.local> - 0.2.6-1
 - Sprint 20: shared Nova assets, terminal identity, nova-about and CLI tools

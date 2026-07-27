@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+"""Hide Plasma panels so Nova Top Bar owns chrome."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+GUI_ROOT = Path("/usr/share/nova/shell")
+DEV_ROOT = Path(__file__).resolve().parents[1]
+
+for root in (GUI_ROOT, DEV_ROOT):
+    if (root / "nova_shell" / "plasma_panels.py").is_file():
+        sys.path.insert(0, str(root))
+        break
+
+from nova_shell.plasma_panels import hide_plasma_panels
+
+if __name__ == "__main__":
+    ok = hide_plasma_panels()
+    print("ok" if ok else "skipped")
+    raise SystemExit(0 if ok else 1)

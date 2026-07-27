@@ -1,10 +1,10 @@
 [General]
 Name=NovaOS
-Version=0.2.6
+Version=0.2.7
 LogoPath=/usr/share/nova/assets/logo/novaos.png
 Website=https://novaos.local
 BugAddress=https://novaos.local
-VersionId=0.2.6
+VersionId=0.2.7
 Variant=Installable
 Vendor=NovaOS
 Distribution=NovaOS

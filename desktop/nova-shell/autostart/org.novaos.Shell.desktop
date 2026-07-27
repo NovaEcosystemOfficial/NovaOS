@@ -2,12 +2,12 @@
 Type=Application
 Version=1.0
 Name=Nova Shell
-Comment=Start Nova Shell Horizon Bar
+Comment=Nova Top Bar 3.0 — glass strut panel
 Exec=nova-shell
 TryExec=nova-shell
 Icon=novaos
 Terminal=false
 X-GNOME-Autostart-enabled=true
-X-KDE-autostart-after=panel
 OnlyShowIn=KDE;GNOME;XFCE;LXQt;
 X-NovaOS-Component=nova-shell
+X-NovaOS-TopBar=3.0

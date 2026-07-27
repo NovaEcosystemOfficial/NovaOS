@@ -99,6 +99,7 @@ class TopBarManager:
         """Re-assert geometry + struts (safe to call often)."""
         self.place()
         self._set_struts()
+        self.set_blur_behind()
         return False
 
     def destroy(self) -> None:
@@ -192,6 +193,17 @@ class TopBarManager:
             return
         self._xchange(xid, b"_NET_WM_STRUT", (c_ulong * 4)(0, 0, 0, 0), 4)
         self._xchange(xid, b"_NET_WM_STRUT_PARTIAL", (c_ulong * 12)(*([0] * 12)), 12)
+
+    def set_blur_behind(self, xid: int | None = None) -> None:
+        """Enable KWin blur behind the bar (glassmorphism)."""
+        if xid is None:
+            xid = self._window_xid()
+        if xid is None or self._xlib is None:
+            return
+        geo = self._geo
+        # Region relative to window: x, y, width, height
+        region = (c_ulong * 4)(0, 0, max(1, geo.width), self._bar_height)
+        self._xchange(xid, b"_KDE_NET_WM_BLUR_BEHIND_REGION", region, 4)
 
     def _xchange(self, xid: int, name: bytes, data, nelements: int) -> None:
         lib = self._xlib
